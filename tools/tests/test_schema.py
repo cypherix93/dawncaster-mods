@@ -122,6 +122,34 @@ def test_weapon_category_pinned_and_classes_required(validator):
     assert any("classes" in e or "Paladin" in e for e in errors(validator, m))
 
 
+def test_starting_card_shape_and_classes(validator):
+    # v1.2: a starting card is the full card schema + required classes,
+    # with NO category pinning (any legal card shape).
+    m = example_manifest()
+    sc = copy.deepcopy(m["cards"][0])
+    sc["name"] = "Zz Schema Test Opener"
+    sc["cardID"] = 737673497
+    m["startingCards"] = [sc]
+    errs = "\n".join(errors(validator, m))
+    assert "classes" in errs                   # classes is required
+    assert "BasicAttack" not in errs           # category NOT pinned (stays Action)
+    sc["classes"] = ["Knight", "all"]
+    assert errors(validator, m) == []
+    sc["category"] = "Enchantment"             # shipped corpus has 4 Enchantments
+    assert errors(validator, m) == []
+    sc["classes"] = ["Paladin"]                # not a shipped Profession
+    assert any("classes" in e or "Paladin" in e for e in errors(validator, m))
+
+
+def test_starting_cards_only_pack_is_legal(validator):
+    m = example_manifest()
+    sc = copy.deepcopy(m["cards"][0])
+    sc["classes"] = ["Knight"]
+    del m["cards"]
+    m["startingCards"] = [sc]
+    assert errors(validator, m) == []          # anyOf accepts startingCards alone
+
+
 def test_weapon_power_shape(validator):
     m = example_manifest()
     m["weaponPowers"] = [{
@@ -170,8 +198,15 @@ def test_enums_match_gamedata(schema):
     ench = defs(schema, "enchantment")["properties"]
     assert ench["type"]["enum"] == gd.ENCHANT_TYPES
 
-    classes = defs(schema, "weapon")["properties"]["classes"]["items"]["enum"]
-    assert classes == sorted(gd.profession_names()) + ["all"]
+    for defname in ("weapon", "startingCard"):
+        classes = defs(schema, defname)["properties"]["classes"]["items"]["enum"]
+        assert classes == sorted(gd.profession_names()) + ["all"]
+
+    # startingCard mirrors the card definition (full category enum, no pinning)
+    sc = defs(schema, "startingCard")["properties"]
+    assert sc["category"]["enum"] == gd.CARD_CATEGORIES
+    assert defs(schema, "startingCard")["required"] == \
+        defs(schema, "card")["required"] + ["classes"]
 
     for field in ("cardID",):
         assert card[field]["minimum"] == gd.MOD_ID_RANGE[0]

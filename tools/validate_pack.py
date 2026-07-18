@@ -1,5 +1,6 @@
 """Gate 1: static validation of a card-pack manifest against CARD-PACK-SPEC.md §2
-and WEAPON-SPEC.md §2/§7 (manifest v1.1: optional `weapons` + `weaponPowers` arrays).
+and WEAPON-SPEC.md §2/§7 (manifest v1.1: optional `weapons` + `weaponPowers`
+arrays; v1.2: optional `startingCards` array).
 
 Checks (all vocabulary comes from the decompiled enums hardcoded in tools/gamedata.py
 and the extracted pool in tools/out/data/):
@@ -29,6 +30,16 @@ v1.1 (WEAPON-SPEC.md §7.1):
   - hard degeneracy error: a weapon-cooldown-reducing command
     (resetweaponcooldown / lowercooldown / reducecooldown / setcooldown) inside an
     ActivateWeapon-triggered effect = infinite-activation loop
+
+v1.2 (WEAPON-SPEC.md §7.0):
+  - startingCards: full card schema (any legal category — the shipped 63-card
+    corpus spans Action/Enchantment/Equipment), `classes` validated like weapons,
+    same cardID/name collision surfaces as cards/weapons (shared namespace),
+    top-down ID placement advisory (§3: starting cards continue the block's
+    top-down loadout counter, directly below the weapon cardIDs / power
+    talentIDs), and the §4 budget lint (81% of the shipped corpus is 1-cost;
+    always-available mod starting cards hold to Common/Uncommon; NOT
+    reward-excluded — 62/63 shipped starting cards are normal pool cards)
 
 Exit code 1 on any ERROR (warnings alone exit 0; --strict makes warnings fatal).
 
@@ -328,6 +339,39 @@ def _validate_classes(classes, label: str, findings: list[dict]) -> None:
                 f"({', '.join(sorted(legal))}) or 'all'")
 
 
+def validate_starting_card(card: dict, idx: int, pack_dir: Path, id_block,
+                           pack_names_lower, findings: list[dict]) -> None:
+    """WEAPON-SPEC §2/§4 (v1.2): a starting card IS a card (full schema, any
+    legal category, 512×512 art) + `classes`, plus the starting-card budget lint
+    derived from the shipped 63-card corpus."""
+    label = card.get("name") or f"startingCards[{idx}]"
+    warn = lambda check, msg: findings.append(_finding("WARN", label, check, msg))  # noqa: E731
+
+    validate_card(card, idx, pack_dir, id_block, pack_names_lower, findings)
+    _validate_classes(card.get("classes"), label, findings)
+
+    # --- §4 budget lint (advisory: the corpus curve, not a hard rule)
+    cost = card.get("cost")
+    if isinstance(cost, dict):
+        total = sum(v for k, v in cost.items()
+                    if k in gd.COST_KEYS and k != "Life" and isinstance(v, int))
+        if total != 1:
+            warn("startingcard_cost_curve",
+                 f"total energy cost {total} — 51/63 shipped starting cards (81%) "
+                 "and all six Profession defaults are exactly 1-cost; a mod "
+                 "starting card should be 1-cost unless corpus-anchored (§4)")
+    if card.get("rarity") not in (None, "Common", "Uncommon"):
+        warn("startingcard_rarity",
+             f"rarity {card.get('rarity')!r} — Rare is the keystone-unlock "
+             "build-around tier; always-available mod starting cards hold to "
+             "Common/Uncommon (WEAPON-SPEC §4)")
+    if "excludeFromRewards" in (card.get("flags") or []):
+        warn("startingcard_reward_excluded",
+             "excludeFromRewards set — starting cards are NORMAL pool cards "
+             "(62/63 shipped starting cards are reward-pool legal, §1); do not "
+             "default-exclude them the way §5 does for weapons")
+
+
 REQUIRED_POWER_FIELDS = ["name", "talentID", "description", "cooldown", "effects",
                          "classes", "meta"]
 
@@ -453,25 +497,29 @@ def validate_pack(manifest: dict, pack_path: Path) -> list[dict]:
     cards = manifest.get("cards")
     weapons = manifest.get("weapons")
     powers = manifest.get("weaponPowers")
-    for field, val in (("cards", cards), ("weapons", weapons), ("weaponPowers", powers)):
+    starting_cards = manifest.get("startingCards")
+    for field, val in (("cards", cards), ("weapons", weapons),
+                       ("weaponPowers", powers), ("startingCards", starting_cards)):
         if val is not None and not isinstance(val, list):
             perr("shape", f"{field} must be a list")
     cards = cards if isinstance(cards, list) else []
     weapons = weapons if isinstance(weapons, list) else []
     powers = powers if isinstance(powers, list) else []
-    if not cards and not weapons and not powers:
-        perr("no_cards", "manifest has no cards, weapons, or weaponPowers")
+    starting_cards = starting_cards if isinstance(starting_cards, list) else []
+    if not cards and not weapons and not powers and not starting_cards:
+        perr("no_cards", "manifest has no cards, weapons, weaponPowers, or startingCards")
         return findings
 
-    # cross-pack collision surfaces (weapons share the card namespaces;
-    # weaponPowers get their own talentID/talent-name namespaces)
+    # cross-pack collision surfaces (weapons and starting cards share the card
+    # namespaces; weaponPowers get their own talentID/talent-name namespaces)
     sibling_ids: dict[int, str] = {}
     sibling_names: dict[str, str] = {}
     sibling_talent_ids: dict[int, str] = {}
     sibling_talent_names: dict[str, str] = {}
     for sib_path, sib in gd.other_pack_manifests(exclude=pack_path):
         sib_name = sib.get("pack", sib_path.parent.name)
-        for c in list(sib.get("cards") or []) + list(sib.get("weapons") or []):
+        for c in (list(sib.get("cards") or []) + list(sib.get("weapons") or [])
+                  + list(sib.get("startingCards") or [])):
             if not isinstance(c, dict):
                 continue
             if isinstance(c.get("cardID"), int):
@@ -486,7 +534,7 @@ def validate_pack(manifest: dict, pack_path: Path) -> list[dict]:
             if isinstance(p.get("name"), str):
                 sibling_talent_names.setdefault(p["name"].lower(), sib_name)
 
-    pack_names_lower = {c["name"].lower() for c in cards + weapons
+    pack_names_lower = {c["name"].lower() for c in cards + weapons + starting_cards
                         if isinstance(c, dict) and isinstance(c.get("name"), str)}
 
     seen_ids: set[int] = set()
@@ -551,6 +599,35 @@ def validate_pack(manifest: dict, pack_path: Path) -> list[dict]:
                                      f"weapon cardID {wid} is not above the pack's card IDs "
                                      f"(max {max_card_id}) — WEAPON-SPEC §3 allocates weapon IDs "
                                      "top-down from the block end"))
+
+    # ---- starting cards (WEAPON-SPEC §2 v1.2: full card schema + classes;
+    # §3: IDs continue the block's top-down loadout counter, directly below the
+    # weapon cardIDs / power talentIDs — both advisories, not errors)
+    topdown_ids = ([w["cardID"] for w in weapons
+                    if isinstance(w, dict) and isinstance(w.get("cardID"), int)]
+                   + [p["talentID"] for p in powers
+                      if isinstance(p, dict) and isinstance(p.get("talentID"), int)])
+    topdown_floor = min(topdown_ids, default=None)
+    for i, sc in enumerate(starting_cards):
+        if not isinstance(sc, dict):
+            perr("shape", f"startingCards[{i}] is not an object")
+            continue
+        label = sc.get("name") or f"startingCards[{i}]"
+        validate_starting_card(sc, i, pack_dir, id_block, pack_names_lower, findings)
+        check_identity(label, sc.get("cardID"), sc.get("name"))
+        scid = sc.get("cardID")
+        if isinstance(scid, int):
+            if max_card_id is not None and scid <= max_card_id:
+                findings.append(_finding("WARN", label, "startingcard_id_not_topdown",
+                                         f"starting card cardID {scid} is not above the pack's "
+                                         f"card IDs (max {max_card_id}) — WEAPON-SPEC §3 allocates "
+                                         "starting-card IDs top-down from the block end"))
+            if topdown_floor is not None and scid >= topdown_floor:
+                findings.append(_finding("WARN", label, "startingcard_id_not_topdown",
+                                         f"starting card cardID {scid} is not below the pack's "
+                                         f"weapon/power allocations (min {topdown_floor}) — "
+                                         "WEAPON-SPEC §3 continues the shared top-down counter "
+                                         "directly below them"))
 
     # ---- weapon powers (WEAPON-SPEC §2: tier-0 Talents)
     seen_tids: set[int] = set()

@@ -100,13 +100,28 @@ def good_power(**overrides):
     return power
 
 
+def good_starting_card(**overrides):
+    card = good_card(
+        name="Zz First Spark", cardID=700009985, cost={"INT": 1},
+        description="Deal 3 fire damage.",
+        meta={"archetype": "burn starting card", "nearestExisting": "Shocking Grasp",
+              "whyDifferent": "test fixture"},
+    )
+    card["effects"][0]["codeLine"] = "damage:3:fire"
+    card["classes"] = ["Arcanist", "Knight"]
+    card.update(overrides)
+    return card
+
+
 def run(cards, id_block=(700009900, 700009999), tmp_path=None,
-        weapons=None, powers=None):
+        weapons=None, powers=None, starting_cards=None):
     manifest = {"pack": "TestPack", "idBlock": list(id_block), "cards": cards}
     if weapons is not None:
         manifest["weapons"] = weapons
     if powers is not None:
         manifest["weaponPowers"] = powers
+    if starting_cards is not None:
+        manifest["startingCards"] = starting_cards
     pack_path = (tmp_path or gd.PACKS_DIR / "_nonexistent") / "pack.json"
     return vp.validate_pack(manifest, pack_path)
 
@@ -417,6 +432,100 @@ def test_power_without_activateweapon_warns(tmp_path):
     findings = run([], tmp_path=tmp_path, weapons=[good_weapon()], powers=[p])
     assert any(f["check"] == "no_activateweapon" for f in findings)
     assert not errors(findings, "no_activateweapon")
+
+
+def test_starting_card_clean_pass(tmp_path):
+    findings = run([good_card()], tmp_path=tmp_path,
+                   starting_cards=[good_starting_card()])
+    assert not errors(findings), findings
+    # no budget warnings on the corpus-conformant fixture (1-cost Common)
+    assert not any(f["check"].startswith("startingcard_") for f in findings)
+
+
+def test_starting_cards_only_pack_is_legal(tmp_path):
+    findings = run([], tmp_path=tmp_path, starting_cards=[good_starting_card()])
+    assert not errors(findings, "no_cards")
+
+
+def test_starting_card_any_category_legal(tmp_path):
+    # NO BasicAttack pinning: the shipped corpus spans Action/Enchantment/Equipment
+    findings = run([], tmp_path=tmp_path,
+                   starting_cards=[good_starting_card(category="Enchantment")])
+    assert not errors(findings), findings
+    assert not any(f["check"] == "weapon_not_basicattack" for f in findings)
+
+
+def test_starting_card_classes_validated(tmp_path):
+    findings = run([], tmp_path=tmp_path,
+                   starting_cards=[good_starting_card(classes=["Paladin"])])
+    assert errors(findings, "bad_class")
+    sc = good_starting_card()
+    del sc["classes"]
+    assert errors(run([], tmp_path=tmp_path, starting_cards=[sc]),
+                  "missing_classes")
+    findings = run([], tmp_path=tmp_path,
+                   starting_cards=[good_starting_card(classes=["all"])])
+    assert not errors(findings, "bad_class")
+
+
+def test_starting_card_shares_card_id_namespace(tmp_path):
+    findings = run([good_card(cardID=700009985)], tmp_path=tmp_path,
+                   starting_cards=[good_starting_card(cardID=700009985)])
+    assert errors(findings, "id_collision")
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon(cardID=700009985)],
+                   starting_cards=[good_starting_card(cardID=700009985)])
+    assert errors(findings, "id_collision")
+
+
+def test_starting_card_id_topdown_advisory(tmp_path):
+    # below the pack's regular cards -> advisory only
+    findings = run([good_card(cardID=700009950)], tmp_path=tmp_path,
+                   starting_cards=[good_starting_card(cardID=700009910)])
+    assert any(f["check"] == "startingcard_id_not_topdown" for f in findings)
+    assert not errors(findings, "startingcard_id_not_topdown")   # advisory
+    # at/above the weapon/power allocations -> advisory
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon(cardID=700009990)],
+                   powers=[good_power(talentID=700009989)],
+                   starting_cards=[good_starting_card(cardID=700009991)])
+    assert any(f["check"] == "startingcard_id_not_topdown" for f in findings)
+    # directly below them -> silent
+    findings = run([good_card(cardID=700009901)], tmp_path=tmp_path,
+                   weapons=[good_weapon(cardID=700009990)],
+                   powers=[good_power(talentID=700009989)],
+                   starting_cards=[good_starting_card(cardID=700009988)])
+    assert not any(f["check"] == "startingcard_id_not_topdown" for f in findings)
+
+
+def test_starting_card_budget_lints_warn_only(tmp_path):
+    findings = run([], tmp_path=tmp_path,
+                   starting_cards=[good_starting_card(cost={"INT": 2})])
+    assert any(f["check"] == "startingcard_cost_curve" for f in findings)
+    assert not errors(findings, "startingcard_cost_curve")
+    findings = run([], tmp_path=tmp_path,
+                   starting_cards=[good_starting_card(rarity="Rare")])
+    assert any(f["check"] == "startingcard_rarity" for f in findings)
+    assert not errors(findings, "startingcard_rarity")
+    findings = run([], tmp_path=tmp_path,
+                   starting_cards=[good_starting_card(flags=["excludeFromRewards"])])
+    assert any(f["check"] == "startingcard_reward_excluded" for f in findings)
+    assert not errors(findings, "startingcard_reward_excluded")
+
+
+def test_cross_pack_starting_card_collision(tmp_path, monkeypatch):
+    sibling_dir = tmp_path / "OtherPack"
+    sibling_dir.mkdir()
+    sibling = {"pack": "OtherPack", "idBlock": [700009900, 700009999],
+               "cards": [], "startingCards": [good_starting_card()]}
+    (sibling_dir / "pack.json").write_text(json.dumps(sibling), encoding="utf-8")
+    monkeypatch.setattr(gd, "PACKS_DIR", tmp_path)
+
+    mine_dir = tmp_path / "MinePack"
+    mine_dir.mkdir()
+    manifest = {"pack": "MinePack", "idBlock": [700009900, 700009999],
+                "cards": [], "startingCards": [good_starting_card()]}
+    findings = vp.validate_pack(manifest, mine_dir / "pack.json")
+    assert errors(findings, "id_collision")
+    assert errors(findings, "name_collision")
 
 
 def test_cross_pack_weapon_and_power_collisions(tmp_path, monkeypatch):

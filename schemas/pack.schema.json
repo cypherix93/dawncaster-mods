@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/dawncaster-mods/schemas/pack.schema.json",
   "title": "Dawncaster card-pack manifest (pack.json)",
-  "description": "DawnKit.Packs manifest v1.1 \u2014 CARD-PACK-SPEC.md \u00a72 + WEAPON-SPEC.md \u00a72. Field names map 1:1 onto the verified Card/Talent ScriptableObjects; enum values are the EXACT decompiled spellings including canonical typos (CardRariry values, suffix 'Phyisical'). This schema mirrors tools/validate_pack.py's ERROR-level rules; the validator remains the shipping gate (it also checks vocabulary, collisions vs the extracted pool, art files and budgets).",
+  "description": "DawnKit.Packs manifest v1.2 \u2014 CARD-PACK-SPEC.md \u00a72 + WEAPON-SPEC.md \u00a72 (weapons/weaponPowers v1.1, startingCards v1.2). Field names map 1:1 onto the verified Card/Talent ScriptableObjects; enum values are the EXACT decompiled spellings including canonical typos (CardRariry values, suffix 'Phyisical'). This schema mirrors tools/validate_pack.py's ERROR-level rules; the validator remains the shipping gate (it also checks vocabulary, collisions vs the extracted pool, art files and budgets).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -36,6 +36,16 @@
       ],
       "properties": {
         "weaponPowers": {
+          "minItems": 1
+        }
+      }
+    },
+    {
+      "required": [
+        "startingCards"
+      ],
+      "properties": {
+        "startingCards": {
           "minItems": 1
         }
       }
@@ -89,6 +99,13 @@
       "description": "Activatable weapon powers (WEAPON-SPEC \u00a72) \u2014 each becomes a tier-0 Talent. talentID is a SEPARATE namespace from cardIDs (a talentID may equal a cardID safely).",
       "items": {
         "$ref": "#/definitions/weaponPower"
+      }
+    },
+    "startingCards": {
+      "type": "array",
+      "description": "Starting cards (WEAPON-SPEC \u00a72, manifest v1.2) \u2014 full card schema (any legal card shape, no BasicAttack pinning) plus 'classes'. IDs continue the top-down loadout allocation below the weapons/powers.",
+      "items": {
+        "$ref": "#/definitions/startingCard"
       }
     },
     "meta": {
@@ -1216,6 +1233,322 @@
           "type": "array",
           "minItems": 1,
           "description": "Which Professions offer this weapon at character creation (exact Profession asset names; 'all' allowed). The loader appends to the live Profession.weapons list.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Arcanist",
+              "Hunter",
+              "Knight",
+              "Rogue",
+              "Scion",
+              "Seeker",
+              "Warrior",
+              "all"
+            ]
+          }
+        }
+      }
+    },
+    "startingCard": {
+      "type": "object",
+      "description": "One starting card (WEAPON-SPEC.md \u00a72, manifest v1.2) \u2014 a starting card IS a card: the full card schema applies with NO category pinning (the shipped 63-card starting corpus spans Action/Enchantment/Equipment), and 'classes' lists the Professions that offer it as the third character-creation loadout slot (weapon + weapon power + starting card). Starting cards are NORMAL pool cards \u2014 do not set excludeFromRewards (62/63 shipped starting cards are reward-pool legal); the pick enters the starting deck \u00d71 and round-trips inside playerDeck like any other card.",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "cardID",
+        "expansion",
+        "type",
+        "category",
+        "suffix",
+        "rarity",
+        "cost",
+        "description",
+        "effects",
+        "art",
+        "meta",
+        "classes"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "ScriptableObject name = EN display name. MUST be unique (case-insensitive) vs all 2,525 shipped cards and every other installed pack \u2014 card names are identity (lowercase-keyed caches); the loader refuses collisions with both claimants named."
+        },
+        "cardID": {
+          "type": "integer",
+          "minimum": 700000000,
+          "maximum": 799999999,
+          "description": "Unique numeric card ID inside the pack's declared idBlock (mods own 700,000,000-799,999,999). Starting cards continue the block's top-down loadout allocation, directly below the pack's weapon cardIDs and power talentIDs (WEAPON-SPEC \u00a73: one shared top-down counter per block); regular cards allocate bottom-up from the block start."
+        },
+        "expansion": {
+          "type": "string",
+          "description": "CardExpansions member. Use 'Extended' for mod packs: in-pool, but not Core (Core is the base-game identity). 'None' and 'Metaprogress' are excluded here \u2014 ProcessCard filters them out of the player pool. When the pack has a valid idBlock, the loader supersedes this with the pack's own synthetic set value (1000 + (blockStart - 700,000,000) / 100) so the pack appears as its own toggleable card set; the field stays required as documentation and as the fallback when synthetic sets are disabled.",
+          "enum": [
+            "Core",
+            "Metamorphosis",
+            "Extended",
+            "Infinitum",
+            "Catalyst",
+            "Eclypse",
+            "Synthesis"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "description": "CardType member. Drives type-matters conditions and resist/affinity interactions.",
+          "enum": [
+            "Melee",
+            "Magic",
+            "Ranged",
+            "Utility",
+            "Divine",
+            "Move",
+            "Corruption",
+            "Monster"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "description": "CardCategory member. 'Action' for normal plays; 'BasicAttack' is reserved for starting weapons and is pinned in the weapons array.",
+          "enum": [
+            "Action",
+            "Item",
+            "Artifact",
+            "Conjuration",
+            "Enchantment",
+            "BasicAttack",
+            "Summon",
+            "Performance",
+            "Form",
+            "Hymn",
+            "Revelation",
+            "Affix",
+            "Attunement",
+            "Equipment",
+            "Code",
+            "Ingredient",
+            "Path",
+            "Location",
+            "Offering",
+            "Mantra",
+            "Adaptation"
+          ]
+        },
+        "suffix": {
+          "type": "string",
+          "description": "Suffix member \u2014 exact game spelling INCLUDING the canonical typo 'Phyisical' (sic: the game's enum member for physical; the enums are API surface, do not correct it in data). 'Companion' is excluded here: it routes the card to the companion deck, not the player pool (AssetManager.ProcessCard filter).",
+          "enum": [
+            "None",
+            "Fire",
+            "Frost",
+            "Lightning",
+            "Phyisical",
+            "Ebb",
+            "Flow",
+            "Infernal",
+            "Junk"
+          ]
+        },
+        "rarity": {
+          "type": "string",
+          "description": "CardRariry member \u2014 sic: the game's enum type is literally misspelled 'CardRariry', and its values are API surface; data files use the exact game spellings, never 'fixed' ones. 'Monster' is excluded here because it is never legal for player cards (AssetManager.ProcessCard filter). Epic/Mythic/Ultra sit outside the reward ladder \u2014 reachable only by forced placement (GAME-MECHANICS Part VIII); the validator warns on them.",
+          "enum": [
+            "Common",
+            "Uncommon",
+            "Rare",
+            "Legendary",
+            "Epic",
+            "Mythic",
+            "Ultra"
+          ]
+        },
+        "cost": {
+          "type": "object",
+          "description": "Energy cost per pool; omitted keys = 0. 'Life' is paid in health, not energy. Cost profile IS frame-color identity (Card.GetColor: DEX green, INT blue, STR red, HOLY gold, hybrids aqua/orange/purple, life/corruption black) \u2014 keep archetype color identities coherent. Shipped pool max total energy cost is 4; distribution skews low (72% of cards cost 0-1).",
+          "additionalProperties": false,
+          "properties": {
+            "DEX": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Dexterity (green) energy."
+            },
+            "INT": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Intelligence (blue) energy."
+            },
+            "STR": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Strength (red) energy."
+            },
+            "HOLY": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Holy (gold) energy."
+            },
+            "Neutral": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Any-color energy."
+            },
+            "DEXINT": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Hybrid DEX/INT (aqua) energy."
+            },
+            "DEXSTR": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Hybrid DEX/STR (orange) energy."
+            },
+            "INTSTR": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Hybrid INT/STR (purple) energy."
+            },
+            "Life": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Health paid as a cost (black identity), not energy."
+            }
+          }
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Card rules text (EN). Inline text IS the localization fallback for cards \u2014 no string tables needed."
+        },
+        "keywords": {
+          "type": "array",
+          "default": [],
+          "description": "CardProperties members \u2014 the game's mechanical keywords (Chain, OneUse, Piercing, Persistent, ...). Ship [] when unused (all list fields are non-null).",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Chain",
+              "Conjured",
+              "Cursed",
+              "Defiled",
+              "Echo",
+              "Figmented",
+              "Firecast",
+              "Grounded",
+              "Heavy",
+              "Lifedrain",
+              "Memorized",
+              "OneUse",
+              "Persistent",
+              "Piercing",
+              "Psionic",
+              "Rampage",
+              "Reaping",
+              "Recall",
+              "Reliable",
+              "Scrap",
+              "Sinister",
+              "Unique",
+              "Unplayable",
+              "Untempered",
+              "Valuable"
+            ]
+          }
+        },
+        "cardKeywords": {
+          "type": "array",
+          "default": [],
+          "description": "Free-string tags, lowercase by convention (e.g. 'firecast'); reuse existing tags where possible \u2014 CardContainsKeyword-style conditions match on them.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "utilityNumber": {
+          "type": "string",
+          "default": "",
+          "description": "NumberParser grammar string (GAME-MECHANICS Part VII); empty when unused."
+        },
+        "charges": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Starting charges (Equipment/charge mechanics); 0 when unused."
+        },
+        "flags": {
+          "type": "array",
+          "default": [],
+          "description": "Boolean Card fields expressed as a flag list (CARD-PACK-SPEC \u00a72).",
+          "items": {
+            "type": "string",
+            "enum": [
+              "uniqueInHand",
+              "cantbeupgraded",
+              "requireAllConditions",
+              "pauseQueue",
+              "excludeFromConjurations",
+              "excludeFromSunforge",
+              "excludeFromRewards",
+              "excludeFromCodex",
+              "hideConditionGlow",
+              "resetTempValues"
+            ]
+          }
+        },
+        "playConditions": {
+          "type": "array",
+          "default": [],
+          "description": "Conditions that must hold for the card to be playable. Ship [] when unused.",
+          "items": {
+            "$ref": "#/definitions/condition"
+          }
+        },
+        "effects": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The card's triggered effects \u2014 at least one.",
+          "items": {
+            "$ref": "#/definitions/effect"
+          }
+        },
+        "enchantment": {
+          "$ref": "#/definitions/enchantment"
+        },
+        "art": {
+          "type": "string",
+          "description": "Path to the card art relative to the pack dir ('art/<CardName>.png', 512x512 RGBA full-bleed \u2014 the frame is drawn by the UI). Empty string = engine renders its generated cost-colored placeholder."
+        },
+        "meta": {
+          "type": "object",
+          "description": "Review-gate data for humans and the offline validator \u2014 stripped before load, never reaches the game. Required for the uniqueness gate (CARD-PACK-SPEC \u00a75): a pack card earns its slot with a new decision, not new numbers.",
+          "required": [
+            "nearestExisting"
+          ],
+          "properties": {
+            "archetype": {
+              "type": "string",
+              "description": "Which archetype cluster this belongs to (GAME-MECHANICS Part VI)."
+            },
+            "nearestExisting": {
+              "type": "string",
+              "description": "The closest shipped card ('Fireball' / 'Fireball.json'; annotations after ' (' allowed). Must resolve against the extracted pool \u2014 the nearest-neighbor audit anchor."
+            },
+            "whyDifferent": {
+              "type": "string",
+              "description": "The uniqueness argument: bridges archetypes / unused trigger+condition combo / new payoff or setup / new mode of an existing mechanic. '+1/-1 numbers on card X' gets cut."
+            },
+            "intendedDeck": {
+              "type": "string",
+              "description": "2-3 lines of how it plays / what deck wants it."
+            },
+            "powerNotes": {
+              "type": "string",
+              "description": "Budget math vs the \u00a74 baselines (~4 damage per energy at common; each rarity step buys ~+1 damage-equivalent or one rider)."
+            }
+          }
+        },
+        "classes": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Which Professions offer this starting card at character creation (exact Profession asset names; 'all' allowed). The loader appends to the live Profession.startingCards list \u2014 CharacterBuilder.LoadStartingCards (phase 5) reads it live, no UI patching.",
           "items": {
             "type": "string",
             "enum": [
