@@ -154,3 +154,47 @@ Composites mark the two payoff engines: Assembly Line (Evocation's forging hands
 Stormcast's vortex, linear blend) and Overclock (Timestop's clock-rune rings ringed by
 Innervation's lightning, radial blend). Stutterbolt alone gets a soft posterize for a
 deliberate stutter/glitch texture.
+
+---
+
+## Weapons & powers (manifest v1.1)
+
+**Shipped curve (derived, cited in EmberweaveGrove notes in full):** weapons = damage 2,
+1 Neutral, Common, one rider. Powers (66 tier-0 talents): cooldowns 1x1, 2x20, 3x32,
+4x8, 5x2, 6x1, 10x1, 20x1; cd 2 = small/level-scaled next-combat status (+ optional
+passive), cd 3 = free/choice card or 2-3xlvl status, cd 4-5 = permanent deck edits,
+cd 6+ = dramatic one-offs; riders are small per-trigger values, non-scaling with cd.
+
+### Weapon: Tickwright's Baton - 700000299, Magic (Chain), Arcanist/Seeker
+- **Role:** combo finisher in the basic-attack slot - Flow 2 mints a Cogspark for next
+  turn's chain; carries Chain so the basic never wipes chain stacks (the archetype's
+  breaking rule).
+- **Budget:** damage 2 + Chain keyword (=1 chain on resolve, half Forcewand's feed);
+  gated token = ~1 dmg + 1 chain + Cascade-gated draw of temporary value, priced by
+  needing 2 prior plays. At/under Forcewand's unconditional +2 chain.
+- **Nearest:** Forcewand / Knuckles. **Different:** opposite sequencing decision to
+  Knuckles' Cascade opener-weave - play it LAST, not first; the output is the pack token.
+
+### Power: Ratchetwind Weapon - 700000298, cd 3, Arcanist/Seeker
+- **Role:** token opener; four 0-cost links let turn 1 hit Flow thresholds.
+- **Budget vs curve:** conjure:ref:[[myLevel]]:4 is Thundering Weapon's cd-3 codeLine
+  character-for-character; Cogspark per-copy value ~ Zap's. On-curve by construction.
+- **Nearest:** Thundering Weapon / Quicksilver Weapon. **Different:** the tokens are
+  Chain links with Cascade cantrips - seeds the sequencing engine, not burst damage.
+
+### Power: Escapement Weapon - 700000297, cd 4, Arcanist/Seeker
+- **Role:** permanent link-minting - grafts Chain onto a chain-breaking payoff card.
+- **Budget vs curve:** permanent deck edits live at cd 4 (Coiling/Psychic); single lean
+  line, deliberately under Psychic's triple package (the graft compounds every combat).
+- **Nearest:** Coiling Weapon (upgrades existing links) - Escapement makes NEW links.
+  **UNVERIFIED:** addkeywordindeck ships only with the psionic argument; chain (Chain=1)
+  is on the same enum-parse path - in-game QA required.
+
+### Power: Flywheel Weapon - 700000296, cd 3, Seeker/Arcanist
+- **Role:** engine-on-turn-zero - choice of Winding Key / Tickwork Aura / Mainspring
+  Coil at next combat start; fixes engine-stuck-on-bottom, the archetype's worst fail.
+- **Budget vs curve:** choice-of-3 start-of-combat card is the modal shipped cd-3
+  payoff (Artificer's/Deathdealers/Explosive); the refs are the pack's own 1-cost C/U
+  cards, materially in line with shipped Contract/Equipment pulls. addnextcard:3 +
+  referenceCard list shipped-verbatim. **Nearest:** Deathdealers Weapon /
+  Artificer's Weapon.

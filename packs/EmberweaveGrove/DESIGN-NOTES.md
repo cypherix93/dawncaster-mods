@@ -218,3 +218,54 @@ Approach) hue-shifted from teal/green into ember for the graveyard half, so the 
 archetypes read as one scorched world. Composites mark the two archetype-welding cards:
 Cinder Archive (grimoire + flame breath) and Emberweave Communion (ritual pillar + winged
 ascension, noise-woven for the "weave").
+
+---
+
+## Weapons & powers (manifest v1.1)
+
+**Shipped curve derived first (required by WEAPON-SPEC §4).** Weapons: all 6 shipped
+base weapons are `damage:2`, Common, BasicAttack, 1 Neutral (Warmace: 2 Neutral for an
+ungated status rider) — identity lives in exactly one rider/condition. Powers: the 66
+extracted tier-0 talents distribute cooldown 1×1, 2×20, 3×32, 4×8, 5×2, 6×1, 10×1, 20×1
+(79% at cd 2–3), and payoff scales as:
+
+- **cd 2** — one small/level-scaled next-combat status (Evasion 1; Armor 3×lvl;
+  Poison 2×lvl) or minor conversion, often + a passive rider or StartGame talent grant.
+- **cd 3** — a start-of-combat card (choice-of-3 or free) OR ~2–3×lvl statuses OR a
+  mid heal (10% max HP, per-deck-composition).
+- **cd 4–5** — permanent deck edits (upgraderandom, upgradeallchain, addkeywordindeck,
+  destroy) or bigger heals.
+- **cd 6+** — dramatic one-offs (reward-pool override 6, Scar removal 10, full heal 20).
+- Passive riders do NOT scale with cooldown: small per-trigger values (heal 1–3, 1
+  status stack, 1 resource) or one-time StartGame `addtalent`/`imbue` grants.
+
+### Weapon: Cinderbough Wand — 700000099, Magic, Arcanist/Knight
+- **Role:** graveyard→burn bridge in the basic-attack slot (the direction the gap map
+  calls missing).
+- **Budget:** statline par (2 fire dmg, 1 Neutral, Common). Rider = 1 Burning/turn gated
+  on `CardsBurned > 0`; Warmace ships an UNgated 2-status/turn rider at cost 2, so a
+  bury-gated 1/turn at cost 1 is under the shipped ceiling.
+- **Nearest:** Forcewand (statline twin) / Warmace (status rider). **Different:** first
+  weapon whose rider reads archetype state (graveyard) instead of position/cost-weave.
+
+### Power: Cindersong Weapon — 700000098, cd 3, Arcanist/Knight
+- **Role:** burn opener + bury→burn passive.
+- **Budget vs curve:** primary identical to Flaming Weapon's cd-3 Burning×lvl; second
+  half is a bury-conditional rider instead of Flaming's Focus×lvl + talent — at/under.
+- **Nearest:** Flaming Weapon. **UNVERIFIED:** `Bury` as a talent rider trigger has no
+  shipped tier-0 precedent (legal enum member; rider-on-odd-trigger pattern shipped —
+  Shaking Weapon rides ShuffleCard).
+
+### Power: Pyregraft Weapon — 700000097, cd 4, Arcanist
+- **Role:** permanent Firecast grafting (manufactures the pack's enabler).
+- **Budget vs curve:** permanent single-card edits sit at cd 4 (Psychic/Coiling/Forging);
+  runs lighter than Psychic (flat 1 Zeal, no passive) because Firecast compounds every
+  reshuffle. **Nearest:** Psychic Weapon. **UNVERIFIED:** `addkeywordindeck` ships only
+  with the `psionic` argument; `firecast` is a legal CardProperties member on the same
+  enum-parse path — in-game QA required.
+
+### Power: Hearthguard Weapon — 700000096, cd 2, Knight
+- **Role:** defensive opener with a Burning pip (turns on foe-Burning conditions turn 1).
+- **Budget vs curve:** Armor 2×lvl + 1 Burning vs Fortified's cd-2 Armor 3×lvl + free
+  card — strictly inside. All codeLines shipped-verbatim startstatus forms. **Nearest:**
+  Fortified Weapon.

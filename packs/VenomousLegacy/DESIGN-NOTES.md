@@ -247,3 +247,48 @@ the bleed suite (Toxicity's weeping dagger, Plague Strike), disease-cloud and sk
 for the Infected angle (Cloudkill, Toxic Bloom, Withering Touch). Composites mark the body-
 horror payoffs: Rupture (Lacerate gashes noise-blended into Grievous Injury's bite) and
 Symbiotic Carapace (Bone Ritual's ribcage inside Aura of Venom's aura).
+
+---
+
+## Weapons & powers (manifest v1.1)
+
+**Shipped curve (derived, cited in EmberweaveGrove notes in full):** weapons = damage 2,
+1 Neutral, Common, one rider (Warmace: 2 Neutral for an ungated status rider). Powers
+(66 tier-0 talents): cooldowns 1x1, 2x20, 3x32, 4x8, 5x2, 6x1, 10x1, 20x1; cd 2 = one
+small/level-scaled next-combat status (+ optional passive), cd 3 = free/choice card or
+2-3xlvl status, cd 4-5 = permanent deck edits, cd 6+ = dramatic one-offs; passive riders
+are small per-trigger values and do not scale with cooldown.
+
+### Weapon: Blightpin Stiletto - 700000199, Melee, Rogue
+- **Role:** poison tick-frequency enabler; the pack's thesis (duration, not magnitude)
+  in the basic-attack slot.
+- **Budget:** trades base damage BELOW the universal 2 (1 + 2 Poison = par); the only
+  weapon paying a stat cost for archetype fuel. Poison Dart (C, 1 cost) = damage:1 +
+  5 Poison as a one-shot; a repeating 2/turn from the basic is the engine version.
+- **Nearest:** Warmace (only shipped affliction-rider weapon) / Poison_Dart.
+  **Different:** stat sacrifice for fuel; keeps every tick payoff live without deck slots.
+
+### Weapon: Flaying Hook - 700000198, Melee, Hunter
+- **Role:** bleed-maintenance payoff (Bloodlust: +2 damage, +1 Bleeding).
+- **Budget:** Daggers encoding (adddamage on trigger None + condition); gated total
+  (4 + 1 Bleeding) needs an external bleed starter and sits far under Daggers' shipped
+  ceiling (Ambush-led (2+3)x2 = 10 every round). **Nearest:** Daggers / Cleavers.
+  **Different:** rider reads an affliction on the foe (archetype state), not position;
+  the loop re-feeds the bleed it pays off.
+
+### Power: Festering Weapon - 700000197, cd 2, Rogue/Hunter
+- **Role:** flagship - the game's first player-side Infected access (all six shipped
+  users are Monster-rarity).
+- **Budget vs curve:** cd-2 affliction opener slot (Baneful = Poison 2xlvl + passive);
+  runs 1xlvl and NO passive because Infected repeats per foe discard and never decays
+  (only foe healing clears it). **Nearest:** Baneful Weapon. **UNVERIFIED:**
+  startstatus:X:false is shipped-verbatim, but no shipped talent uses Infected as its
+  referenceStatus (asset exists; excludeFromRandom only gates randomstatus) - QA flag.
+
+### Power: Hemorrhaging Weapon - 700000196, cd 3, Hunter/Warrior
+- **Role:** bleed opener + Deep Wound sustain rider; guarantees Bloodlust live turn 1.
+- **Budget vs curve:** primary payload = Feral Weapon OLD's cd-3 line verbatim
+  (Bleeding 2xlvl); rider (heal 3 on Deepwound, capped ~5/combat by E_maxwounds)
+  mirrors Singing Weapon's on-Kill heal scale. **Nearest:** Serrated Weapon / Feral
+  Weapon OLD. **UNVERIFIED:** Deepwound as a rider trigger has no shipped tier-0
+  precedent (legal enum member; heal-on-trigger rider pattern shipped).

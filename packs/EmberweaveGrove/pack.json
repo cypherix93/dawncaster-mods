@@ -636,5 +636,207 @@
         "powerNotes": "Per bury: 2+cost (~3 avg) Burning ≈ Halo_of_Wrath (Common) per-proc, so the Legendary premium is entirely the reshuffle clause and scaling ceiling. DANGER FLAGGED for sim: reshuffle->bury:3 can chain (BuryCard calls ResetDeck when the deck empties mid-bury, firing Reshuffle again); loop terminates via NO_MORE_CARDS/Heavy-only graveyard but each cycle adds fatigue — intended as a self-limiting greed spiral; verify no lock."
       }
     }
+  ],
+  "weapons": [
+    {
+      "name": "Cinderbough Wand",
+      "cardID": 700000099,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "BasicAttack",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {
+        "Neutral": 1
+      },
+      "description": "Deal [damage:2] fire damage.\nIf a card was buried this combat, apply <b>1 Burning</b>.",
+      "keywords": [],
+      "cardKeywords": [
+        "basic",
+        "fire",
+        "wand"
+      ],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [
+        "excludeFromRewards"
+      ],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2:fire",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:1",
+          "forecast": true,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            {
+              "value": "CardsBurned",
+              "op": "IsMoreThan",
+              "target": "0",
+              "ignoreForDisplay": false
+            }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/CinderboughWand.png",
+      "classes": [
+        "Arcanist",
+        "Knight"
+      ],
+      "meta": {
+        "archetype": "burn/Firecast x graveyard bridge (basic-attack slot)",
+        "nearestExisting": "Forcewand.json (statline twin: 2 elemental damage + archetype rider); Warmace.json (only shipped weapon applying a status)",
+        "whyDifferent": "Every shipped weapon's rider is positional or unconditional (Ambush, Flanking, Cascade, always-on). Cinderbough Wand is the first whose rider reads run/combat state from an archetype (CardsBurned > 0) - once any bury has happened this combat, the repeating basic attack becomes a burn engine. It closes the pack's missing graveyard->burn direction (DESIGN-NOTES gap map) from turn 1 of the run.",
+        "intendedDeck": "EmberweaveGrove bury shells: Emberseed/Gravemoss enable it by turn 2; Combust/Flameletting read the Burning it accrues.",
+        "powerNotes": "Statline par: damage 2 at 1 Neutral, Common - identical to 5 of 6 shipped weapons. Rider = 1 Burning/turn, gated behind a real setup (a bury) exactly like Warmace's ungated 2 Brittle/turn at cost 2; conditional 1/turn at cost 1 is under that shipped ceiling."
+      }
+    }
+  ],
+  "weaponPowers": [
+    {
+      "name": "Cindersong Weapon",
+      "talentID": 700000098,
+      "description": "Use your weapon power to inflict <b>Burning</b> equal to your level ([[myLevel]]) at the start of next combat. <b>Passive:</b> Whenever you Bury a card, inflict <b>1 Burning</b>.",
+      "flavortext": "",
+      "cooldown": 3,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "startstatus:[[myLevel]]:false",
+          "forecast": true,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "Bury",
+          "codeLine": "inflict:1",
+          "forecast": false,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "requirements": {
+        "rDEX": 0,
+        "rINT": 0,
+        "rSTR": 0
+      },
+      "classes": [
+        "Arcanist",
+        "Knight"
+      ],
+      "art": "art/CindersongWeapon.png",
+      "meta": {
+        "archetype": "burn opener + bury->burn passive",
+        "nearestExisting": "Flaming Weapon (cd3: Burning [[myLevel]] + Focus [[myLevel]] + Fire Immunity talent)",
+        "whyDifferent": "Flaming Weapon pays its second half in Focus + a defensive talent; Cindersong pays it in a bury-conditional in-combat rider, making every bury effect (the pack's whole engine) also a burn application. No shipped tier-0 talent listens on the Bury trigger.",
+        "intendedDeck": "EmberweaveGrove bury decks; the rider turns Emberseed/Buried Sun loops into repeated 1-Burning pings.",
+        "powerNotes": "cd3 curve point: shipped cd3 = level-scaled status (Feral OLD Bleeding 2xlvl) or a start-of-combat card. Burning 1xlvl (vs Flaming's identical primary) + a conditional rider that needs deck support sits at/under Flaming's total package. UNVERIFIED: Bury as a talent rider trigger has no shipped tier-0 precedent (legal GameTriggers member; rider-on-nonstandard-trigger pattern is shipped, e.g. Shaking Weapon on ShuffleCard)."
+      }
+    },
+    {
+      "name": "Pyregraft Weapon",
+      "talentID": 700000097,
+      "description": "Use your weapon power to add the <b>Firecast</b> keyword to a card in your deck and start next combat with <b>1 Zeal</b>.",
+      "flavortext": "",
+      "cooldown": 4,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "addkeywordindeck:firecast",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "startstatus:1",
+          "forecast": false,
+          "referenceStatus": "Zeal",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "requirements": {
+        "rDEX": 0,
+        "rINT": 0,
+        "rSTR": 0
+      },
+      "classes": [
+        "Arcanist"
+      ],
+      "art": "art/PyregraftWeapon.png",
+      "meta": {
+        "archetype": "permanent Firecast grafting (deck edit)",
+        "nearestExisting": "Psychic Weapon (cd4: addkeywordindeck:psionic + startstatus Focus [[myLevel]] + Brainrot passive)",
+        "whyDifferent": "Same permanent-keyword chassis, opposite archetype: Psionic converts costs to Focus, Firecast converts burial into casting - it manufactures the pack's core enabler one card at a time, something no shipped power or card does for Firecast.",
+        "intendedDeck": "Any Ember deck: graft Firecast onto a big INT action, then bury it with Gravemoss/Chosen for the Pyre for a free cast.",
+        "powerNotes": "cd4 curve point: permanent single-card deck edits live at cd4 (Psychic, Coiling, Forging). Deliberately lighter than Psychic (flat 1 Zeal vs level-scaled Focus, no passive talent) because Firecast on the right card is a repeatable free cast every reshuffle. UNVERIFIED: addkeywordindeck ships only with the psionic argument; firecast is a legal CardProperties member parsed by the same enum path - flagged for in-game QA."
+      }
+    },
+    {
+      "name": "Hearthguard Weapon",
+      "talentID": 700000096,
+      "description": "Use your weapon power to start next combat with <b>Armor</b> equal to twice your level ([[myLevel]]*2) and inflict <b>1 Burning</b> on your foe.",
+      "flavortext": "",
+      "cooldown": 2,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "startstatus:[[myLevel]]*2",
+          "forecast": true,
+          "referenceStatus": "Armor",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "startstatus:1:false",
+          "forecast": false,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "requirements": {
+        "rDEX": 0,
+        "rINT": 0,
+        "rSTR": 0
+      },
+      "classes": [
+        "Knight"
+      ],
+      "art": "art/HearthguardWeapon.png",
+      "meta": {
+        "archetype": "defensive burn opener (Knight bridge)",
+        "nearestExisting": "Fortified Weapon (cd2: Armor [[myLevel]]*3 + Heavy Armor card)",
+        "whyDifferent": "Fortified is pure turtle; Hearthguard trades a third of the armor and the free card for an offensive splash that seeds the pack's Burning payoffs - the only shipped-pool-adjacent power that preps both sides of the board.",
+        "intendedDeck": "Knight INTSTR bridge decks (Cinder Archive / Emberdredge); the Burning pip turns on foe-is-Burning conditions from turn 1.",
+        "powerNotes": "cd2 curve point: one small level-scaled next-combat status package (Fortified 3xlvl Armor + card; Baneful 2xlvl Poison + passive). Armor 2xlvl + 1 Burning is strictly inside that envelope - both codeLines are shipped-verbatim patterns (Fortified/Baneful startstatus forms)."
+      }
+    }
   ]
 }

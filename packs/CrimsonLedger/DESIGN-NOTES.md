@@ -209,3 +209,49 @@ signature teal soul-glow as the one permitted cold accent (Soul Dynamo, Debt Col
 Souls stay instantly readable against the red room. Composites mark the two conversion
 engines: Soul Dynamo (Damnation's radiating figure noise-blended with Soulbolt's comet) and
 Exsanguine Engine (Vampirism's hungry face over Bloodcast's blood-working hands).
+
+---
+
+## Weapons & powers (manifest v1.1)
+
+**Shipped curve (derived, cited in EmberweaveGrove notes in full):** weapons = damage 2,
+1 Neutral, Common, one rider (Warmace: 2 Neutral). Powers (66 tier-0 talents): cooldowns
+1x1, 2x20, 3x32, 4x8, 5x2, 6x1, 10x1, 20x1; cd 2 = small/level-scaled next-combat
+status or minor conversion (+ optional passive), cd 3 = free/choice card or 2-3xlvl
+status, cd 4-5 = permanent deck edits, cd 6+ = dramatic one-offs; riders are small
+per-trigger values, non-scaling with cd.
+
+### Weapon: Bloodprice Falchion - 700000399, Melee, Warrior/Knight
+- **Role:** the ledger as a basic attack - costs 1 Life, zero energy; every swing fires
+  the pack's listener stack (life payment = damage taken -> Frenzy; = BLOOD energy
+  spend -> Bloodbank-pattern riders) and banks 1 Soul toward the 100-soul revive.
+- **Budget:** at the pack's derived rate (2 Life ~ 1 energy) 1 Life buys ~0.5 energy;
+  damage stays at the universal 2 and the soul (<=1 HP battery) roughly refunds the
+  life paid - the real gain is tempo + trigger fuel, and the sustained ~1 HP/turn drain
+  is a drawback no shipped weapon carries. Renders Black (pure life cost) per GetColor.
+- **Nearest:** Longsword (statline) / Soultap (HP->souls). **Different:** the only
+  weapon with no energy cost; identity is an economy loop, not a statline bump.
+
+### Power: Bloodtithe Weapon - 700000398, cd 2, Warrior/Knight
+- **Role:** HP->gold conversion; the pack thesis as a button.
+- **Budget vs curve:** Jewelled (cd 3) nets ~lvl gold + a potion per 3 combats;
+  Bloodtithe nets 2xlvl gold per 2 combats minus lvl HP (exploration damage buys no
+  combat triggers, so the HP is a real price). Per-combat gold rate ~ Jewelled, the
+  surplus paid in HP. Both codeLines shipped tier-0 verbatim (Reckless takedamage,
+  Jewelled gold). **Nearest:** Reckless Weapon x Jewelled Weapon.
+
+### Power: Soulscribe Weapon - 700000397, cd 3, Warrior/Knight
+- **Role:** armor opener + permanent blood->souls dividend.
+- **Budget vs curve:** armor half runs UNDER the shipped cd-2 baseline (2xlvl vs
+  Fortified's 3xlvl + card) one cd step higher; the delta prices the rider, which pays
+  1 resource per trigger event like shipped small riders (per SpendEnergy event, not
+  per HP - big life costs don't multiply it). Rider encoding = Bloodbank.json's shipped
+  SpendEnergy + EnergyType Is BLOOD. **Nearest:** Fortified Weapon + Bloodbank (card).
+  First tier-0 talent listening to BLOOD spends.
+
+### Power: Pawnbroker's Weapon - 700000396, cd 5, Warrior/Knight
+- **Role:** deck-as-collateral - destroy a card, gain 2xlvl gold.
+- **Budget vs curve:** card destruction is the shipped cd-5 effect (Voracious); a
+  one-shot 2xlvl gold vs Voracious' repeatable heal-on-destroy passive is at-worst
+  equal. Both codeLines shipped verbatim (remove, gold). **Nearest:** Voracious
+  Weapon - same setup action, economy payoff instead of sustain.

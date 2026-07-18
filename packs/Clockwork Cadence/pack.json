@@ -586,5 +586,192 @@
         "powerNotes": "LOOP-BRAKE: OneUse - the card is permanently gone after a single cast (EndActionStep), so no extra-turn recursion; the fresh turn also resets [[actionsPlayed]], so even a hypothetical second copy starts from 0. Flow auto-passes on Reliable cards - Overclock is not Reliable and no shipped effect grants Reliable+replay to OneUse cards; noted for sim. Budget: Brainwarp (Rare, 3 INT, ~20-Focus gate) vs this (Legendary, 2 INT, 8-play gate, OneUse) - stricter gate, lower cost, single use."
       }
     }
+  ],
+  "weapons": [
+    {
+      "name": "Tickwright's Baton",
+      "cardID": 700000299,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "BasicAttack",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {
+        "Neutral": 1
+      },
+      "description": "Deal [damage:2] lightning damage.\n<b>Flow 2:</b> Conjure a <b>Cogspark</b>.",
+      "keywords": [
+        "Chain"
+      ],
+      "cardKeywords": [
+        "basic",
+        "lightning",
+        "chain"
+      ],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [
+        "excludeFromRewards"
+      ],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2:lightning",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "conjure:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [
+            "Cogspark"
+          ],
+          "hideReferenceCards": false,
+          "conditions": [
+            {
+              "value": "Flow",
+              "op": "Is",
+              "target": "2",
+              "ignoreForDisplay": false
+            }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/TickwrightsBaton.png",
+      "classes": [
+        "Arcanist",
+        "Seeker"
+      ],
+      "meta": {
+        "archetype": "chain/conjuration finisher (basic-attack slot)",
+        "nearestExisting": "Forcewand.json (2 lightning + chain feed); Knuckles.json (Cascade: conjure a copy)",
+        "whyDifferent": "Forcewand feeds chain stacks; Knuckles self-copies on a cost-weave. The Baton mints the pack's token only when played third-or-later in a turn (Flow 2) - the basic attack becomes the combo FINISHER that banks tomorrow's link, the opposite sequencing decision to Knuckles' opener-weave. Carries Chain so it never breaks the chain it serves.",
+        "intendedDeck": "Clockwork Cadence combo turns: Cogspark output feeds Winding Key/Assembly Line counters and keeps Mainspring Coil fed.",
+        "powerNotes": "Statline par: damage 2 at 1 Neutral + Chain keyword (=1 chain stack on resolve, half of Forcewand's feed). Gated Cogspark ~ 1 dmg + 1 chain + Cascade-gated draw of temporary value; needing 2 prior plays prices it at/under Forcewand's unconditional +2 chain."
+      }
+    }
+  ],
+  "weaponPowers": [
+    {
+      "name": "Ratchetwind Weapon",
+      "talentID": 700000298,
+      "description": "Use your weapon power to start next combat with a free <b>Cogspark</b> per level (up to 4).",
+      "flavortext": "",
+      "cooldown": 3,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "conjure:ref:[[myLevel]]:4",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [
+            "Cogspark"
+          ],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "requirements": {
+        "rDEX": 0,
+        "rINT": 0,
+        "rSTR": 0
+      },
+      "classes": [
+        "Arcanist",
+        "Seeker"
+      ],
+      "art": "art/RatchetwindWeapon.png",
+      "meta": {
+        "archetype": "token opener (chain/conjuration fuel)",
+        "nearestExisting": "Thundering Weapon (cd3: conjure:ref:[[myLevel]]:4 Zaps); Quicksilver Weapon (cd2: daggers, free)",
+        "whyDifferent": "Same shipped chassis, different physics: Zaps are burst damage, Cogsparks are Chain links with Cascade cantrips - the opener seeds the pack's sequencing engine (chain retention + conjured-count payoffs) rather than face damage.",
+        "intendedDeck": "Any Clockwork deck; four 0-cost links let turn 1 hit Flow thresholds and keep Tickwork Aura/Resonance Chamber counting.",
+        "powerNotes": "cd3 curve point: conjure-per-level-capped-4 is shipped verbatim at cd3 (Thundering). Cogspark's per-copy value (1 dmg + chain + gated draw) ~ Zap's (2 dmg + chain); on-curve by construction. codeLine is a shipped tier-0 line character-for-character."
+      }
+    },
+    {
+      "name": "Escapement Weapon",
+      "talentID": 700000297,
+      "description": "Use your weapon power to add the <b>Chain</b> keyword to a card in your deck.",
+      "flavortext": "",
+      "cooldown": 4,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "addkeywordindeck:chain",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "requirements": {
+        "rDEX": 0,
+        "rINT": 0,
+        "rSTR": 0
+      },
+      "classes": [
+        "Arcanist",
+        "Seeker"
+      ],
+      "art": "art/EscapementWeapon.png",
+      "meta": {
+        "archetype": "permanent link-minting (deck edit)",
+        "nearestExisting": "Coiling Weapon (cd4: upgrade all Chain cards); Psychic Weapon (cd4: addkeywordindeck:psionic + extras)",
+        "whyDifferent": "Coiling makes existing links bigger; Escapement makes NEW links - it permanently converts any engine card (a 2-cost bomb, a draw spell) into a non-chain-breaking play, directly attacking the archetype's core constraint (any non-Chain card wipes chain stacks).",
+        "intendedDeck": "Chain decks whose payoff cards break their own chain (Overclock, Assembly Line) - graft Chain onto the payoff and the engine never stalls.",
+        "powerNotes": "cd4 curve point: permanent deck edits live at cd4 (Coiling/Psychic/Forging). Single lean line, deliberately under Psychic's triple package, because a well-chosen graft compounds every combat. UNVERIFIED: addkeywordindeck ships only with the psionic argument; chain is a legal CardProperties member (Chain=1) on the same enum-parse path - flagged for in-game QA."
+      }
+    },
+    {
+      "name": "Flywheel Weapon",
+      "talentID": 700000296,
+      "description": "Use your weapon power to start next combat with a clockwork engine of your choice.",
+      "flavortext": "",
+      "cooldown": 3,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "addnextcard:3",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [
+            "Winding Key",
+            "Tickwork Aura",
+            "Mainspring Coil"
+          ],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "requirements": {
+        "rDEX": 0,
+        "rINT": 0,
+        "rSTR": 0
+      },
+      "classes": [
+        "Seeker",
+        "Arcanist"
+      ],
+      "art": "art/FlywheelWeapon.png",
+      "meta": {
+        "archetype": "engine-on-turn-zero opener",
+        "nearestExisting": "Artificer's Weapon (cd3: addnextbykeyword:equipment:3); Deathdealers Weapon (cd3: addnextcard:3 with three fixed Contract refs)",
+        "whyDifferent": "The Deathdealers chassis pointed at the pack's own engines: the choice among Winding Key (token faucet), Tickwork Aura (chain counter) and Mainspring Coil (link feed) is a real per-fight read of which axis the next combat needs - not a generic keyword pool pull.",
+        "intendedDeck": "All Clockwork decks; smooths the archetype's worst failure mode (engine pieces stuck at the bottom of the deck).",
+        "powerNotes": "cd3 curve point: choice-of-3 start-of-combat card is the modal shipped cd3 payoff (Artificer's/Deathdealers/Explosive/Familiar). All three refs are the pack's own 1-cost C/U cards - materially in line with shipped Contract/Equipment pulls. addnextcard:3 + referenceCard list is shipped-verbatim."
+      }
+    }
   ]
 }

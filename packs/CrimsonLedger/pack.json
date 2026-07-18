@@ -626,5 +626,208 @@
         "powerNotes": "3 effective cost (2N + 1 Life) for 4 delayed card+conversion activations; each use ~ Bloodcast (Rare, 1E) minus the conjured-copy upside. Durability cap prevents the infinite-conversion failure mode Overdraft already explores."
       }
     }
+  ],
+  "weapons": [
+    {
+      "name": "Bloodprice Falchion",
+      "cardID": 700000399,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "BasicAttack",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {
+        "Life": 1
+      },
+      "description": "Deal [damage:2] damage.\nGain <b>1 Soul</b>.",
+      "keywords": [],
+      "cardKeywords": [
+        "basic",
+        "blood"
+      ],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [
+        "excludeFromRewards"
+      ],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "changesouls:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/BloodpriceFalchion.png",
+      "classes": [
+        "Warrior",
+        "Knight"
+      ],
+      "meta": {
+        "archetype": "blood economy engine (basic-attack slot)",
+        "nearestExisting": "Longsword.json (statline baseline); Soultap.json (self-damage -> Souls exchange)",
+        "whyDifferent": "The only weapon with no energy cost: it is paid in Life (1/swing). Every single turn it fires the pack's whole listener stack for free - a life payment counts as damage taken (Frenzy) and as a BLOOD energy spend (Bloodbank-pattern riders) - while banking 1 Soul toward the 100-soul auto-revive. The basic attack IS the ledger: HP out, tempo + souls in.",
+        "intendedDeck": "CrimsonLedger blood decks (Blood Retainer, Sanguine Tally, Soul Dynamo); frees a full energy per turn for the pack's expensive engines.",
+        "powerNotes": "Budget at the pack's derived exchange rate (2 Life ~ 1 energy): 1 Life buys ~0.5 energy of value; damage stays at the universal 2 and the soul (~<=1 HP of battery) roughly refunds the life paid, so the real gain is tempo + trigger fuel - text, not stats. Sustained cost ~1 HP/turn is a genuine drawback no shipped weapon carries."
+      }
+    }
+  ],
+  "weaponPowers": [
+    {
+      "name": "Bloodtithe Weapon",
+      "talentID": 700000398,
+      "description": "Use your weapon power to take damage equal to your level ([[myLevel]]) and gain twice as much gold.",
+      "flavortext": "",
+      "cooldown": 2,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "takedamage:[[myLevel]]:normal",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "gold:[[myLevel]]*2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "requirements": {
+        "rDEX": 0,
+        "rINT": 0,
+        "rSTR": 0
+      },
+      "classes": [
+        "Warrior",
+        "Knight"
+      ],
+      "art": "art/BloodtitheWeapon.png",
+      "meta": {
+        "archetype": "HP-for-gold ledger conversion",
+        "nearestExisting": "Reckless Weapon (cd1: takedamage:[[myLevel]] for statuses); Jewelled Weapon (cd3: gold:[[myLevel]] + potion delve)",
+        "whyDifferent": "The shipped pool converts HP into combat stats (Reckless) and cooldowns into gold (Jewelled); nothing converts HP into economy. Bloodtithe is the pack's thesis as a button - your health bar is a bank account.",
+        "intendedDeck": "CrimsonLedger greed lines: fund Tithe Censer/merchant buys; Debt Collector and campfires refinance the HP.",
+        "powerNotes": "cd2 curve point: Jewelled nets ~lvl gold + a potion per 3 combats; Bloodtithe nets 2xlvl gold per 2 combats MINUS lvl HP (exploration damage buys no combat trigger value, so the HP is a real price). Per-combat gold rate matches Jewelled with the surplus paid for in HP at the pack's 1 HP ~ 1 gold-ish margin. Both codeLines are shipped tier-0 verbatim (Reckless/Jewelled)."
+      }
+    },
+    {
+      "name": "Soulscribe Weapon",
+      "talentID": 700000397,
+      "description": "Use your weapon power to start next combat with <b>Armor</b> equal to twice your level ([[myLevel]]*2). <b>Passive:</b> Whenever you pay a Life cost, gain <b>1 Soul</b>.",
+      "flavortext": "",
+      "cooldown": 3,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "startstatus:[[myLevel]]*2",
+          "forecast": true,
+          "referenceStatus": "Armor",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "SpendEnergy",
+          "codeLine": "changesouls:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            {
+              "value": "EnergyType",
+              "op": "Is",
+              "target": "BLOOD",
+              "ignoreForDisplay": false
+            }
+          ]
+        }
+      ],
+      "requirements": {
+        "rDEX": 0,
+        "rINT": 0,
+        "rSTR": 0
+      },
+      "classes": [
+        "Warrior",
+        "Knight"
+      ],
+      "art": "art/SoulscribeWeapon.png",
+      "meta": {
+        "archetype": "blood->souls accounting passive + armor opener",
+        "nearestExisting": "Fortified Weapon (cd2: Armor [[myLevel]]*3 + card); Bloodbank.json (the rider's exact SpendEnergy/BLOOD listener)",
+        "whyDifferent": "First tier-0 talent that listens to BLOOD energy spends - it turns every life cost in the pack into soul income (the 100-soul revive as a long-run dividend). The armor half only covers the self-harm the passive encourages.",
+        "intendedDeck": "Blood-dense CrimsonLedger decks (Flesh Installment, Ledger of Vitae, Bloodprice Falchion) - each blood play scribes a soul.",
+        "powerNotes": "cd3 curve point: armor package runs UNDER the shipped cd2 baseline (2xlvl vs Fortified's 3xlvl + card) one cooldown step higher; the delta pays for the permanent economy rider, priced like shipped small riders (1 resource per trigger event - per SpendEnergy event, not per HP, so big life costs don't multiply it). Rider encoding is Bloodbank.json's shipped condition (EnergyType Is BLOOD) on a shipped trigger."
+      }
+    },
+    {
+      "name": "Pawnbroker's Weapon",
+      "talentID": 700000396,
+      "description": "Use your weapon power to pawn a card: destroy a card in your deck and gain gold equal to twice your level ([[myLevel]]*2).",
+      "flavortext": "",
+      "cooldown": 5,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "remove",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "gold:[[myLevel]]*2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "requirements": {
+        "rDEX": 0,
+        "rINT": 0,
+        "rSTR": 0
+      },
+      "classes": [
+        "Warrior",
+        "Knight"
+      ],
+      "art": "art/PawnbrokersWeapon.png",
+      "meta": {
+        "archetype": "deck-as-collateral (thinning -> economy)",
+        "nearestExisting": "Voracious Weapon (cd5: destroy a card + heal-5-on-destroy passive)",
+        "whyDifferent": "Voracious converts thinning into sustain; Pawnbroker converts it into purchasing power - the ledger's last entry: when you run out of blood and souls, sell the deck itself. Distinct payoff for the identical setup action.",
+        "intendedDeck": "Lean sacrifice decks that want both a thin list and merchant funding for Exsanguine Engine/Soul Dynamo.",
+        "powerNotes": "cd5 curve point: card destruction is the shipped cd5 effect (Voracious). Gold 2xlvl one-shot vs Voracious' repeatable heal-on-destroy passive (which also triggers off other destroy effects) - at worst equal value. Both codeLines shipped verbatim (remove per Voracious, gold per Jewelled/Bloodtithe)."
+      }
+    }
   ]
 }

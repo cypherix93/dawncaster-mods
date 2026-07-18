@@ -12,3 +12,17 @@ ID 41,020,045). Blocks of 100. Allocate here BEFORE using; never reuse a freed b
 
 Legacy: `SandboxStrike` id 900001 (pre-policy hello-card; migrate into a block when the
 pack loader lands).
+
+## Weapons & weapon powers (manifest v1.1, allocated 2026-07-18)
+
+Weapon cardIDs are allocated **top-down from each block's end** (WEAPON-SPEC §3);
+weapon-power talentIDs reuse the same block numbers in the **separate Talent namespace**
+(a talentID may equal a cardID safely). Allocations are contiguous top-down; the next
+free top-down number per block is one below the lowest listed.
+
+| Block | Pack | Weapon cardIDs (top-down) | Power talentIDs (top-down) |
+|---|---|---|---|
+| …000099↓ | EmberweaveGrove | 700000099 Cinderbough Wand | 700000098 Cindersong Weapon, 700000097 Pyregraft Weapon, 700000096 Hearthguard Weapon |
+| …000199↓ | VenomousLegacy | 700000199 Blightpin Stiletto, 700000198 Flaying Hook | 700000197 Festering Weapon, 700000196 Hemorrhaging Weapon |
+| …000299↓ | Clockwork Cadence | 700000299 Tickwright's Baton | 700000298 Ratchetwind Weapon, 700000297 Escapement Weapon, 700000296 Flywheel Weapon |
+| …000399↓ | CrimsonLedger | 700000399 Bloodprice Falchion | 700000398 Bloodtithe Weapon, 700000397 Soulscribe Weapon, 700000396 Pawnbroker's Weapon |
