@@ -1,0 +1,208 @@
+# EmberweaveGrove — design notes
+
+**Cluster:** Fire & ash — burn/Firecast + graveyard (bury/Reaping/Heavy).
+**ID block:** 700000000–700000011 used (of 700000000–700000099).
+**Art:** `art/*.png` paths reserved; 512×512 RGBA per ART-PIPELINE still to produce.
+
+## Research summary (what exists today)
+
+Read end-to-end: Fireball, Elite_Fireball, Combust, Searing_Ray, Cauterize, Sanctify,
+Singe, Torch, Fan_the_Flames, Meteor_Storm, Ashes_to_Ashes, Awakening, Prayer,
+Conviction, Censorship, Spellburn, Fleeting_Thoughts, Beseech, the four Halos,
+Pyroclasm, Fireside_Blessings, Gravesite, Bury_Alive, Recycle, Roll_the_Bones,
+Bone_Ritual, Blood_Ritual, Rapture, Soultap, Sanguine_Visions, Grave_Pact, Soulbinder,
+Boneskewer, Suntree_Twig, Extraction_Listener, plus the enemy-side mill suite
+(Vile_Consumption, Gleeful_Disdain, Divine_Ire, Entropy, Bone_Armor, Fury's_Blaze).
+
+Verified enum decodes used throughout (decompiled/EventHandler.cs, ConditionChecker.cs):
+trigger ints 1=PlayAction, 13=Bury, 44=EndAction, 54=Reshuffle, 78=InflictStatusDamage;
+condition ints 11=CardsInGraveyard, 13=CardsInDeckRemaining, 70=DamageType.
+Engine reads that shaped the pack (decompiled/SpellEffects.cs):
+
+- `BuryCard`: buries from the **top of the deck**; a buried card's own `Bury`-trigger
+  effects run before filing; **Firecast** ⇒ PlayAction effects execute, card →
+  graveyard; **Persistent** ⇒ graveyard instead of exile; everything else → exile.
+- `bury:N:other` on the player side calls `BuryMonsterCard`, which silently deletes
+  enemy deck cards — **no Bury trigger, no `[[lastBuriedEnergy]]`**. Killed an
+  enemy-mill card concept; the Vile_Consumption pattern only works enemy→player.
+- `return:` args verified: `choose`, `this`, `last`, `ref`, `unique`, numeric-random.
+- `topgy` is a *target selector* (graveyard.Last()) for `permaremove`, not a command
+  of its own. Not used in this pack.
+- `burydrawn` exists and is engine-implemented (buries `TurnStat.lastDrawnCard`) but
+  has **zero shipped users** — avoided.
+
+**Gap map (why these 12):** no Firecast cantrip; no self-Burning payoff; no player
+card on the Reshuffle trigger; no Firecast+Heavy card; no burn payoff reading
+graveyard *size* (only `[[cardsBuried]]`); no graveyard-count + Reaping combo; the
+burn↔graveyard bridge is one-directional (bury→cast) with nothing flowing back.
+
+**Color identity:** INT (blue) for burn, matching Fireball/Combust/Searing_Ray;
+DEXSTR (orange) for graveyard, matching Recycle/Rapture/Bone_Ritual; INTSTR (purple)
+for bridges, matching the Halo bury cycle.
+
+---
+
+## Per-card rationale
+
+### 1. Emberseed — 0, Common, Magic/Fire, Firecast
+- **Role:** burn/Firecast enabler; graveyard filler.
+- **Deck:** any bury shell; makes `bury:N` effects card-neutral when they hit it.
+- **Budget:** 0-cost common ≈ 2–3 dmg-equiv. 1 Burning (never decays) + cantrip ≈
+  Evangelize (0-cost Firecast: Zeal + random blessing).
+- **Nearest:** Evangelize. **Different:** the only Firecast card that replaces itself —
+  no shipped Firecast draws (checked all 14 `"firecast"` cardKeyword files).
+- All DSL verified (inflict+referenceStatus per Fireball; draw:1 ubiquitous).
+
+### 2. Ashfeast — INT 1, Common, Magic/Fire
+- **Role:** burn payoff keyed to graveyard size (bridge, C-level).
+- **Deck:** INT burn with Firecast/discard fill; dislikes exile-heavy bury (texture).
+- **Budget:** 3 dmg flat (1-cost common band 3–5) + Ancestral-gated 4 Burning; gate
+  identical to Boneskewer/Blood_Ritual (`CardsInGraveyard IsMoreThan 3`).
+- **Nearest:** Boneskewer. **Different:** first Ancestral card outside the DEXSTR
+  shaman suite; first burn payoff reading discard-pile size (Ashes_to_Ashes reads
+  `[[cardsBuried]]` — burials only, different resource).
+- All DSL verified.
+
+### 3. Gravemoss — 0, Common, Utility
+- **Role:** bury enabler that is itself a bury *target* (graveyard archetype).
+- **Deck:** bury-dense shells; you rig your own bury lottery.
+- **Budget:** played = 2 Armor + bury (cf. Singe 0-cost: 2 Burning + bury); buried =
+  5 Armor at a random time (Armor fades at StartPhase, so enemy-phase procs decay).
+- **Nearest:** Suntree_Twig (only shipped card with a self Bury-trigger effect; hidden
+  transform on a Grounded basic). **Different:** first player-pool card whose *stated
+  value* is higher buried than played — Firecast-for-defense without the keyword.
+- Card-level Bury trigger verified in SpellEffects.BuryCard + Suntree_Twig.json.
+
+### 4. Everburning Censer — INT 1, Common, Magic/Fire, Persistent
+- **Role:** repeatable bury payload; burn + graveyard stock in one card.
+- **Deck:** bury+recursion hybrid; loops with return effects.
+- **Budget:** 3 Burning at 1 (≈ Halo_of_Wrath's per-proc rate as a one-shot); bury
+  proc is a conditional bonus 3.
+- **Nearest:** Singe. **Different:** first card built on the verified
+  Persistent-bury routing (buried Persistent → graveyard, not exile) — survives
+  burial and stays retrievable; Persistent ships today only as hand-retention.
+- All DSL verified.
+
+### 5. Flameletting — INT 1, Uncommon, Magic/Fire
+- **Role:** self-Burning payoff (new mode: wants an affliction on self).
+- **Deck:** masochist INT fire with cleanse valves (Cauterize, Fire_Resistance,
+  Aura_of_Fire); Zeal decks get accidental fuel.
+- **Budget:** floor 4 dmg for 1 INT (par) at the price of a permanent 2/turn
+  self-DoT; escalates with copies/Zeal because Burning never decays.
+- **Nearest:** Cauterize (self-Burning as cost rider). **Different:** the payoff
+  direction is new — nothing in 2,525 cards rewards Burning on yourself.
+- DSL: `bless:2`+refstatus Burning self-application per Cauterize.json;
+  `[[my(status)Burning]]` per Pyroclasm.json; `*2` is NumberParser base arithmetic,
+  deliberately NOT `multiplydamage:2` (crit channel, Part VIII).
+
+### 6. Chosen for the Pyre — INT 1, Uncommon, Magic/Fire
+- **Role:** precision bury → burn (burn/bury archetype).
+- **Deck:** INT burn wanting thinning + reach; aims buryselect at Firecast payloads.
+- **Budget:** Burning = 2×cost (avg ~2–4) vs Censorship (U): Zeal 2× + heal 2× —
+  comparable, offense-shifted.
+- **Nearest:** Censorship (the only shipped choose-bury). **Different:** ports
+  choose-bury from HOLY/defense to INT/offense and makes the *choice* the tension
+  (junk = thin-but-0-burn; bomb = big burn but card loss; Firecast = both).
+- Structure copied 1:1 from Censorship.json (enchant:self + buryselect;
+  EndAction `[[lastBuriedEnergy]]` payload; `removeenchant:this`; playCondition
+  CardsInDeckRemaining>0). **Mild UNVERIFIED:** Censorship's helper enchant fires as
+  three separate EndAction lines; I merged payload+cleanup into one `;`-joined line
+  (multi-statement lines verified elsewhere, e.g. Bone_Ritual's EndAction line).
+
+### 7. Emberdredge — INTSTR 1, Uncommon, Magic/Fire
+- **Role:** **bridge #1 (non-obvious): graveyard → burn** — retrieval that advances
+  the burn clock (reverse of Firecast's deck → fire direction).
+- **Deck:** pack glue; re-arms Buried Sun, loops Everburning Censer.
+- **Budget:** Recycle (C, DEXSTR1) = bare return:choose; +1×cost Burning rider at
+  U/INTSTR mirrors Bone_Ritual's rider pricing (2× Armor at Rare + 1 Life). Not
+  strictly better than Recycle (different color, higher rarity).
+- **Nearest:** Bone_Ritual. **Different:** only the second card ever to price
+  retrieval by the returned card's cost, and the payoff crosses archetypes.
+- DSL: `return:choose` + EndAction `[[lastpickedenergy]]` + `removeenchant:this`
+  verified verbatim in Bone_Ritual.json.
+
+### 8. Ashen Harvest — DEXSTR 2, Uncommon, Melee, Reaping
+- **Role:** graveyard-count finisher (graveyard archetype, Reaping payoff).
+- **Deck:** DEXSTR graveyard stocking Heavy/Firecast residents; boss killer.
+- **Budget:** 2-cost par ~8; graveyard is ~5–10 midgame; Uncommon pays for the
+  Reaping rider and the anti-recursion tension (returns shrink it).
+- **Nearest:** Rapture (2 dmg × GY, lifedrain, 3-cost). **Different:** single
+  Reaping hit = permanent max-HP shred scaling on graveyard size — combination
+  absent from the pool; creates a spend-vs-harvest decision with its own pack.
+- DSL: `[[cardsInGraveyard]]` in damage slot per Rapture.json/Soultap.json.
+
+### 9. Cinder Archive — INTSTR 1, Rare, Enchantment, Unique
+- **Role:** **bridge #2 (non-obvious): burn tick frequency → card advantage.**
+- **Deck:** burn deck splashing graveyard, or vice versa; Combust chains = draws.
+- **Budget:** ≈ Roll_the_Bones (R, DEXSTR1, flat 1 random return/turn); mine needs
+  Burning online but scales past 1/turn with tick effects.
+- **Nearest:** Sanctify (per-tick trigger host) / Roll_the_Bones (payoff shape).
+  **Different:** no shipped card converts a burn resource into a graveyard resource.
+- **UNVERIFIED (flagged in meta):** whether self-Burning ticks (Zeal upkeep,
+  Flameletting) also fire the player-side InflictStatusDamage scan — Sanctify's
+  extra EnemyTurn/CurrentPhase guards hint at direction subtleties I did not fully
+  trace. If self-ticks proc it, it's a noted synergy, not a break. Sim-check please.
+
+### 10. Cinder Cycle — DEXSTR 1, Rare, Enchantment, Unique
+- **Role:** **bridge #3 (non-obvious): reshuffle/fatigue race → burn + armor.**
+- **Deck:** thin bury decks and Gravesite/Orphic_Glance mill decks that hit 2–4
+  reshuffles; Armor half offsets fatigue chip (reshuffle #2+ ≈ 10% maxHP).
+- **Budget:** ~2–3 activations × (6 Burning + 6 Armor) per long fight for 1 energy
+  at Rare — engine-card envelope.
+- **Nearest:** Entropy (enemy-side Reshuffle enchantment; no player analogue).
+  **Different:** first player payoff on the Reshuffle trigger; turns a global
+  penalty (fatigue) into a priced strategy. Bury accelerates reshuffles — hidden
+  archetype synergy no shipped card exploits.
+- Reshuffle-trigger enchantment hosting verified in Entropy/Divine_Ire/Fatigue.json.
+
+### 11. Buried Sun — INT 2, Rare, Magic/Fire, Firecast + Heavy
+- **Role:** bridge payload — burn bomb / bury roulette hit / permanent graveyard
+  resident, in one card.
+- **Deck:** every deck in the cluster wants it for a different reason.
+- **Budget:** 8 + 4 Burning at 2-cost Rare is top-of-band (5–8), paid by Heavy
+  (once per combat unless Emberdredge re-arms it). Not strictly better than
+  Elite_Fireball (Legendary, INT1, no drawback, reward-locked rarity aside).
+- **Nearest:** Elite_Fireball. **Different:** the pool's first Firecast+Heavy
+  keyword pair (verified zero cards carry 11+21 together); the lifecycle
+  (detonate-on-bury → Heavy graveyard residency → paid re-detonation) is new.
+- All DSL verified; keyword routing verified in SpellEffects.BuryCard and
+  DeckHandler.ReshuffleGraveyard.
+
+### 12. Emberweave Communion — INTSTR 2, Legendary, Enchantment, Unique
+- **Role:** capstone engine welding bury→burn and reshuffle→bury into one loop.
+- **Deck:** all-in bury inferno (Prayer/Singe/Deification + Firecast payloads +
+  Cinder Cycle); wincon = Burning snowball vs fatigue/deck-death clock.
+- **Budget:** per-bury 2+cost (~3 avg) ≈ Halo_of_Wrath (C) per-proc; the Legendary
+  premium is the reshuffle clause + cost scaling.
+- **Nearest:** Halo_of_Wrath. **Different:** scales per buried cost (player-positive
+  use of the `[[lastBuriedEnergy]]`-on-Bury idiom that ships only as the enemy
+  affliction Extraction_Listener) and closes the loop with auto-bury on reshuffle.
+- **DANGER FLAG (also in meta):** reshuffle→`bury:3` can cascade — BuryCard calls
+  ResetDeck when the deck empties mid-bury, which fires Reshuffle again. Termination
+  path verified (NO_MORE_CARDS break; Heavy-only graveyard yields empty reshuffles),
+  and each cycle adds fatigue, so it is a self-limiting greed spiral by design — but
+  this is the pack's #1 sim-harness target (with Cinder Cycle in play especially).
+
+---
+
+## Honest UNVERIFIED ledger
+
+1. **Cinder Archive** — direction/targeting of `InflictStatusDamage` for self-owned
+   Burning ticks (see card 9). Trigger+DamageType condition pair itself is verified
+   (Sanctify.json).
+2. **Chosen for the Pyre / Emberdredge** — helper-enchant `combat: false` +
+   same-action `removeenchant:this`: shipped analogues (Censorship, Bone_Ritual)
+   self-remove at EndAction so the combat flag should be moot; flag value on the
+   shipped assets not extracted (CardEnchantments.combatEnchantment was 0 on both,
+   matching my `false`).
+3. **Emberweave Communion** — cascade termination reasoned from decompiled BuryCard
+   control flow, not observed in play. Sim before ship.
+4. Everything else: every command, trigger, condition, token, and keyword routing
+   in this pack is backed by a named shipped card or a cited decompiled method.
+
+## Cross-pack notes (one wave)
+
+- Ashen Harvest + CrimsonLedger self-damage: Reaping max-HP shred stacks with
+  Grave_Pact-style steals — no dependency, pure gravy.
+- Cinder Archive returns feed Clockwork Cadence's CardsPlayedThisTurn payoffs.
+- Nothing in this pack requires another pack.

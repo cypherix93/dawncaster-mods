@@ -1,0 +1,630 @@
+{
+  "pack": "CrimsonLedger",
+  "idBlock": [700000300, 700000399],
+  "cards": [
+    {
+      "name": "Paper Cut",
+      "cardID": 700000300,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {},
+      "description": "Deal 2 damage. Take 1 damage.",
+      "keywords": [],
+      "cardKeywords": ["blood"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "directdamage:1:bleeding:self",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/PaperCut.png",
+      "meta": {
+        "archetype": "blood-enabler",
+        "nearestExisting": "Fury.json",
+        "whyDifferent": "Fury is a conjured junk card (Anger+take 1+draw). This is a deck-buildable 0-cost attack whose self-damage line is the point: it flips Frenzy on demand and feeds every take-damage payoff in the pack (Ledger of Vitae, Bleeding self-tick loops).",
+        "intendedDeck": "Any blood/Frenzy list wanting a free enabler; with own Bleeding stacks the take-1 triggers extra ticks, which Ledger of Vitae converts to Souls.",
+        "powerNotes": "Cost-0 common baseline is 2-3 dmg; 2 dmg + 1 self-damage is at/below curve, upside is purely the enabler text."
+      }
+    },
+    {
+      "name": "Blood Retainer",
+      "cardID": 700000301,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "STR": 1, "Life": 1 },
+      "description": "Deal 5 damage. Restore 1 Durability of your Equipment.",
+      "keywords": [],
+      "cardKeywords": ["blood", "equipment"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:5",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "repair:1",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/BloodRetainer.png",
+      "meta": {
+        "archetype": "blood-artifice bridge",
+        "nearestExisting": "Field_Repairs.json",
+        "whyDifferent": "Field Repairs is defensive utility (3 Armor, repair gated behind Frenzy). This puts repair on an attack chassis and prices it in blood, unconditionally: the life cost IS the maintenance fee, and it self-enables Frenzy for the rest of the turn. Bridges blood -> equipment charges.",
+        "intendedDeck": "Equipment decks running Tithe Censer / Soul Dynamo / Exsanguine Engine; keeps engines running while pressuring and turning Frenzy on.",
+        "powerNotes": "1 STR + 1 Life ~ 1.5 energy at the derived 2-Life-per-energy rate; 5 dmg is under the ~6 curve for that, the gap pays for repair:1 (Field Repairs sells conditional repair-all + 3 Armor for 1 energy at Uncommon)."
+      }
+    },
+    {
+      "name": "Flesh Installment",
+      "cardID": 700000302,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "Life": 2 },
+      "description": "Deal 4 damage. Gain 2 Souls.",
+      "keywords": [],
+      "cardKeywords": ["blood", "souls"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:4:blood",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "changesouls:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/FleshInstallment.png",
+      "meta": {
+        "archetype": "blood + souls",
+        "nearestExisting": "Vile_Blast.json",
+        "whyDifferent": "Same chassis (2-Life common, zero energy) but the opposite decision: Vile Blast is a conditional affliction-scaling nuke; this is flat tempo damage that banks Souls, converting HP into the revive/spend battery every time it is cast. First common that produces Souls from a pure blood cost.",
+        "intendedDeck": "Souls-greed blood decks: pays HP in, gets damage + Souls out; Souls later fund Usurer's Bargain / Soul Dynamo; the life cost flips Frenzy and feeds Sanguine Tally.",
+        "powerNotes": "2 Life ~ 1 energy => 4 dmg is exactly on the common curve; the 2-Souls rider (~1-2 HP of value, Part V revive math) is the compensation for paying in HP instead of energy."
+      }
+    },
+    {
+      "name": "Debt Collector",
+      "cardID": 700000303,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "Life": 1 },
+      "description": "Inflict 2 Bleeding. Gain Souls equal to the foe's Bleeding.",
+      "keywords": [],
+      "cardKeywords": ["souls"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:2",
+          "forecast": true,
+          "referenceStatus": "Bleeding",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "changesouls:[[other(status)Bleeding]]",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/DebtCollector.png",
+      "meta": {
+        "archetype": "bleed -> souls",
+        "nearestExisting": "Soulbolt.json",
+        "whyDifferent": "Soulbolt spends Souls for a copy; no shipped card reads the foe's affliction state to GAIN Souls. This turns enemy Bleeding into a soul bank - a payoff bleed decks never had, and a cross-pack handshake with the VenomousLegacy attrition cluster.",
+        "intendedDeck": "Bleed/attrition shells splashing souls: stack Bleeding, then collect; wants to be played the turn Bleeding peaks.",
+        "powerNotes": "1 Life ~ 0.5 energy; 2 Bleeding ~ 2 delayed dmg is on rate. The souls line scales with setup (typically 3-8 Souls ~ 1-2 energy of battery value per Soultap's 1-souls-per-1-HP rate) - conditional value per spec section 4."
+      }
+    },
+    {
+      "name": "Sanguine Tally",
+      "cardID": 700000304,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Enchantment",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "STR": 1, "Life": 1 },
+      "description": "This combat, whenever you spend BLOOD, add a tally. Your attacks deal +1 damage per tally.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["blood"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "Whenever you spend BLOOD, add a tally. Attacks deal +1 damage per tally.",
+        "type": "other",
+        "combat": true,
+        "showstacks": true,
+        "effects": [
+          {
+            "trigger": "SpendEnergy",
+            "codeLine": "addstack:1",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": [
+              { "value": "EnergyType", "op": "Is", "target": "BLOOD", "ignoreForDisplay": false }
+            ]
+          },
+          {
+            "trigger": "CalculateOutgoingDamage",
+            "codeLine": "adddamage:[[enchantmentStacks]]",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/SanguineTally.png",
+      "meta": {
+        "archetype": "blood-spend payoff engine",
+        "nearestExisting": "Bloodbank.json",
+        "whyDifferent": "Identical enabler (SpendEnergy + EnergyType Is BLOOD accumulator, Bloodbank's exact idiom) but the opposite payoff axis: Bloodbank refunds blood as sustain (heal/draw); this converts it into permanent outgoing damage via the Acquire_Target adddamage:[[enchantmentStacks]] pattern. Blood aggro finally has a scaling reason to keep paying life.",
+        "intendedDeck": "All-in blood beatdown: Exsanguine Engine / Overdraft-style conversion floods BLOOD payments, each orb ratchets every later hit.",
+        "powerNotes": "1 STR + 1 Life for a ramping enchantment; ~2-3 stacks/turn in a dedicated deck ~ Anger-like growth but gated behind actually paying HP. Its own life cost starts the tally at 1."
+      }
+    },
+    {
+      "name": "Tithe Censer",
+      "cardID": 700000305,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Equipment",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "Neutral": 1 },
+      "description": "Whenever you spend BLOOD, restore 3 HEALTH and this loses 1 Durability.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["blood", "equipment", "durability"],
+      "utilityNumber": "",
+      "charges": 3,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "equip",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "Whenever you spend BLOOD, restore 3 HEALTH and lose 1 Durability.",
+        "type": "equipment",
+        "combat": true,
+        "showstacks": true,
+        "effects": [
+          {
+            "trigger": "SpendEnergy",
+            "codeLine": "heal:3; repairself:-1",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": [
+              { "value": "EnergyType", "op": "Is", "target": "BLOOD", "ignoreForDisplay": false },
+              { "value": "EnchantmentStacks", "op": "IsMoreThan", "target": "0", "ignoreForDisplay": true }
+            ]
+          },
+          {
+            "trigger": "StartPhase",
+            "codeLine": "removeenchant:this",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": [
+              { "value": "EnchantmentStacks", "op": "IsLessThan", "target": "1", "ignoreForDisplay": true }
+            ]
+          }
+        ]
+      },
+      "art": "art/TitheCenser.png",
+      "meta": {
+        "archetype": "blood-artifice bridge",
+        "nearestExisting": "Blood_Levy.json",
+        "whyDifferent": "Blood Levy TAXES blood payment (1 Bleeding per BLOOD paid); this is its inverse - a durability battery that refunds the first 3 life payments at 3 HP each. No shipped Equipment reacts to the BLOOD spend event; durability-as-charge-counter for a passive reactive equipment is a new mode.",
+        "intendedDeck": "Any costLife deck: makes the first blood payments of a fight near-free, then Blood Retainer / Field Repairs re-arm it. Turns repair effects into heal-batteries.",
+        "powerNotes": "1 energy -> up to 9 HP refunded over the combat, but only while paying life (each proc needs ~1+ HP spent). Comparable to Bloodbank's 1-heal-per-blood at Legendary-adjacent scale, throttled by 3 charges."
+      }
+    },
+    {
+      "name": "Usurer's Bargain",
+      "cardID": 700000306,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": {},
+      "description": "Spend 12 Souls: Draw 2 cards and gain 4 Barrier.",
+      "keywords": [],
+      "cardKeywords": ["souls"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [
+        { "value": "AnyValue", "op": "IsMoreThan", "target": "[[souls]]:11", "ignoreForDisplay": false }
+      ],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "changesouls:-12",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "draw:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:4",
+          "forecast": true,
+          "referenceStatus": "Barrier",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/UsurersBargain.png",
+      "meta": {
+        "archetype": "souls-spend payoff",
+        "nearestExisting": "Mojo.json",
+        "whyDifferent": "Shipped souls-spenders buy damage (Damnation), kills (Dark End), performance (Mojo) or crits (Reave). Nothing lets you liquidate the revive battery for raw tempo - draw + Barrier at 0 energy. New decision: is 12% of your extra life worth a turn of gas?",
+        "intendedDeck": "Souls-generating shells (Flesh Installment, Debt Collector, Ledger of Vitae) that bank far past 100 souls, or greed decks that would rather cash out than sit on a revive.",
+        "powerNotes": "0-cost gated by a real resource: 12 Souls ~ 12 HP of battery (Soultap rate) buys ~2 energy of effect (draw 2 ~ 1E, Barrier 4 ~ 1E). The play condition uses the shipped [[souls]]:N target format (Mojo/Reave)."
+      }
+    },
+    {
+      "name": "Ledger of Vitae",
+      "cardID": 700000307,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Enchantment",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "Neutral": 1, "Life": 1 },
+      "description": "This combat, whenever you take damage during your turn, gain that many Souls.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["blood", "souls"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "Taking damage during your turn grants that many Souls.",
+        "type": "other",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "DealtDamage",
+            "codeLine": "changesouls:[[varValue]]",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": [
+              { "value": "EnemyTurn", "op": "IsNot", "target": "", "ignoreForDisplay": false }
+            ]
+          }
+        ]
+      },
+      "art": "art/LedgerOfVitae.png",
+      "meta": {
+        "archetype": "self-damage -> souls engine",
+        "nearestExisting": "Soultap.json",
+        "whyDifferent": "Soultap is the one-shot version (take N, gain N souls, once). This engine-izes the conversion and widens it to EVERY on-turn self-damage source: life costs, Paper Cut, Chalice of Blood, Zeal upkeep, own Bleeding ticks. The turn-gate (EnemyTurn IsNot, Levy Pain's exact idiom) keeps enemy hits from feeding it - you only profit from wounds you chose.",
+        "intendedDeck": "The pack's spine: blood decks double-dip every HP paid (damage value + soul value), racing toward the 100-soul revive or Usurer's/Dynamo spends.",
+        "powerNotes": "Dedicated lists self-inflict ~5-8/turn -> 5-8 Souls/turn (~1 energy/turn of battery at the Soultap 1:1 rate). Costs 1 energy + 1 Life and a card; Rare per engine precedent (Soultap is Rare for the one-shot)."
+      }
+    },
+    {
+      "name": "Soul Dynamo",
+      "cardID": 700000308,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Equipment",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "INT": 1 },
+      "description": "Use: Spend 8 Souls to gain 2 INT energy and draw a card.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["souls", "equipment", "durability"],
+      "utilityNumber": "",
+      "charges": 3,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "equip",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "Use: Spend 8 Souls to gain 2 INT energy and draw a card.",
+        "type": "equipment",
+        "combat": true,
+        "showstacks": true,
+        "effects": [
+          {
+            "trigger": "PlayPhase",
+            "codeLine": "activate",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          },
+          {
+            "trigger": "None",
+            "codeLine": "changesouls:-8; energyINT:2; draw:1",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": [
+              { "value": "AnyValue", "op": "IsMoreThan", "target": "[[souls]]:7", "ignoreForDisplay": false }
+            ]
+          },
+          {
+            "trigger": "DiscardPhase",
+            "codeLine": "disable",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/SoulDynamo.png",
+      "meta": {
+        "archetype": "souls-artifice bridge",
+        "nearestExisting": "Grimoire_of_Storms.json",
+        "whyDifferent": "The Grimoires are activated equipment engines priced in HP (costLife) that pay out cards. This inverts the fuel line: it is priced in energy but BURNS SOULS per activation - the first souls->energy conversion in the pool, on the shipped activate/disable equipment skeleton (Umbral Armor idiom).",
+        "intendedDeck": "Souls engines (Ledger of Vitae, Flesh Installment) that overproduce; converts banked souls into ramp turns for expensive INT payoffs.",
+        "powerNotes": "Per use: -8 Souls (~8 HP battery) -> 2 energy + 1 card (~2.5E). 3 uses max, gated behind actually holding 8+ Souls. Energy gained at cap 8 cycles the oldest orb (Part I) - no overflow abuse."
+      }
+    },
+    {
+      "name": "Vengeful Mainspring",
+      "cardID": 700000309,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Enchantment",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "Neutral": 1, "Life": 1 },
+      "description": "This combat, whenever you spend a Charge, deal 3 arcane damage to the foe.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["equipment"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "Spending a Charge deals 3 arcane damage to the foe.",
+        "type": "other",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "SpendCharge",
+            "codeLine": "damage:3:arcane",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/VengefulMainspring.png",
+      "meta": {
+        "archetype": "charge-spend payoff",
+        "nearestExisting": "Bomb.json",
+        "whyDifferent": "Bomb is the only shipped SpendCharge listener and it pays out cost reduction on itself, from hand. This is the first enchantment payoff for the charge economy: every Charge spent from hand-cards (Blood Ritual, bombs, charge items) becomes reach damage. Creates a deck that WANTS to burn durability.",
+        "intendedDeck": "Charge-dense artifice lists (Blood Ritual, bomb packages, charge items) plus Blood Retainer to reload; pairs with CrimsonLedger equipment for repeated triggers.",
+        "powerNotes": "1 energy + 1 Life; ~2-4 charges spent/turn in a dedicated shell -> 6-12 dmg/turn, on par with a Rare engine. UNVERIFIED: SpendCharge scan of the player enchantment zone (only in-hand listeners shipped) - flagged for sim-harness check."
+      }
+    },
+    {
+      "name": "Exsanguine Engine",
+      "cardID": 700000310,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Equipment",
+      "suffix": "None",
+      "rarity": "Legendary",
+      "cost": { "Neutral": 2, "Life": 1 },
+      "description": "Use: Draw a card, then convert its cost to BLOOD.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["blood", "equipment", "durability"],
+      "utilityNumber": "",
+      "charges": 4,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "equip",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "Use: Draw a card, then convert its cost to BLOOD.",
+        "type": "equipment",
+        "combat": true,
+        "showstacks": true,
+        "effects": [
+          {
+            "trigger": "PlayPhase",
+            "codeLine": "activate",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          },
+          {
+            "trigger": "None",
+            "codeLine": "draw:1; convertlastdrawntoblood",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          },
+          {
+            "trigger": "DiscardPhase",
+            "codeLine": "disable",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/ExsanguineEngine.png",
+      "meta": {
+        "archetype": "blood-conversion engine (bridge)",
+        "nearestExisting": "Sanguine_Casting.json",
+        "whyDifferent": "Sanguine Casting is a one-shot action (draw highest, convert to blood). This is the repeatable artifact version: 4 durability-limited activations that convert the natural top of your deck, making the whole pack's blood-spend engines (Sanguine Tally, Tithe Censer, Ledger of Vitae) run off any deck. Bridges blood conversion with equipment durability as the throttle.",
+        "intendedDeck": "The Legendary build-around: energy-poor turns become HP-powered turns; with Ledger of Vitae the converted costs partially refund as Souls.",
+        "powerNotes": "3 effective cost (2N + 1 Life) for 4 delayed card+conversion activations; each use ~ Bloodcast (Rare, 1E) minus the conjured-copy upside. Durability cap prevents the infinite-conversion failure mode Overdraft already explores."
+      }
+    }
+  ]
+}

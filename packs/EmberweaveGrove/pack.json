@@ -1,0 +1,640 @@
+{
+  "pack": "EmberweaveGrove",
+  "idBlock": [700000000, 700000099],
+  "cards": [
+    {
+      "name": "Emberseed",
+      "cardID": 700000000,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Fire",
+      "rarity": "Common",
+      "cost": {},
+      "description": "Inflict <b>1 Burning</b>.\nDraw a card.",
+      "keywords": ["Firecast"],
+      "cardKeywords": ["firecast", "fire"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:1",
+          "forecast": true,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "draw:1",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Emberseed.png",
+      "meta": {
+        "archetype": "burn/Firecast",
+        "nearestExisting": "Evangelize",
+        "whyDifferent": "The game's first Firecast cantrip. Every shipped Firecast card (Searing_Ray, Combust, Cauterize, Fireball, Evangelize, Faith_Healing, ...) trades the buried card for effect; none replaces itself. Burying Emberseed draws mid-bury, so mass-bury effects (Deification bury:3, Awakening bury:10, Torch) stop costing deck size — a new setup for the bury archetype. Also a deliberate graveyard-filler: Firecast cards land in the graveyard after bury-cast (SpellEffects.BuryCard), feeding this pack's graveyard payoffs.",
+        "intendedDeck": "Any bury or Firecast deck; also splashable in graveyard-count decks as fuel. Play it early for a chip cantrip, or leave it in the deck as a pleasant bury hit.",
+        "powerNotes": "0-cost common budget ~2-3 dmg-equiv (spec §4). 1 Burning (never decays, ~1 dmg/turn) + cantrip ≈ Evangelize (0-cost: 1 Zeal + random blessing). inflict:X + referenceStatus Burning idiom per Fireball.json; draw:1 ubiquitous."
+      }
+    },
+    {
+      "name": "Ashfeast",
+      "cardID": 700000001,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Fire",
+      "rarity": "Common",
+      "cost": { "INT": 1 },
+      "description": "Deal [damage:3] damage.\n<b>Ancestral:</b> Inflict <b>4 Burning</b>.",
+      "keywords": [],
+      "cardKeywords": ["fire", "ancestral"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:3:fire",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:4",
+          "forecast": true,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "CardsInGraveyard", "op": "IsMoreThan", "target": "3", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Ashfeast.png",
+      "meta": {
+        "archetype": "bridge: graveyard-count -> burn",
+        "nearestExisting": "Boneskewer",
+        "whyDifferent": "Ports the Ancestral gate (CardsInGraveyard > 3, exact condition 11|IsMoreThan|3 from Boneskewer.json/Blood_Ritual.json) out of the DEXSTR shaman suite into the INT burn suite for the first time. Every shipped burn-scaling card keys off cardsBuried (Ashes_to_Ashes) or existing Burning (Fan_the_Flames); none reads the discard pile, so burn decks today are indifferent to their graveyard. This makes the burn deck want a stocked graveyard — synergy with Firecast casts landing there and tension with bury (which exiles instead of filling).",
+        "intendedDeck": "INT burn deck with discard/Firecast fill; turns on around turn 3-4. Anti-synergy with heavy bury-exile lines is deliberate texture.",
+        "powerNotes": "1-cost common baseline 3-5 dmg (spec §4). Flat 3 + conditional 4 Burning (repeating, never decays per Burning.json) is above rate only once Ancestral is on, mirroring Boneskewer's setup discount (C, 1+Life, dmg+bleed+ancestral escalation)."
+      }
+    },
+    {
+      "name": "Gravemoss",
+      "cardID": 700000002,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {},
+      "description": "Gain <b>2 Armor</b>.\nBury a card.\nWhen Buried: Gain <b>5 Armor</b>.",
+      "keywords": [],
+      "cardKeywords": ["bury"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:2",
+          "forecast": true,
+          "referenceStatus": "Armor",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bury:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "Bury",
+          "codeLine": "bless:5",
+          "forecast": false,
+          "referenceStatus": "Armor",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Gravemoss.png",
+      "meta": {
+        "archetype": "graveyard/bury",
+        "nearestExisting": "Suntree_Twig",
+        "whyDifferent": "First player-pool card whose own Bury-trigger effect is the payoff (Suntree_Twig, the only shipped card with a self Bury trigger, uses it for a hidden transform, and it's a Grounded basic). SpellEffects.BuryCard runs a buried card's Bury-trigger CardEffectList before filing it — verified engine path. This is 'Firecast for defense' without the keyword: you rig your own random bury:1 hits so the deck becomes a lottery you want to lose cards to. New decision: the card is better buried than played.",
+        "intendedDeck": "Bury-dense decks (Prayer/Singe/Torch shells). Play it when you need the bury trigger now; leave it in the deck when you're chaining buries.",
+        "powerNotes": "0-cost common ~2-3 value: 2 Armor + bury enabler in hand (cf. Singe: 0-cost, 2 Burning + bury). Buried case pays 5 Armor at a random time — comparable to one Bone_Ritual hit. Armor fades at StartPhase (Armor.json) so buried procs during your turn are full-value, procs off enemy-turn buries decay."
+      }
+    },
+    {
+      "name": "Everburning Censer",
+      "cardID": 700000003,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Fire",
+      "rarity": "Common",
+      "cost": { "INT": 1 },
+      "description": "Inflict <b>3 Burning</b>.\n<b>Persistent</b>.\nWhen Buried: Inflict <b>3 Burning</b>.",
+      "keywords": ["Persistent"],
+      "cardKeywords": ["fire", "bury"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:3",
+          "forecast": true,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "Bury",
+          "codeLine": "inflict:3",
+          "forecast": false,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/EverburningCenser.png",
+      "meta": {
+        "archetype": "bridge: bury -> burn -> graveyard",
+        "nearestExisting": "Singe",
+        "whyDifferent": "The first bury-payload card that survives burial. SpellEffects.BuryCard routes Persistent cards to the graveyard instead of exile — a verified interaction no shipped card is built around (Persistent ships only as a hand-retention keyword). So every burial of the Censer burns the foe AND stocks the graveyard with a retrievable card; return effects (Recycle, Roll_the_Bones, this pack's Emberdredge) loop it. Singe merely enables bury; this one is a repeatable bury target.",
+        "intendedDeck": "Bury+recursion hybrid: bury it from the deck for 3 Burning, dig it back out of the graveyard, replay it. Persistent also keeps it in hand across turns.",
+        "powerNotes": "1-cost common: 3 Burning (~3/turn repeating, never decays) sits at the ~4 dmg/energy line as delayed damage; cf. Halo_of_Wrath's 3 Burning per bury and Sanctify's 3 Burning at HOLY 3 with a heal rider. Bury proc is another 3 only when a bury effect happens to hit it in the deck."
+      }
+    },
+    {
+      "name": "Flameletting",
+      "cardID": 700000004,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Fire",
+      "rarity": "Uncommon",
+      "cost": { "INT": 1 },
+      "description": "Gain <b>2 Burning</b>.\nDeal damage equal to twice your <b>Burning</b>.",
+      "keywords": [],
+      "cardKeywords": ["fire"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:2",
+          "forecast": true,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:[[my(status)Burning]]*2:fire",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Flameletting.png",
+      "meta": {
+        "archetype": "burn (self-Burning payoff)",
+        "nearestExisting": "Cauterize",
+        "whyDifferent": "First card that WANTS Burning on yourself — the spec's example of a new mode (a payoff for a status on self). Shipped self-Burning is only ever a cost rider (Cauterize) or something to cleanse (Aura_of_Fire, Fire_Resistance). Because Burning never decays (Burning.json clearAt None), each copy escalates: play 1 = 4 dmg, play the second at 4 self-stacks = 8+. Creates a masochist INT line where Zeal's fire upkeep, Cauterize's rider and cleanse timing become deck decisions.",
+        "intendedDeck": "INT fire deck with heal/cleanse release valves (Cauterize's 4 heal, Fire_Resistance, Aura_of_Fire). Race the foe before your own pyre wins.",
+        "powerNotes": "Turn-1 floor: 2 self-Burning -> 4 dmg for 1 INT (par), while eating 2/turn thereafter — the escalation upside is paid for by permanent self-DoT. bless:X + referenceStatus Burning self-application verified in Cauterize.json; [[my(status)Burning]] token verified in Pyroclasm.json; *2 base-damage arithmetic is NumberParser int math, NOT the multiplydamage:2 crit channel."
+      }
+    },
+    {
+      "name": "Chosen for the Pyre",
+      "cardID": 700000005,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Fire",
+      "rarity": "Uncommon",
+      "cost": { "INT": 1 },
+      "description": "Bury a card of your choice from your deck.\nInflict <b>Burning</b> equal to twice its cost.",
+      "keywords": [],
+      "cardKeywords": ["fire", "bury"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [
+        { "value": "CardsInDeckRemaining", "op": "IsMoreThan", "target": "0", "ignoreForDisplay": false }
+      ],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "buryselect",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "blessing",
+        "combat": false,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "EndAction",
+            "codeLine": "inflict:[[lastBuriedEnergy]]*2;removeenchant:this",
+            "forecast": false,
+            "referenceStatus": "Burning",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/ChosenForThePyre.png",
+      "meta": {
+        "archetype": "burn/bury",
+        "nearestExisting": "Censorship",
+        "whyDifferent": "Censorship is the only shipped choose-bury card and pays defense (Zeal + heal, HOLY identity). This ports precision burial to the INT burn suite and pays damage — and the choice bites differently: exiling a junk 0-cost fixes your deck but burns for nothing; burying your expensive bomb burns big but costs the card (unless it's Firecast, which casts instead — pointing it at Buried Sun is the dream line). New decision on an existing verified structure.",
+        "intendedDeck": "INT burn deck that wants both deck-thinning and reach; combos with Firecast payloads since buryselect on a Firecast card casts it AND still reads its cost.",
+        "powerNotes": "Structure (enchant:self + buryselect, EndAction payload reading [[lastBuriedEnergy]], removeenchant:this) copied 1:1 from Censorship.json; play condition CardsInDeckRemaining>0 likewise. Burning 2x cost (avg ~2-4 stacks) vs Censorship's Zeal 2x + heal 2x at Uncommon — comparable value, offense-shifted."
+      }
+    },
+    {
+      "name": "Emberdredge",
+      "cardID": 700000006,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Fire",
+      "rarity": "Uncommon",
+      "cost": { "INTSTR": 1 },
+      "description": "Return a card from your discard pile to your hand, then inflict <b>Burning</b> equal to its cost.",
+      "keywords": [],
+      "cardKeywords": ["fire", "discardpile"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [
+        { "value": "CardsInGraveyard", "op": "IsMoreThan", "target": "0", "ignoreForDisplay": false }
+      ],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "return:choose",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "blessing",
+        "combat": false,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "EndAction",
+            "codeLine": "inflict:[[lastpickedenergy]];removeenchant:this",
+            "forecast": false,
+            "referenceStatus": "Burning",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/Emberdredge.png",
+      "meta": {
+        "archetype": "bridge: graveyard -> burn",
+        "nearestExisting": "Bone_Ritual",
+        "whyDifferent": "Bone_Ritual (Rare, DEXSTR+Life, Armor = 2x cost) is the only shipped card that reads the returned card's cost; this reverses the pack's signature bridge — where Firecast turns burial into casts (deck->fire), this turns retrieval into burn (graveyard->fire). It also creates a priced-retrieval decision: digging back a cheap cantrip burns little, digging back Buried Sun or another bomb burns big — recursion that advances the burn clock instead of stalling it. Not strictly better than Recycle (Recycle chooses at Common with no INTSTR requirement; identical retrieval, no rider, different color).",
+        "intendedDeck": "Burn/graveyard hybrid — the pack's centerpiece glue. Loops Everburning Censer and re-arms Buried Sun.",
+        "powerNotes": "Recycle (C, DEXSTR1) = bare return:choose; +1x-cost Burning rider at Uncommon INTSTR mirrors Bone_Ritual's rarity-stepped rider (its 2x Armor costs Rare + 1 Life). [[lastpickedenergy]] after return:choose + EndAction-enchant pattern verified verbatim in Bone_Ritual.json."
+      }
+    },
+    {
+      "name": "Ashen Harvest",
+      "cardID": 700000007,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "DEXSTR": 2 },
+      "description": "Deal damage equal to the cards in your discard pile ([[cardsInGraveyard]]).\n<b>Reaping</b>.",
+      "keywords": ["Reaping"],
+      "cardKeywords": ["reaping", "discardpile"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [
+        { "value": "CardsInGraveyard", "op": "IsMoreThan", "target": "0", "ignoreForDisplay": false }
+      ],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:[[cardsInGraveyard]]",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/AshenHarvest.png",
+      "meta": {
+        "archetype": "graveyard (Reaping payoff)",
+        "nearestExisting": "Rapture",
+        "whyDifferent": "Rapture spends the graveyard count as attack COUNT (2 dmg x N, lifedrain, 3-cost); this is one scaling hit with Reaping, so the payout is permanent max-HP shred (SpellEffects.Damage Reaping block) — no shipped card combines graveyard-count scaling with Reaping. It also creates the pack's core tension: return effects (Emberdredge, Recycle) SHRINK this card's damage, so you choose between recursion and the harvest. Heavy cards are ideal fuel — they never leave the graveyard on reshuffle (DeckHandler.ReshuffleGraveyard).",
+        "intendedDeck": "DEXSTR graveyard deck stocking Heavy/Firecast cards; finisher vs high-HP bosses where max-HP loss compounds with Grave_Pact-style effects.",
+        "powerNotes": "2-cost par ~8 dmg (spec §4). Graveyard is typically 5-10 by mid-combat; Uncommon buys the Reaping rider against the slow start and the self-imposed anti-recursion tension. [[cardsInGraveyard]] in a damage slot verified in Rapture.json/Soultap.json."
+      }
+    },
+    {
+      "name": "Cinder Archive",
+      "cardID": 700000008,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Enchantment",
+      "suffix": "Fire",
+      "rarity": "Rare",
+      "cost": { "INTSTR": 1 },
+      "description": "This combat, whenever your foe takes <b>Burning</b> damage, return a random card from your discard pile to your hand.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["fire", "discardpile"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "Whenever your foe takes <b>Burning</b> damage, return a random card from your discard pile to your hand.",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "InflictStatusDamage",
+            "codeLine": "return:1",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": [
+              { "value": "DamageType", "op": "Is", "target": "fire", "ignoreForDisplay": false },
+              { "value": "CardsInGraveyard", "op": "IsMoreThan", "target": "0", "ignoreForDisplay": true }
+            ]
+          }
+        ]
+      },
+      "art": "art/CinderArchive.png",
+      "meta": {
+        "archetype": "bridge: burn ticks -> graveyard retrieval",
+        "nearestExisting": "Sanctify",
+        "whyDifferent": "Sanctify proves the trigger (InflictStatusDamage + DamageType Is fire = per-Burning-tick hook) and pays healing; Roll_the_Bones returns 1 random card per turn unconditionally. This card is neither: it converts burn tick FREQUENCY into card advantage, so Combust-style forced ticks and Fan_the_Flames doubling become draw engines. No shipped card links the burn and graveyard resources at all — this is the archetype handshake the cluster is missing.",
+        "intendedDeck": "Burn deck splashing graveyard payoffs, or graveyard deck adopting a Burning subtheme. Baseline 1 card/turn off the EndTurnPhase tick; spikes with Combust chains.",
+        "powerNotes": "Compare Roll_the_Bones (Rare, DEXSTR1, 1 random return per turn flat). Same rarity/cost, requires Burning online, but scales past 1/turn with tick effects. Trigger+condition pair verified in Sanctify.json (78 + 70|Is|fire). UNVERIFIED nuance: whether ticks of Burning on YOURSELF (Zeal upkeep, Flameletting) also fire the player-side InflictStatusDamage scan — Sanctify's extra EnemyTurn/CurrentPhase guards suggest direction-handling subtleties; if self-ticks proc it, that is an accepted (noted) synergy, not a break. Sim-harness check requested."
+      }
+    },
+    {
+      "name": "Cinder Cycle",
+      "cardID": 700000009,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Enchantment",
+      "suffix": "Fire",
+      "rarity": "Rare",
+      "cost": { "DEXSTR": 1 },
+      "description": "This combat, whenever your deck reshuffles, inflict <b>6 Burning</b> and gain <b>6 Armor</b>.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["fire"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "Whenever your deck reshuffles, inflict <b>6 Burning</b> and gain <b>6 Armor</b>.",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "Reshuffle",
+            "codeLine": "inflict:6",
+            "forecast": false,
+            "referenceStatus": "Burning",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          },
+          {
+            "trigger": "Reshuffle",
+            "codeLine": "bless:6",
+            "forecast": false,
+            "referenceStatus": "Armor",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/CinderCycle.png",
+      "meta": {
+        "archetype": "bridge: deck-cycling/fatigue -> burn",
+        "nearestExisting": "Entropy",
+        "whyDifferent": "The Reshuffle trigger exists on exactly three shipped assets, all enemy-side or system (Entropy, Divine_Ire, Fatigue) — no player card pays off reshuffling. This makes the fatigue race a strategy: bury-thinning, Gravesite and Orphic_Glance dig you toward reshuffles that now pay 6 Burning + 6 Armor while fatigue still ticks (second reshuffle onward hurts ~10% maxHP), a self-balancing greed engine. Verified trigger/effect-host combination no shipped player card uses.",
+        "intendedDeck": "Thin bury deck or Gravesite mill deck that plans 2-4 reshuffles per long fight; the Armor half offsets fatigue chip.",
+        "powerNotes": "Reshuffles happen ~1-2x naturally, 3-4x when built for; ~2-3 activations of 6+6 for 1 energy at Rare is in line with Roll_the_Bones-class engines. Reshuffle trigger (GameTriggers 54) hosting enchantment effects verified in Entropy.json/Divine_Ire.json/Fatigue.json. Interaction with Emberweave Communion's reshuffle-bury flagged for sim."
+      }
+    },
+    {
+      "name": "Buried Sun",
+      "cardID": 700000010,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Fire",
+      "rarity": "Rare",
+      "cost": { "INT": 2 },
+      "description": "Deal [damage:8] damage.\nInflict <b>4 Burning</b>.",
+      "keywords": ["Firecast", "Heavy"],
+      "cardKeywords": ["firecast", "fire", "heavy"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:8:fire",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:4",
+          "forecast": true,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/BuriedSun.png",
+      "meta": {
+        "archetype": "bridge: burn payload / graveyard resident",
+        "nearestExisting": "Elite_Fireball",
+        "whyDifferent": "First Firecast+Heavy card in the pool (verified: zero shipped cards carry keywords 11+21 together). The keywords interlock into a lifecycle no card has: bury it and it detonates free (Firecast), then parks in the graveyard permanently (Heavy survives every reshuffle, DeckHandler.ReshuffleGraveyard) as fuel for Ashen Harvest/Ashfeast — until Emberdredge digs it out for a paid second detonation. Hand-cast is the fair fallback, one shot per cycle. Not strictly better than Elite_Fireball (Legendary, INT1, 8 dmg + burn, no Heavy): this costs more and carries a real drawback.",
+        "intendedDeck": "Any deck in this cluster: burn decks want the payload, bury decks want the roulette hit, graveyard decks want the permanent resident.",
+        "powerNotes": "2-cost Rare envelope 5-8 dmg (spec §4): 8 + 4 Burning is top-of-band, paid for by Heavy (once per combat without recursion) — mirrors Grave_Pact's Heavy-as-rate-payment (U, DEXSTR1, escalating steal). Firecast bury-cast path verified in SpellEffects.BuryCard (PlayAction effects execute, card -> graveyard)."
+      }
+    },
+    {
+      "name": "Emberweave Communion",
+      "cardID": 700000011,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Enchantment",
+      "suffix": "Fire",
+      "rarity": "Legendary",
+      "cost": { "INTSTR": 2 },
+      "description": "Whenever you Bury a card, inflict <b>Burning</b> equal to 2 plus its cost.\nWhenever your deck reshuffles, <b>Bury 3</b> cards.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["fire", "bury"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": "Burning",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "Whenever you Bury a card, inflict <b>Burning</b> equal to 2 plus its cost.\nWhenever your deck reshuffles, <b>Bury 3</b> cards.",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "Bury",
+            "codeLine": "inflict:2+[[lastBuriedEnergy]]",
+            "forecast": false,
+            "referenceStatus": "Burning",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          },
+          {
+            "trigger": "Reshuffle",
+            "codeLine": "bury:3",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/EmberweaveCommunion.png",
+      "meta": {
+        "archetype": "burn/bury engine (pack capstone)",
+        "nearestExisting": "Halo_of_Wrath",
+        "whyDifferent": "Halo_of_Wrath pays a flat 3 Burning per bury; this scales by the buried card's cost ([[lastBuriedEnergy]] on the Bury trigger — player-positive use of the Extraction_Listener idiom, which ships only as an enemy affliction) AND closes the loop: reshuffles auto-bury 3, and burying accelerates the next reshuffle. The deck literally burns itself down for damage, racing fatigue — an engine, not a rate card, and the only card that welds this pack's two Rare engines (Cinder Cycle, bury payoffs) into one identity.",
+        "intendedDeck": "All-in bury inferno: Prayer/Singe/Deification density, Firecast payloads so burials replace themselves, Cinder Cycle for the reshuffle turns. Wincon is Burning snowball before fatigue or deck-death.",
+        "powerNotes": "Per bury: 2+cost (~3 avg) Burning ≈ Halo_of_Wrath (Common) per-proc, so the Legendary premium is entirely the reshuffle clause and scaling ceiling. DANGER FLAGGED for sim: reshuffle->bury:3 can chain (BuryCard calls ResetDeck when the deck empties mid-bury, firing Reshuffle again); loop terminates via NO_MORE_CARDS/Heavy-only graveyard but each cycle adds fatigue — intended as a self-limiting greed spiral; verify no lock."
+      }
+    }
+  ]
+}

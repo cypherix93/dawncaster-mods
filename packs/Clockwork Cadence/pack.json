@@ -1,0 +1,590 @@
+{
+  "pack": "Clockwork Cadence",
+  "idBlock": [700000200, 700000299],
+  "cards": [
+    {
+      "name": "Cogspark",
+      "cardID": 700000200,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Conjuration",
+      "suffix": "Lightning",
+      "rarity": "Common",
+      "cost": {},
+      "description": "Deal [damage:1] damage.\n<b>Cascade:</b> Draw a card.",
+      "keywords": ["Chain"],
+      "cardKeywords": ["lightning"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": ["excludeFromRewards"],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:1:lightning",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "draw:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Cascade", "op": "Is", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Cogspark.png",
+      "meta": {
+        "archetype": "conjuration-engine token / chain link",
+        "nearestExisting": "Charged_Blade.json",
+        "whyDifferent": "Charged Blade is a permanent BasicAttack that cantrips unconditionally and is added to the run deck by Stormblade. Cogspark is the pack's Conjuration-category token (temporary by construction): its cantrip is Cascade-gated, so the deck must weave 1-cost cards between 0-cost Cogsparks to keep replacing them. New decision = sequencing your costs, not just playing the token.",
+        "intendedDeck": "Conjured by Winding Key / Assembly Line. Chain keyword keeps the chain alive and feeds Mainspring Coil / Stutterbolt; Cascade rewards 0-1-0-1 cost weaving.",
+        "powerNotes": "0-cost: 1 dmg + 1 chain (keyword) + conditional cantrip. Zap (0-cost common) = 2 dmg + 1 chain. Trades 1 dmg for a sequencing-gated draw; on-budget for 0-cost common (~2-3 dmg-equiv). Being Conjured, it never bloats the run deck."
+      }
+    },
+    {
+      "name": "Gearbite",
+      "cardID": 700000201,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "Phyisical",
+      "rarity": "Common",
+      "cost": { "Neutral": 1 },
+      "description": "Deal [damage:2] damage.\nIf you've already played a Gearbite this turn, deal [damage:6] damage instead.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "None",
+          "codeLine": "adddamage:4",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "AlreadyPlayedThisTurn", "op": "Is", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Gearbite.png",
+      "meta": {
+        "archetype": "echo/copy payoff at common (bridge: copy <-> melee combo)",
+        "nearestExisting": "Aura_of_Mind.json",
+        "whyDifferent": "Aura of Mind is the only friendly AlreadyPlayedThisTurn user and is a passive Focus aura. Gearbite puts that condition on a damage card itself: the second same-name play this turn triples the hit. New payoff mode for an existing setup - it wants duplicates in deck, conjured copies (copy/Recall/Figmented share cardID), or replays. No shipped attack cares about its own name having been played.",
+        "intendedDeck": "2x Gearbite in a tempo shell, or one copy plus copy effects (Fractal Bolt pattern, Recast, conjured duplicates). Plays first as a vanilla 2, second as a 6.",
+        "powerNotes": "1-cost common median is 4 dmg. Gearbite is 2 below baseline unconditioned, 6 (+2 over) with a real setup cost (play a second copy the same turn). Conditional overage matches the value of the setup per spec par. AlreadyPlayedThisTurn counts hand-played same-cardID entries (ConditionChecker.AlreadyPlayedThisTurn), so Echo auto-replays do NOT satisfy it - only real second plays."
+      }
+    },
+    {
+      "name": "Sprocket Volley",
+      "cardID": 700000202,
+      "expansion": "Extended",
+      "type": "Ranged",
+      "category": "Action",
+      "suffix": "Lightning",
+      "rarity": "Common",
+      "cost": {},
+      "description": "Deal [damage:1] damage twice.\nIf you played a Conjuration this turn, deal it twice more.",
+      "keywords": [],
+      "cardKeywords": ["lightning"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:1:lightning:other:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:1:lightning:other:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "CategoryPlayedThisTurn", "op": "Is", "target": "conjuration", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/SprocketVolley.png",
+      "meta": {
+        "archetype": "bridge: conjuration <-> combo counting",
+        "nearestExisting": "Wintersprig.json",
+        "whyDifferent": "Wintersprig gates its extra attack on Flow (raw play count). Sprocket Volley uses CategoryPlayedThisTurn=conjuration - a condition ZERO shipped cards use (verified by scan of all 2,525 playConditions+effectConditions). It asks a different question: not 'how many cards' but 'did your engine produce'. First payoff that cares that a Conjuration-category card was PLAYED this turn.",
+        "intendedDeck": "Conjuration engines (Winding Key, Assembly Line, or any shipped conjurerandom deck). Playing a Cogspark first turns this into 4 hits.",
+        "powerNotes": "0-cost: 2 dmg base, 4 dmg conditional. 0-cost common par is 2-3; conditional +2 is paid for by playing a Conjuration first. Multi-hit synergizes with Chain status (+stacks per hit) - intended, and bounded by chain's end-of-turn expiry."
+      }
+    },
+    {
+      "name": "Winding Key",
+      "cardID": 700000203,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "INT": 1 },
+      "description": "Conjure 2 Cogsparks.\n<b>Empower:</b> Conjure a third.",
+      "keywords": [],
+      "cardKeywords": ["conjure", "empower"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "conjure:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": ["Cogspark"],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "conjure:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": ["Cogspark"],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Empower", "op": "Is", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/WindingKey.png",
+      "meta": {
+        "archetype": "conjuration engine (setup)",
+        "nearestExisting": "Stormbolt.json",
+        "whyDifferent": "Stormbolt is a damage spell whose Zaps are a conditional rider (Continuity/Empower). Winding Key is pure engine: no damage, tokens are the whole card, and Empower makes it the first conjuration card that pays you for BANKING energy across turns (energy persists; EnergyHandler.SetEnergyToZero is empty). New decision: hold energy this turn to wind the engine harder next turn.",
+        "intendedDeck": "Cogspark tempo. Feeds Tickwork Aura (chain per conjure), Sprocket Volley (conjuration played), Assembly Line (play count).",
+        "powerNotes": "1 INT for 2 (3 with >4 total energy) Cogsparks = ~2-3 dmg-equiv + 2-3 chain + potential cantrips, delivered slowly (each token costs a play). Comparable to Stormbolt's 4 dmg + conditional Zaps at same cost. Loop-brake: tokens are Conjured (vanish after combat), hand cap 10, and each conjure costs the play tempo it grants."
+      }
+    },
+    {
+      "name": "Mainspring Coil",
+      "cardID": 700000204,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "Lightning",
+      "rarity": "Uncommon",
+      "cost": { "INT": 1 },
+      "description": "Gain <b>Chain</b> equal to the cards you've played this turn ([[actionsPlayed]]).",
+      "keywords": ["Chain"],
+      "cardKeywords": ["lightning"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:[[actionsPlayed]]",
+          "forecast": true,
+          "referenceStatus": "Chain",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/MainspringCoil.png",
+      "meta": {
+        "archetype": "chain/combo (chain battery)",
+        "nearestExisting": "Stormcast.json",
+        "whyDifferent": "Stormcast's chain gain scales with upgrades (deck-building axis); Chain Lightning's with damage rolled (variance axis). Mainspring Coil is the first chain battery that scales with CARDS PLAYED THIS TURN - it rewards sequencing (play it late, after the cheap links) rather than deck investment or luck. Same setup family as Flow, new payoff: chain stacks instead of a fixed rider.",
+        "intendedDeck": "All-Chain lightning deck as links 4-6 of the turn, converting a long turn into a big Shocking Grasp / Stutterbolt / next-hit bonus.",
+        "powerNotes": "[[actionsPlayed]] verified in shipped codeLines (Daring_Dash: energy:DEX:[[actionsPlayed]]). Played 4th it gives 4 chain (+1 from its own Chain keyword) for 1 INT - about Stormcast+2 with real sequencing setup; chain still dies at EndTurnPhase (Chain.json), so the value must be spent same turn."
+      }
+    },
+    {
+      "name": "Stutterbolt",
+      "cardID": 700000205,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Lightning",
+      "rarity": "Uncommon",
+      "cost": { "INT": 1 },
+      "description": "Deal [damage:3] damage. Play a copy for every 3 <b>Chain</b> you have ([[my(status)Chain]]).\nBreaks your <b>Chain</b>.",
+      "keywords": [],
+      "cardKeywords": ["lightning"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:3:lightning",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "playcopy:[[my(status)Chain]]/3",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Stutterbolt.png",
+      "meta": {
+        "archetype": "bridge: chain <-> echo/copy (chain cash-out)",
+        "nearestExisting": "Gathering_Storm.json",
+        "whyDifferent": "Gathering Storm's playcopy count grows by sitting in hand (patience axis). Stutterbolt's grows with Chain stacks - and it deliberately does NOT have the Chain keyword, so casting it ends the chain it cashes out. Existing chain spenders (Shocking Grasp, Energize) convert chain to damage/energy; none convert chain into PLAYS. New decision: kill your own engine at the right moment.",
+        "intendedDeck": "Chain decks as the finisher: build 6-9 chain with links, then convert to 3-4 casts of 3 (each still buffed by chain on the first hit).",
+        "powerNotes": "LOOP-BRAKE (engine card): playcopy re-runs the card's PlayAction lines on each copy, but because Stutterbolt is non-Chain, EndActionStep wipes ALL chain when the first cast resolves - every replay evaluates [[my(status)Chain]]/3 = 0. Self-extinguishing by construction, verified against the Gathering Storm playcopy re-entry pattern (their brake is addtempvalue:-999; mine is the chain wipe rule itself). At 6 chain: 3+3+3 = 9 dmg for 1 INT, minus the chain (+6 next-hit) you gave up - net swing ~3 over baseline with full setup."
+      }
+    },
+    {
+      "name": "Fractal Bolt",
+      "cardID": 700000206,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Lightning",
+      "rarity": "Uncommon",
+      "cost": { "INT": 1 },
+      "description": "Deal [damage:3] damage.\n<b>Figmented</b>.",
+      "keywords": ["Figmented"],
+      "cardKeywords": ["lightning", "elemental"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:3:lightning",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/FractalBolt.png",
+      "meta": {
+        "archetype": "echo/copy (self-replicating spell)",
+        "nearestExisting": "Twinlightning.json",
+        "whyDifferent": "Twinlightning (Echo) double-casts immediately - burst, no decisions. Fractal Bolt uses Figmented, a fully engine-verified keyword (EndActionStep conjures a Conjured, non-Figmented copy to hand) that ZERO shipped player cards carry: the second cast arrives as a real card you must pay 1 INT for, this turn or later. Revives a dormant mechanic as its first shipped user; the copy is also a same-cardID play for Gearbite/Resonance Chamber-style payoffs.",
+        "intendedDeck": "Echo/copy shell with Resonance Chamber; also a Conjuration producer... NOTE: the Figmented copy is Conjured but Action-category, so it does NOT satisfy CategoryPlayedThisTurn=conjuration - only Cogspark does. Deliberate anti-overlap.",
+        "powerNotes": "3 dmg for 1 INT plus a deferred copy that costs full price = 6 dmg for 2 INT total, split across plays. Below Twinlightning's immediate ~8 avg for 1, above it in flexibility/synergy. UNVERIFIED-in-content: no shipped card carries Figmented; mechanics verified in SpellEffects.EndActionStep per GAME-MECHANICS Part III. Loop-brake: the copy drops the Figmented keyword (no infinite lineage) and each generation costs full energy."
+      }
+    },
+    {
+      "name": "Tickwork Aura",
+      "cardID": 700000207,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Enchantment",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "INT": 1 },
+      "description": "This combat, whenever you Conjure a card, gain <b>1 Chain</b>.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["conjure"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "EnchantmentOnSelf", "op": "IsNot", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": {
+        "text": "Whenever you Conjure a card, gain <b>1 Chain</b>.",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "Conjure",
+            "codeLine": "bless:1",
+            "forecast": false,
+            "referenceStatus": "Chain",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/TickworkAura.png",
+      "meta": {
+        "archetype": "bridge: conjuration <-> chain",
+        "nearestExisting": "Conjurers_Boon.json",
+        "whyDifferent": "Conjurer's Boon (Rare, 3 INT) heals when you PLAY a Conjuration. Tickwork Aura triggers on the Conjure event itself (GameTriggers.Conjure - creation, not play; shipped enchantments use trigger 16 only for cost/keyword mutation like Effortless Magic) and pays out in Chain, wiring the conjure archetype directly into the chain archetype. These two archetypes currently don't talk on any shipped card.",
+        "intendedDeck": "Winding Key / Assembly Line shells that also run chain spenders; makes conjurerandom lightning cards (Innervation, Evocation) chain-positive.",
+        "powerNotes": "1 chain per conjure is small and same-turn-perishable (Chain expires EndTurnPhase); the aura does nothing without both engines running. Loop-brake: generates no cards itself - pure conversion, bounded by conjure count and chain expiry. Unique (all Enchantments are)."
+      }
+    },
+    {
+      "name": "Unbroken Cadence",
+      "cardID": 700000208,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Enchantment",
+      "suffix": "Lightning",
+      "rarity": "Rare",
+      "cost": { "INT": 2 },
+      "description": "This combat, cards you draw or Conjure gain <b>Chain</b>.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["lightning"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "EnchantmentOnSelf", "op": "IsNot", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": {
+        "text": "Cards you draw or Conjure gain <b>Chain</b>.",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "Draw",
+            "codeLine": "addtempkeyword:Chain",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          },
+          {
+            "trigger": "Conjure",
+            "codeLine": "addtempkeyword:Chain",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/UnbrokenCadence.png",
+      "meta": {
+        "archetype": "chain/combo build-around (keyword grant)",
+        "nearestExisting": "Twisted_Echoes.json",
+        "whyDifferent": "Exact structural sibling of Twisted Echoes (monster affix: Draw+Conjure triggers, addkeyword:Echo) - but player-side, granting Chain, and using addtempkeyword so the grant is combat-scoped instead of permanently mutating run-deck containers. Solves the chain archetype's core constraint (any non-Chain card wipes chain, forcing mono-Chain decks): with this down, ANY deck chains. No shipped player card grants Chain to other cards.",
+        "intendedDeck": "Chain-splash decks: run big non-Chain payoffs (Fireball, anything) inside a chain engine; every card now sustains and grows chain by +1.",
+        "powerNotes": "+1 chain per card played (~+1 dmg ramp per play, expiring each turn) for 2 INT, Rare - comparable to Twincasting (Rare, 3 total) as a turn-engine. Loop-brake: no card generation; chain still expires at EndTurnPhase; only affects cards entering hand AFTER cast. UNVERIFIED (flagged for sim/QA): that addtempkeyword's card-context inside an enchantment binds to the drawn/conjured card as it does for Twisted Echoes' addkeyword - decompile shows AddtempKeyword(cc,...) falls back to first-card-in-hand when cc is null. Must be play-tested; if binding fails, switch codeLines to the literal Twisted Echoes form addkeyword:Chain and accept combat-only via Conjured/temp filtering."
+      }
+    },
+    {
+      "name": "Assembly Line",
+      "cardID": 700000209,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "INT": 2 },
+      "description": "Conjure a free Cogspark for each card you've played this turn ([[actionsPlayed]]).",
+      "keywords": [],
+      "cardKeywords": ["conjure"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "conjure:[[actionsPlayed]]:free",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": ["Cogspark"],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/AssemblyLine.png",
+      "meta": {
+        "archetype": "bridge: combo counting <-> conjuration engine",
+        "nearestExisting": "Apocalypse.json",
+        "whyDifferent": "Apocalypse scales its conjure count with tempValue accumulated across turns (patience). Assembly Line scales with cards played THIS turn - the combo deck's play count becomes the conjure engine's fuel, closing the loop the other way from Sprocket Volley. No shipped conjure command scales with [[actionsPlayed]].",
+        "intendedDeck": "Play 4-5 cheap links, then refill the hand with free Cogsparks; with Tickwork Aura down, also +4-5 chain on the spot.",
+        "powerNotes": "LOOP-BRAKE analysis (this is the pack's scariest engine): Cogsparks it makes each count as plays, so a second Assembly Line conjures more - but generation is bounded by (a) hand cap 10 (DrawCards/conjure respect MAXIMUM_CARDS), (b) each Cogspark must actually be played, costing queue time and granting only 1 dmg + 1 chain, (c) Assembly Line itself costs 2 INT per cast and you only draw so many. No free recursion: the card never conjures copies of ITSELF and Cogspark conjures nothing. Rare at 2 INT for ~4-6 free 0-cost tokens late-turn = ~5 dmg-equiv + chain + cascade draws, within rare cost-2 envelope (5-8)."
+      }
+    },
+    {
+      "name": "Resonance Chamber",
+      "cardID": 700000210,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Enchantment",
+      "suffix": "Lightning",
+      "rarity": "Rare",
+      "cost": { "INT": 1 },
+      "description": "This combat, whenever you play a card you've already played this turn, gain <b>2 Chain</b> and deal [damage:2] damage.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["lightning"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "EnchantmentOnSelf", "op": "IsNot", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": {
+        "text": "Whenever you play a card you've already played this turn, gain <b>2 Chain</b> and deal [damage:2] damage.",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "PlayAction",
+            "codeLine": "bless:2",
+            "forecast": false,
+            "referenceStatus": "Chain",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": [
+              { "value": "AlreadyPlayedThisTurn", "op": "Is", "target": "", "ignoreForDisplay": false }
+            ]
+          },
+          {
+            "trigger": "PlayAction",
+            "codeLine": "damage:2:lightning",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": [
+              { "value": "AlreadyPlayedThisTurn", "op": "Is", "target": "", "ignoreForDisplay": false }
+            ]
+          }
+        ]
+      },
+      "art": "art/ResonanceChamber.png",
+      "meta": {
+        "archetype": "echo/copy payoff engine (bridge: copy <-> chain)",
+        "nearestExisting": "Aura_of_Mind.json",
+        "whyDifferent": "Aura of Mind pays 1 Focus (slow, threshold-6 draw economy) for repeat plays. Resonance Chamber pays in the tempo cluster's native currencies - chain and immediate lightning damage - turning every duplicate, conjured copy, and Figmented replay into a chain link even when the copy itself isn't a Chain card. Repeat-play as a damage engine doesn't exist player-side.",
+        "intendedDeck": "Copy shell: 2x commons, Fractal Bolt copies, Recast/Recall targets, Cogspark swarms (2nd+ Cogspark each turn triggers it).",
+        "powerNotes": "Trigger requires a same-cardID second hand-play in one turn - real deck cost. Per trigger: 2 dmg + 2 chain (~4 dmg-equiv same-turn). 2-3 triggers/turn in a dedicated deck = rare-level engine for 1 INT; gated hard by needing duplicates. Loop-brake: generates no plays or cards itself, purely reactive."
+      }
+    },
+    {
+      "name": "Overclock",
+      "cardID": 700000211,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "Lightning",
+      "rarity": "Legendary",
+      "cost": { "INT": 2 },
+      "description": "Draw 2 cards.\n<b>Flow ([[actionsPlayed]]/8):</b> Take an extra turn.\n<b>One Use</b>.",
+      "keywords": ["OneUse"],
+      "cardKeywords": ["flow", "lightning"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "draw:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "extraturn",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Flow", "op": "Is", "target": "8", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Overclock.png",
+      "meta": {
+        "archetype": "combo capstone (chain/combo + conjuration payoff)",
+        "nearestExisting": "Brainwarp.json",
+        "whyDifferent": "Shipped extra turns are gated by cost (Timestop, 4 INT flat), resource dump (Brainwarp, 20 Focus), or delve luck (Eternity, Revelation). Overclock is the first gated on raw combo count: Flow 8 means the deck must physically play 8 cards first - exactly what this pack's token engines produce. The extra turn is the reward for the archetype's core activity, not for a parallel resource.",
+        "intendedDeck": "Any Clockwork shell: chain links + Cogspark swarm reach 8 plays; whiffing still cantrips (draw 2, which itself can find the last links).",
+        "powerNotes": "LOOP-BRAKE: OneUse - the card is permanently gone after a single cast (EndActionStep), so no extra-turn recursion; the fresh turn also resets [[actionsPlayed]], so even a hypothetical second copy starts from 0. Flow auto-passes on Reliable cards - Overclock is not Reliable and no shipped effect grants Reliable+replay to OneUse cards; noted for sim. Budget: Brainwarp (Rare, 3 INT, ~20-Focus gate) vs this (Legendary, 2 INT, 8-play gate, OneUse) - stricter gate, lower cost, single use."
+      }
+    }
+  ]
+}

@@ -1,0 +1,626 @@
+{
+  "pack": "VenomousLegacy",
+  "idBlock": [700000100, 700000199],
+  "cards": [
+    {
+      "name": "Weeping Blade",
+      "cardID": 700000100,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "STR": 1 },
+      "description": "Deal [damage:2] damage twice. \nIf the target is <b>Bleeding</b>, attack a third time.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "StatusOnOpponent", "op": "Is", "target": "bleeding", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/WeepingBlade.png",
+      "meta": {
+        "archetype": "bleed (payoff)",
+        "nearestExisting": "Cleavers.json",
+        "whyDifferent": "Cleavers buys its extra attack with Frenzy (you got hit); this buys it with the foe Bleeding - a hit-COUNT payoff for bleed. Bleeding ticks whenever the holder is dealt damage (Bleeding.json: effectTrigger DealtDamage), so three small hits = three bleed ticks. New payoff mode: bleed decks currently cash out stacks ([[other(status)Bleeding]] readers), not tick frequency.",
+        "intendedDeck": "STR bleed-tempo. Turn 1: Lacerate/Open Old Wounds to start the bleed, then Weeping Blade converts every attack into double value. Pairs with Spiteful Ground (this pack) for tick saturation.",
+        "powerNotes": "1-energy common baseline ~4 dmg (spec 4). Base 2+2=4; conditional third hit = 6 total plus 3 bleed ticks, paid for by the setup card (spec 4: conditional may exceed baseline by setup value). Precedent: Cleavers (Cleavers.json, C, 1 Neutral) = 2 + conditional (2 dmg + 3 Bleeding). Condition idiom StatusOnOpponent Is 'bleeding' verified in Wildclaw.json / Venomous_Bite.json (decoded conds [62:bleeding])."
+      }
+    },
+    {
+      "name": "Open Old Wounds",
+      "cardID": 700000101,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {},
+      "description": "Inflict <b>2 Bleeding</b>. \n<b>Frenzy:</b> Inflict <b>2 Poison</b>.",
+      "keywords": [],
+      "cardKeywords": ["frenzy"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:2",
+          "forecast": true,
+          "referenceStatus": "Bleeding",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:2",
+          "forecast": false,
+          "referenceStatus": "Poison",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Frenzy", "op": "Is", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/OpenOldWounds.png",
+      "meta": {
+        "archetype": "bleed (setup) + poison bridge via self-damage",
+        "nearestExisting": "Withering_Touch.json",
+        "whyDifferent": "Withering Touch is 0-cost poison gated on Synergy; this is 0-cost bleed whose poison rider is gated on Frenzy (took damage this turn - life costs count, GAME-MECHANICS Part I). New decision: the attrition deck wants to get hit / pay blood BEFORE playing it, linking this cluster to the CrimsonLedger blood cluster without requiring it.",
+        "intendedDeck": "Any DEX/STR attrition shell; best in blood-cost hybrids where Frenzy is free. Feeds Bloodlust checks (Gutter Toxin) and Weeping Blade in the same pack.",
+        "powerNotes": "0-cost common baseline ~2-3 dmg-equivalent (spec 4). 2 Bleeding ~ 2 damage over 2 ticks; conditional 2 Poison ~ 2 more. Precedent: Withering_Touch.json (0-cost C, 3 Poison + conditional 3). Frenzy condition verified in Cleavers.json (decoded conds [422:])."
+      }
+    },
+    {
+      "name": "Gutter Toxin",
+      "cardID": 700000102,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "DEXSTR": 1 },
+      "description": "Inflict <b>4 Poison</b>. \n<b>Bloodlust:</b> Gain <b>2 Potency</b>.",
+      "keywords": [],
+      "cardKeywords": ["bloodlust", "potency"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:4",
+          "forecast": true,
+          "referenceStatus": "Poison",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:2",
+          "forecast": false,
+          "referenceStatus": "Potency",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Bloodlust", "op": "Is", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/GutterToxin.png",
+      "meta": {
+        "archetype": "BRIDGE bleed->poison",
+        "nearestExisting": "Toxicity.json",
+        "whyDifferent": "Toxicity (DEX 1 C) is 5 Poison + 1 Potency unconditionally. This trades raw stacks for a Bloodlust gate (dealt bleeding damage this turn or target is Bleeding, ConditionChecker): the Potency doubles only if you sequenced bleed FIRST. No shipped poison card reads a bleed condition; the existing bridge (Festering_Wounds.json) goes the other direction (bleed-inflicts add Poison). New decision: play order across the two archetypes.",
+        "intendedDeck": "DEX/STR dual-attrition. Lacerate/Open Old Wounds turn 1, Gutter Toxin turn 2 with Bloodlust live; Potency then boosts BOTH poison and bleeding ticks (Potency applies to every affliction tick - SpellEffects.StatusDamage, GAME-MECHANICS Part II).",
+        "powerNotes": "Vs Toxicity (Toxicity.json): -1 Poison, conditional +1 Potency net. Not strictly better/worse (power-creep gate). Bloodlust condition verified in Vampirism.json / Grievous_Injury.json (decoded conds [432:]). bless+Potency idiom verified in Contaminate.json / Witching_Hour.json."
+      }
+    },
+    {
+      "name": "Septic Bloom",
+      "cardID": 700000103,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "DEX": 1 },
+      "description": "Inflict <b>4 Poison</b> \nand <b>1 Infected</b>.",
+      "keywords": [],
+      "cardKeywords": ["affliction"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:4",
+          "forecast": true,
+          "referenceStatus": "Poison",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:1",
+          "forecast": true,
+          "referenceStatus": "Infected",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/SepticBloom.png",
+      "meta": {
+        "archetype": "Infected angle (setup) + poison",
+        "nearestExisting": "Toxicity.json (shape); Buzzbite.json (only Infected-inflict idiom in pool, Monster-rarity)",
+        "whyDifferent": "No player-pool card inflicts Infected - all six Infected users are Monster cards (Buzzbite, Rend, Talonlash, Dark_Skittering, Hostess__Presence, Pestilent_Authority). The pairing is the point: Infected is wiped when the holder GAINS health (Infected.json clearAt GainHealth), but Poison eats incoming healing 1:1 before it lands (DoHealing) - so the Poison half literally shields the Infected half from small heals. A synergy that exists only because of verified status timing, surfaced as a card.",
+        "intendedDeck": "DEX affliction stacking. Core common of the Infected package (Quarantine, Ague Fever, Pyrrhic Remedy). Infected ticks its full stacks per card the foe discards (Infected.json effectTrigger Discard) - enemies discard their unplayed hand every turn (MonsterHandler turn loop).",
+        "powerNotes": "Vs Toxicity (DEX 1 C, 5 Poison + 1 Potency): -1 Poison, and 1 Infected ~ 1-3 dmg/turn until wiped, symmetric value. inflict+referenceStatus Infected idiom verified in Buzzbite.json."
+      }
+    },
+    {
+      "name": "Rupture",
+      "cardID": 700000104,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "STR": 1 },
+      "description": "Deal [damage:3] damage. \n<b>On Hit:</b> If the target has 5 or more <b>Bleeding</b>, inflict a <b>Deep Wound</b>.",
+      "keywords": [],
+      "cardKeywords": ["deep wound", "on hit"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:3",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "deepwound",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "AnyValue", "op": "IsMoreThan", "target": "[[lastDamage]]:0", "ignoreForDisplay": false },
+            { "value": "AnyValue", "op": "IsMoreThan", "target": "[[other(status)Bleeding]]:4", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Rupture.png",
+      "meta": {
+        "archetype": "bleed -> Deep Wound (payoff)",
+        "nearestExisting": "Cutting_Words.json",
+        "whyDifferent": "Every shipped Deep Wound setup keys off the ATTACK context: Flanking (Cutting_Words), crit (Headshot), even HP (Dividing_Strike), 3rd card (Vigorating_Strike), Flow (Follow_Through), basic count (Duel_Mastery). None keys off the bleed STACK the archetype already builds. This makes stacked Bleeding (which otherwise wastes stacks - it loses 1 per tick and big stacks outlive the fight) a Deep Wound battery: new payoff for an existing setup.",
+        "intendedDeck": "STR big-bleed. Lacerate/Boneskewer pile stacks, Rupture converts overstacked bleed into wound-execute pressure (5 Deep Wounds slay, SpellEffects.DeepWound).",
+        "powerNotes": "3 dmg at 1 STR common is under the 4-dmg baseline; the gap pays for the conditional Deep Wound (Cutting_Words: 1 dmg + Flanking-gated DW at same cost/rarity). Dual-condition deepwound idiom verified in Cutting_Words.json (decoded conds [251:[[lastDamage]]:0 ; 372:]); [[other(status)Bleeding]] token verified in Vampirism.json / Heartache.json."
+      }
+    },
+    {
+      "name": "Quarantine",
+      "cardID": 700000105,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "DEX": 1 },
+      "description": "Inflict <b>2 Infected</b>. \nThe target discards all <b>Heal</b> cards.",
+      "keywords": [],
+      "cardKeywords": ["affliction"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:2",
+          "forecast": true,
+          "referenceStatus": "Infected",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "forcediscard:heal",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Quarantine.png",
+      "meta": {
+        "archetype": "Infected angle (engine)",
+        "nearestExisting": "Silence.json (forcediscard idiom); Buzzbite.json (Infected)",
+        "whyDifferent": "Triple-purpose line no shipped card has: (1) the forced discards each trigger Infected immediately (Infected.json effectTrigger Discard - it ticks per card the holder discards), (2) discarding their Heal cards removes the only thing that wipes Infected (clearAt GainHealth), (3) it is hand-disruption in an archetype that has none. Silence discards heal/hex cards but carries no affliction and is not in the player pool (expansion None).",
+        "intendedDeck": "DEX Infected tempo. Best against sustain enemies; alongside Septic Bloom and Ague Fever it makes Infected stick long enough to matter.",
+        "powerNotes": "forcediscard:heal verified verbatim in Silence.json (its text: 'The target discards all Heal and Hex cards'); targets enemy Heal-hint (MonsterHint) cards. 2 Infected + situational discard at 1 energy U ~ Serrated_Arrow-tier utility. UNVERIFIED: whether each forcediscard'ed card fires the Discard trigger for Infected ticks (assumed; needs sim/in-game check)."
+      }
+    },
+    {
+      "name": "Ague Fever",
+      "cardID": 700000106,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "DEX": 1 },
+      "description": "Inflict <b>2 Sickened</b> \nand <b>1 Infected</b>.",
+      "keywords": [],
+      "cardKeywords": ["affliction"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:2",
+          "forecast": true,
+          "referenceStatus": "Sickened",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:1",
+          "forecast": true,
+          "referenceStatus": "Infected",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/AgueFever.png",
+      "meta": {
+        "archetype": "Infected angle (enabler) / affliction control",
+        "nearestExisting": "Pestilent_Authority.json (Monster: Infected+Poison+Slowed spread)",
+        "whyDifferent": "No card in the entire pool - player or monster - inflicts Sickened (grep confirms zero users; it ships as a status asset with a live RunStatusEffect case). The pairing is causal, not cosmetic: Sickened strips 1 enemy energy per PlayPhase (Sickened.json), the enemy plays fewer cards, so MORE cards rot in their hand and get discarded at end of turn - and every one of those discards is an Infected tick. Energy denial that literally feeds the DoT.",
+        "intendedDeck": "DEX Infected control vs high-energy elites. With Septic Bloom/Quarantine as the package's tick base.",
+        "powerNotes": "Enemy max energy is 5 (MonsterHandler.GetMaxEnergy), so 2 Sickened ~ -1 enemy card for 2 turns, plus 1 Infected. Comparable to 1-cost U control (Sleeping_Poison.json: 2 delayed Jinxed at DEX 1 U). UNVERIFIED: Sickened has never shipped on a card; behavior vs enemies needs an in-game check (RunStatusEffect case exists and is side-agnostic)."
+      }
+    },
+    {
+      "name": "Salt the Wound",
+      "cardID": 700000107,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Enchantment",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "DEXSTR": 1 },
+      "description": "This combat, whenever you inflict a <b>Deep Wound</b>, inflict <b>3 Poison</b> and <b>2 Bleeding</b>.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["deep wound", "affliction"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "Deepwound",
+            "codeLine": "inflict:3",
+            "forecast": false,
+            "referenceStatus": "Poison",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          },
+          {
+            "trigger": "Deepwound",
+            "codeLine": "inflict:2",
+            "forecast": false,
+            "referenceStatus": "Bleeding",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/SaltTheWound.png",
+      "meta": {
+        "archetype": "BRIDGE Deep Wound -> poison/bleed",
+        "nearestExisting": "Cruelty.json",
+        "whyDifferent": "Cruelty draws on the Deepwound trigger; Festering_Wounds chains bleed-inflict into Poison. This is the third corner neither covers: Deep Wound events (the bleed archetype's execute mechanic) become AFFLICTION fuel, pulling the STR wound deck toward the DEX poison deck. The Deepwound->afflictions combination has no shipped user.",
+        "intendedDeck": "DEXSTR wound-affliction hybrid: Cutting Words / Rupture / Follow Through generate Deep Wounds; each one now also loads 3 Poison + 2 Bleeding, which Gutter Toxin's Potency amplifies.",
+        "powerNotes": "Festering_Wounds (U, DEXSTR 1) pays 2 Poison per bleed-inflict, a much more frequent trigger; Deep Wounds land ~1-2/turn in a dedicated deck, so 5 stacks/proc is proportional. Deepwound enchantment trigger verified in Cruelty.json (decoded ENCH trig 66); enchant:self + combat enchantment shape verified in Carnage.json / Festering_Wounds.json (theType 0, combatEnchantment 1)."
+      }
+    },
+    {
+      "name": "Symbiotic Carapace",
+      "cardID": 700000108,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Enchantment",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "DEX": 2 },
+      "description": "This combat, whenever <b>Poison</b> damage is dealt, gain <b>1 Armor</b>.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["poison"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "InflictStatusDamage",
+            "codeLine": "bless:1",
+            "forecast": false,
+            "referenceStatus": "Armor",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": [
+              { "value": "DamageType", "op": "Is", "target": "poison", "ignoreForDisplay": false }
+            ]
+          }
+        ]
+      },
+      "art": "art/SymbioticCarapace.png",
+      "meta": {
+        "archetype": "poison (tick-frequency payoff)",
+        "nearestExisting": "Bolgar_Blightbane.json (Monster-only: heal 3 per enemy poison tick)",
+        "whyDifferent": "All player-pool poison payoffs read STACKS ([[other(status)Poison]]: Plague Strike, Venomancing, Aura of Venom, Cloudkill) or inflict-events (Avatar of Blight, Vulture Soul). None pays off the TICKS - poison fires once per card the holder plays (Poison.json effectTrigger PlayAction), so card-spammy enemies tick 3-5 times on their own turn. Each tick banks 1 Armor mid-enemy-turn, exactly when it protects, and Armor fading at StartPhase (Armor.json) makes the income self-balancing. Player-side version of a design only Bolgar (Monster) has.",
+        "intendedDeck": "Defensive DEX poison. Land 10+ Poison, then this converts the enemy's own tempo into your mitigation. Anti-synergy warning: Ague Fever's Sickened reduces enemy plays and thus this card's income - a real deck-building choice inside the pack.",
+        "powerNotes": "~3-5 Armor per enemy turn while poison holds ~ sustained defensive rare at 2 energy (cf. Spectral_Guardian.json, DEXSTR 2 R, reduce damage by foe affliction count). InflictStatusDamage trigger + DamageType Is poison combination verified verbatim in Bolgar_Blightbane.json (ENCH trig 78, conds [702:poison]). DELIBERATE simplification: Bolgar adds a side-gating condition (decoded [342:], EnemyTurn) whose relative-vs-absolute semantics are unverified; I dropped it, so the text is honestly symmetric ('whenever Poison damage is dealt') - if the player is poisoned, their own ticks also feed it. Flagged for sim check."
+      }
+    },
+    {
+      "name": "Pyrrhic Remedy",
+      "cardID": 700000109,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "DEXSTR": 2 },
+      "description": "Inflict <b>3 Infected</b>. \nThis combat, whenever your foe gains HEALTH, they gain <b>3 Poison</b>.",
+      "keywords": [],
+      "cardKeywords": ["affliction"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:3",
+          "forecast": true,
+          "referenceStatus": "Infected",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:other",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "Whenever you gain HEALTH, gain <b>3 Poison</b>.",
+        "type": "other",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "GainHealth",
+            "codeLine": "bless:3",
+            "forecast": false,
+            "referenceStatus": "Poison",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/PyrrhicRemedy.png",
+      "meta": {
+        "archetype": "Infected angle (capstone) / anti-heal",
+        "nearestExisting": "Bone_Pin.json (enchant:other + GainHealth-trigger heal-hate); Buzzbite.json (Infected)",
+        "whyDifferent": "Closes the Infected loop no shipped card addresses: Infected's escape hatch is healing (clearAt GainHealth), so this makes the escape itself toxic - the heal wipes Infected but banks 3 Poison, and Poison then eats their NEXT heal 1:1 (DoHealing), re-protecting any reapplied Infected. Bone Pin blocks healing flat for one turn; this converts healing into afflictions for the whole combat: a punish, not a lock, and a new payoff for the natural 'enemy heals' setup.",
+        "intendedDeck": "DEXSTR attrition vs sustain/boss enemies. Play early against healers; Septic Bloom / Quarantine keep Infected pressure so the foe is always choosing between rotting and drinking poison.",
+        "powerNotes": "3 Infected (~3-9 dmg/turn until wiped) + a combat-long trap at 2 energy R. enchant:other on the foe verified in Bone_Pin.json / Trail_of_Blood.json; ENCH GainHealth trigger verified in Bone_Pin.json (decoded trig 7); enchantment-on-holder afflicts via bless (Blood_Levy.json pattern). theType 'other' + combat mirrors Bone Pin's foe-enchant type (theType 2) made persistent (combatEnchantment 1, Carnage.json). Assumes poison-eaten heals do not fire GainHealth (DoHealing replaces the heal with stack removal) - flagged for sim check to rule out weird loops."
+      }
+    },
+    {
+      "name": "Spiteful Ground",
+      "cardID": 700000110,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Enchantment",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "STR": 2 },
+      "description": "This combat, deal 1 <b>Piercing</b> damage whenever your foe plays an Action.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["piercing"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "EnemyPlaysAction",
+            "codeLine": "directdamage:1:normal:self",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/SpitefulGround.png",
+      "meta": {
+        "archetype": "bleed (tick engine)",
+        "nearestExisting": "Caltrops.json",
+        "whyDifferent": "Caltrops is a one-round burst (3+X piercing + 1 Bleeding per foe action, then removes itself). This is the opposite trade: tiny damage, whole combat - and the point is not the 1 damage, it is that Bleeding ticks whenever the holder is DEALT damage (Bleeding.json effectTrigger DealtDamage): every enemy card play becomes a guaranteed bleed tick for the rest of the fight. A permanent tick-frequency engine is a new mode of the mechanic, not Caltrops with different numbers.",
+        "intendedDeck": "STR bleed-stack decks (Lacerate, Boneskewer, Rupture): keep foe Bleeding high and this drains them on THEIR turn; also pings toward Weeping Blade's condition. Cross-pack: any poison already ticks per enemy play, so both DoTs fire on the same event.",
+        "powerNotes": "Enemy plays ~3-5 actions/turn: ~4 piercing/turn passive at 2 energy R, plus tick value only in bleed decks (cf. Caltrops U, 1 Neutral, one round). codeLine copied verbatim-shape from Caltrops.json (ENCH trig 39 EnemyPlaysAction, 'directdamage:3+[[enchantmentStacks]]:normal:self') - including its ':self' target token, which Caltrops demonstrably uses to hit the FOE from a self-enchant during the enemy turn. UNVERIFIED: whether directdamage fires DealtDamage and thus actually triggers Bleeding (Caltrops pairing damage with Bleeding suggests yes); needs sim check - if not, the card is still playable but loses the tick-engine role."
+      }
+    },
+    {
+      "name": "Metastasis",
+      "cardID": 700000111,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Legendary",
+      "cost": { "DEXSTR": 3 },
+      "description": "Double your foe's Afflictions. \nDraw a card for each different Affliction on them ([[otherAfflictions]]).",
+      "keywords": [],
+      "cardKeywords": ["affliction"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [
+        { "value": "AnyValue", "op": "IsMoreThan", "target": "[[otherAfflictions]]:0", "ignoreForDisplay": false }
+      ],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "doubleafflictions:other",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "draw:[[otherAfflictions]]",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Metastasis.png",
+      "meta": {
+        "archetype": "BRIDGE capstone - all three afflictions",
+        "nearestExisting": "Profanity.json (increase foe afflictions by 1/3); Aura_of_Venom.json (doubles Poison only)",
+        "whyDifferent": "Aura of Venom doubles Poison alone every turn; Profanity adds flat +1/+3 to each. This is a one-shot double of EVERYTHING - Poison, Bleeding, Infected, Decay, Bane - plus draw scaling with breadth ([[otherAfflictions]] counts DISTINCT afflictions, cf. Drain_Soul.json vs otherTotalAfflictions). The reward is explicitly for going WIDE across both archetypes and the Infected angle, which is this pack's whole thesis; mono-poison decks get more from Aura of Venom, so it dodges strictly-better.",
+        "intendedDeck": "The dual-attrition pile's finisher: Septic Bloom + Lacerate + Ague Fever put 3-4 affliction types out, then Metastasis doubles ~25-35 stacks and refills your hand 3-4 cards.",
+        "powerNotes": "Legendary 3-cost anchors: Avatar_of_Blight.json (DEX 3 L), Toxic_Bloom.json (DEXSTR 3 L). Value scales with setup investment per spec 4 conditional rule; playCondition (AnyValue IsMoreThan [[otherAfflictions]]:0, idiom verified in Cling_to_Sanity.json play-condition shape) prevents dead draws. doubleafflictions is in effect-commands.txt; shipped usage is only 'doubleafflictions:self' (Falling_Apart.json). UNVERIFIED: the ':other' target argument - if unsupported, fallback is bare 'doubleafflictions' (default-other like most inflict-family commands) or Profanity-style 'increaseafflictions:[[otherAfflictions]]'; needs sim check before shipping. Draw is clamped by hand cap 10 (DeckHandler)."
+      }
+    }
+  ]
+}
