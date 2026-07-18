@@ -201,11 +201,92 @@ The Python stack (extract → validate → sim → artmutate → contact sheets)
   rebuildable artifacts; only recipes/manifests/original art travel.
 - Achievements/leaderboard stance: policy decision still open (question #3).
 
-## 6. Open questions
+## 6. The monorepo (pattern adopted from `ftk2-mods`)
+
+This repo becomes a **multi-mod monorepo** in the `D:\src\mods\ftk2-mods` style: shared
+docs + shared toolchain at the root, one directory per shippable package, each with its
+own SPEC/notes. The toolkit is just **one package among several**; our packs are sibling
+packages that consume it — the engine's first and permanent dogfood.
+
+### 6.1 Target layout
+
+```
+dawncaster-mods/
+  README.md                     # package table (what/status/priority), like ftk2's
+  MOD-TOOLKIT.md                # this direction doc
+  docs/
+    CONVENTIONS.md              # per-package rules + SPEC template (adapted from ftk2)
+    research/                   # decompile-verified knowledge, shared by all packages
+      GROUND-TRUTH.md
+      GAME-MECHANICS.md
+      asset-extraction-notes.md
+      reference/                # effect/dialogue/talent command vocabularies
+  tools/                        # shared Python toolchain (extract/validate/sim/art)
+    out/, bin/                  # machine artifacts — gitignored, rebuildable
+  decompiled/                   # gitignored, local-only (unchanged policy)
+
+  DC.DawnKit/                   # THE ENGINE PACKAGE
+    SPEC.md                     # engine spec (grows out of §2 here)
+    CARD-PACK-SPEC.md           # the data contracts ARE its extensibility surface,
+    WEAPON-SPEC.md              #   so they live with the engine package
+    ART-MUTATION-SPEC.md
+    src/                        # DawnKit + DawnKit.Packs (+ dev sandbox) — M1 split
+    examples/                   # the 20-line example C# mod, template data pack
+
+  DC.VenomousLegacy/            # CONTENT PACKAGES (one per pack)
+    pack.json                   #   consume DawnKit.Packs; no code
+    DESIGN-NOTES.md
+    BALANCE-REPORT.md
+    art-recipes.json
+    art/                        # gitignored (derivative outputs, built locally)
+  DC.EmberweaveGrove/
+  DC.ClockworkCadence/          # dir renamed — package dirs use no spaces;
+  DC.CrimsonLedger/             #   in-game display name stays "Clockwork Cadence"
+                                #   (comes from pack.json, not the folder)
+```
+
+Conventions adopted from ftk2 (see its `docs/CONVENTIONS.md`), adapted:
+
+- **Package = shippable unit.** Any top-level `DC.*/` dir with a `pack.json` is a content
+  package (tools discover by that convention); packages with `src/` ship DLLs.
+- **The engine hardcodes no content and no tuning numbers** — ftk2's non-negotiable rule,
+  already our thesis. DawnKit ships zero cards; even its example content lives in
+  `examples/`.
+- **Per-package SPEC.md** follows a shared template (in CONVENTIONS.md): purpose,
+  player-facing behavior, architecture, data formats, knobs, patch targets, example
+  dataset, testing plan, save considerations, milestones, open questions. (ftk2's
+  multiplayer section is dropped — Dawncaster is single-player.)
+- **"Target found: X" logging** for every Harmony patch target at boot (ftk2/EOR
+  practice) — makes game-update breakage diagnosable from logs alone. Adopt in DawnKit.
+- **Fail-safe rule**: every engine feature has a master `Enabled` knob; parse failures
+  log loudly and leave vanilla behavior untouched.
+- **Naming**: plugin GUIDs `dcmods.<package>` (e.g. `dcmods.dawnkit`); package dirs
+  `DC.<PascalCase>`; content IDs keep the block policy (per-pack numeric blocks).
+
+### 6.2 Migration plan (do it as pure moves, before the M1 extraction)
+
+Two separate commits, in order, so history stays reviewable:
+
+1. **Restructure commit — `git mv` only, zero content edits**: create `docs/research/`,
+   move GROUND-TRUTH/GAME-MECHANICS/asset notes/reference there; move the three data
+   specs into `DC.DawnKit/`; `packs/<Name>` → `DC.<Name>` (Clockwork Cadence loses the
+   space); `src/` → `DC.DawnKit/src/`. History preserved via rename detection.
+2. **Path-fixup commit**: tools' pack discovery (`packs/*` glob → `DC.*/pack.json`
+   convention), validator/sim/artmutate path constants, doc cross-links, `.gitignore`
+   paths, README rewrite as the package table — plus the game-side
+   `Packs.PacksPath` config repoint (and `DawnKit.Packs` default becomes the
+   `DC.*`-aware scan).
+
+Then the M1 engine extraction happens *inside* the already-clean layout. Future mods
+(a Dawncaster equivalent of WarBrain, event packs, etc.) land as new `DC.*` packages —
+and yes, they build on DawnKit, because that's the point.
+
+## 7. Open questions
 
 1. **Name** for the engine (DawnKit placeholder; run a namestorm — must not collide with
    in-game terms like Sunforge).
-2. **Repo split timing** — engine repo vs content repo (lean: at M2, engine graduates).
+2. ~~Repo split timing~~ — **resolved by §6**: monorepo, ftk2-style; the engine is one
+   package (`DC.DawnKit`), content packs are sibling packages. No split.
 3. **Achievements stance** — permissive / config-gated / disabled-with-mods.
 4. **When to contact Wanderlost** (lean: before M2's public release).
 5. **License**: engine MIT? docs CC-BY? guidance for pack authors' own content?
