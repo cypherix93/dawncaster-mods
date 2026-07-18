@@ -264,3 +264,36 @@ per-trigger values, non-scaling with cd.
   one-shot 2xlvl gold vs Voracious' repeatable heal-on-destroy passive is at-worst
   equal. Both codeLines shipped verbatim (remove, gold). **Nearest:** Voracious
   Weapon - same setup action, economy payoff instead of sustain.
+
+---
+
+## Starting cards (manifest v1.2)
+
+**Shipped curve (derived, cited in EmberweaveGrove notes in full):** 63-card corpus
+(6 Profession defaults + 57 KeystoneType.StartingCard keystone cards): cost 1 on 51/63
+(81%), rarity 22C/19U/18R/4L (defaults 5C/1U), Utility 40 / Melee 10 dominant, 1-3
+effect lines (median 2), 62/63 normal reward-pool cards (NOT excludeFromRewards),
+7/63 "Make a Basic Attack". The pick enters the starting deck ONCE (surges + weapon x6 +
+Block x2 + card x1) and is an ordinary card thereafter.
+
+### Starting card: Repossession — 700000395, Melee, C, 1 Neutral, Warrior/Knight
+- **Role in loadout:** closes the Falchion's bank→cash loop from combat 1. Bloodprice
+  Falchion drips 1 Soul per swing and Soulscribe pays a souls dividend on every blood
+  spend — but nothing in the starting kit *spends* souls before the 100-soul revive
+  abstraction. Repossession is the pocket-change outlet: 3 dmg, and with 3+ Souls it
+  spends 3 for 3 more. Three swings fund a boosted hit; the ledger becomes a decision
+  on turn 3, not at soul 100. Weapon (banks) + power (dividend) + card (cash-out).
+- **Budget vs curve:** cost 1 (81% mode), Common, 2 effect lines. Base 3 is under the
+  4-dmg 1-cost common par; conditional 6 total is priced by 3 banked Souls (≈3 HP of
+  battery at the pack's derived 1 Soul ≈ 0.5–1 HP rate) — net ≈ par with loadout
+  support, never free. Deliberately no Life cost (Brown neutral per GetColor): the
+  SPEND side of the ledger stays playable at low HP.
+- **Nearest existing:** Soultap (Hunter keystone starting card — the ONLY souls card
+  among the 63, and it only *gains*) / Mojo (souls-gated spend, bard shell, not a
+  starting card). **Different:** 0 of the 63 spend Souls; first damage-payout souls
+  spender at starting-card scale, sitting below in-pack Usurer's Bargain's 12-soul
+  liquidation.
+- **DSL:** gate + spend are Mojo-verbatim — `AnyValue IsMoreThan "[[souls]]:2"` and a
+  ';'-joined payoff+spend line (Mojo ships `perform:4;souls:-3` under the same gate);
+  `souls` is in effect-commands.txt (distinct from the pack's `changesouls` usage —
+  both shipped forms).

@@ -301,3 +301,50 @@ are small per-trigger values and do not scale with cooldown.
   mirrors Singing Weapon's on-Kill heal scale. **Nearest:** Serrated Weapon / Feral
   Weapon OLD. **UNVERIFIED:** Deepwound as a rider trigger has no shipped tier-0
   precedent (legal enum member; heal-on-trigger rider pattern shipped).
+
+---
+
+## Starting cards (manifest v1.2)
+
+**Shipped curve (derived, cited in EmberweaveGrove notes in full):** 63-card corpus
+(6 Profession defaults + 57 KeystoneType.StartingCard keystone cards): cost 1 on 51/63
+(81%), rarity 22C/19U/18R/4L (defaults 5C/1U), Utility 40 / Melee 10 dominant, 1-3
+effect lines (median 2), 62/63 normal reward-pool cards (NOT excludeFromRewards),
+7/63 "Make a Basic Attack". The pick enters the starting deck ONCE (surges + weapon x6 +
+Block x2 + card x1) and is an ordinary card thereafter.
+
+This pack takes **two** starting cards — it is the only pack with two weapons and two
+class-split archetype halves, and each half's weapon rider needs its own ignition.
+
+### Starting card: Twin Fangs — 700000195, Melee, C, 1 DEX, Rogue
+- **Role in loadout:** the pack thesis (tick *frequency*, not stack size) as the opening
+  play. With Blightpin Stiletto every basic is 1 dmg + 2 Poison; Twin Fangs' first fang
+  lands the poison that unlocks the second — and each extra basic is an extra card play,
+  i.e. an extra Poison tick. Weapon (poison-feed basic) + Festering Weapon (Infected
+  opener) + card (tick doubler) = the attrition Rogue's turn 1.
+- **Budget vs curve:** cost 1 (81% mode), Common, 2 effect lines, basic-attack skeleton.
+  With Blightpin: 2×(1 dmg + 2 Poison) ≈ Poison_Dart (C, 1: 1 dmg + 5 Poison) /
+  Toxicity. Whiff mode (no poison out): one basic, below par — the archetype commitment
+  price, same structure as Sneak Attack outside Ambush decks.
+- **Nearest existing:** Sneak_Attack (Rogue default) / Mindstrike (Seeker default:
+  2 unconditional basics + Focus + discard). **Different:** 0 of the 63 starting cards
+  reference Poison at all (scripted scan); the repeat is status-gated, making it a real
+  archetype signal instead of Mindstrike's flat value.
+- **DSL:** `basicattack` in effect-commands.txt; `StatusOnOpponent Is poison` matches
+  ConditionChecker.CheckEffect's lowercased status-name comparison (shipped targets
+  'bleeding' ×7, 'burning', 'frozen' ×9; ConditionChecker.cs:2233).
+
+### Starting card: First Blood — 700000194, Melee, C, 1 STR, Hunter/Warrior
+- **Role in loadout:** the bleed ignition. Flaying Hook's Bloodlust rider (+2 dmg,
+  +1 Bleeding) and Weeping Blade's third hit both need the foe *already* bleeding;
+  Hemorrhaging Weapon covers turn 1 only when picked. First Blood makes the swing
+  sequence self-sufficient: basic, On Hit 2 Bleeding, and every subsequent Hook swing is
+  live and re-feeds the bleed it pays off.
+- **Budget vs curve:** cost 1 (81% mode), Common, 2 effect lines, basic-attack skeleton.
+  Basic (~2 dmg) + on-hit 2 Bleeding — under Cleavers' 1-cost package (2 + Frenzy-gated
+  2 dmg + 3 Bleeding) and under Weeping Blade's conditional ceiling. Reliability card.
+- **Nearest existing:** Feral_Strikes (Hunter default: basic + Frenzy Anger rider).
+  **Different:** 0 of the 63 starting cards inflict Bleeding (scripted scan); Feral
+  Strikes reads self-state (Frenzy), this seeds the foe-side state the rest of the
+  loadout consumes. On Hit gate is the shipped decoded idiom (`AnyValue IsMoreThan
+  [[lastDamage]]:0` — Bolstered_Strike, our Rupture), so a blocked basic starts nothing.

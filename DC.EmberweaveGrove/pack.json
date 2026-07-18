@@ -839,5 +839,61 @@
         "powerNotes": "cd2 curve point: one small level-scaled next-combat status package (Fortified 3xlvl Armor + card; Baneful 2xlvl Poison + passive). Armor 2xlvl + 1 Burning is strictly inside that envelope - both codeLines are shipped-verbatim patterns (Fortified/Baneful startstatus forms)."
       }
     }
+  ],
+  "startingCards": [
+    {
+      "name": "Stoke the Coals",
+      "cardID": 700000095,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Fire",
+      "rarity": "Common",
+      "cost": {
+        "INT": 1
+      },
+      "description": "Deal [damage:3] fire damage.\nBury a card.",
+      "keywords": [],
+      "cardKeywords": [
+        "fire"
+      ],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:3:fire",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bury:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/StokeTheCoals.png",
+      "classes": [
+        "Arcanist",
+        "Knight"
+      ],
+      "meta": {
+        "archetype": "burn/bury starting card - turn-1 ignition for both pack clocks",
+        "nearestExisting": "Dedication.json (Knight keystone starting card - the only burier among the 63: bury-for-HOLY economy, Divine, Deplete: Ascend); Singe.json (0-cost: 2 Burning + bury; not a starting card)",
+        "whyDifferent": "Dedication converts burials into energy in a Divine economy shell; Singe pays in Burning with no attack. Stoke the Coals is the attack version that starts both pack clocks on turn 1: the burial immediately turns on Cinderbough Wand's bury-gated 1 Burning/turn rider AND spins the Firecast roulette (a buried Firecast card casts). No shipped starting card stocks the graveyard as a resource - Dedication's burial is fuel, not stock.",
+        "intendedDeck": "Loadout: Cinderbough Wand (2 fire, rider live once CardsBurned > 0) + Cindersong/Pyregraft + this. Deliberately the simplest card in the pack - the corpus rule is that defaults are simple (Sneak Attack = 4 dmg + Ambush reset).",
+        "powerNotes": "Starting-card curve: cost 1 (81% mode), Common, 2 effect lines. 3 dmg at 1 INT sits at the low end of the 1-cost common band (3-5); bury:1 (top of deck, SpellEffects.BuryCard) is archetype-positive here and neutral-to-negative outside bury shells - the delta prices the rider. Strictly under in-pack Ashfeast (3 dmg + Ancestral-gated 4 Burning)."
+      }
+    }
   ]
 }

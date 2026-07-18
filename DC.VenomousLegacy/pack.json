@@ -843,5 +843,128 @@
         "powerNotes": "cd3 curve point: shipped cd3 = 2-3xlvl status or free card. Identical primary payload to Feral OLD (cd3) plus a small conditional rider (heal 3, gated on landing Deep Wounds - max 5/combat via E_maxwounds) mirrors Singing Weapon's on-Kill heal rider scale. UNVERIFIED: Deepwound as a rider trigger has no shipped tier-0 precedent (legal GameTriggers member; heal-on-trigger rider pattern is shipped)."
       }
     }
+  ],
+  "startingCards": [
+    {
+      "name": "Twin Fangs",
+      "cardID": 700000195,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {
+        "DEX": 1
+      },
+      "description": "Make a Basic Attack.\nIf your foe is <b>Poisoned</b>, make another.",
+      "keywords": [],
+      "cardKeywords": [
+        "affliction"
+      ],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "basicattack:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "basicattack:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            {
+              "value": "StatusOnOpponent",
+              "op": "Is",
+              "target": "poison",
+              "ignoreForDisplay": false
+            }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/TwinFangs.png",
+      "classes": [
+        "Rogue"
+      ],
+      "meta": {
+        "archetype": "poison tick-frequency starting card (Rogue half of the loadout)",
+        "nearestExisting": "Sneak_Attack.json (Rogue default: 4 dmg + Ambush reset); Mindstrike.json (Seeker default: discard 1, 2 basic attacks, 1 Focus)",
+        "whyDifferent": "0 of the 63 shipped starting cards reference Poison at all (scripted scan of descriptions + codeLines). Mindstrike's double basic is unconditional; Twin Fangs' repeat is status-gated: with Blightpin Stiletto the first fang's 2 Poison enables the second (the loadout's designed self-synergy - each extra basic is also an extra play, i.e. an extra Poison tick), while with shipped Daggers it needs an external poison source. StatusOnOpponent Is 'poison' matches ConditionChecker.CheckEffect's lowercased-name comparison (shipped targets: 'bleeding', 'burning').",
+        "intendedDeck": "Loadout: Blightpin Stiletto (1 dmg + 2 Poison basic) + Festering Weapon + this. Turn 1: fang, poison lands, fang again - the pack thesis (tick frequency, not stack size) as the opening play.",
+        "powerNotes": "Starting-card curve: cost 1 (81% mode), Common, 2 effect lines, basic-attack skeleton (7/63). With Blightpin: 2 x (1 dmg + 2 Poison) = 2 dmg + 4 Poison for 1 DEX ~ Poison_Dart (C, 1-cost: 1 dmg + 5 Poison) / Toxicity (5 Poison + 1 Potency). Whiff mode (no poison): a single basic, below par - the gap is the archetype commitment price, same structure as Sneak Attack outside Ambush decks."
+      }
+    },
+    {
+      "name": "First Blood",
+      "cardID": 700000194,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {
+        "STR": 1
+      },
+      "description": "Make a Basic Attack.\n<b>On Hit:</b> Inflict <b>2 Bleeding</b>.",
+      "keywords": [],
+      "cardKeywords": [
+        "affliction"
+      ],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "basicattack:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:2",
+          "forecast": false,
+          "referenceStatus": "Bleeding",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            {
+              "value": "AnyValue",
+              "op": "IsMoreThan",
+              "target": "[[lastDamage]]:0",
+              "ignoreForDisplay": false
+            }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/FirstBlood.png",
+      "classes": [
+        "Hunter",
+        "Warrior"
+      ],
+      "meta": {
+        "archetype": "bleed ignition starting card (Hunter/Warrior half of the loadout)",
+        "nearestExisting": "Feral_Strikes.json (Hunter default: basic attack + Frenzy: Anger per hit); Cleavers.json (C, 1-cost: 2 dmg + Frenzy-gated 2 dmg + 3 Bleeding; not a starting card)",
+        "whyDifferent": "0 of the 63 shipped starting cards inflict Bleeding (scripted scan). Feral Strikes reads the player's own Frenzy; First Blood seeds the FOE-side state every other loadout piece pays off: Flaying Hook's Bloodlust rider (+2 dmg, +1 Bleeding) and Weeping Blade's third hit both need the foe already bleeding. The On Hit gate is the shipped decoded idiom (AnyValue IsMoreThan [[lastDamage]]:0 - Bolstered_Strike/Rupture) so a blocked basic starts nothing.",
+        "intendedDeck": "Loadout: Flaying Hook (Bloodlust rider basic) + Hemorrhaging Weapon (bleed opener) + this. Even without the power's opener, swing 1 arms every Bloodlust gate in the pack from turn 1.",
+        "powerNotes": "Starting-card curve: cost 1 (81% mode), Common, 2 effect lines, basic-attack skeleton (7/63). Basic (~2 dmg) + on-hit 2 Bleeding for 1 STR - under Cleavers' 1-cost package (2 + gated 2 dmg + 3 Bleeding), and under in-pack Weeping Blade's conditional 6-dmg ceiling. Reliability card, not a power card."
+      }
+    }
   ]
 }

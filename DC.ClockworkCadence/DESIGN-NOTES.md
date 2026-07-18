@@ -207,3 +207,32 @@ cd 6+ = dramatic one-offs; riders are small per-trigger values, non-scaling with
   cards, materially in line with shipped Contract/Equipment pulls. addnextcard:3 +
   referenceCard list shipped-verbatim. **Nearest:** Deathdealers Weapon /
   Artificer's Weapon.
+
+---
+
+## Starting cards (manifest v1.2)
+
+**Shipped curve (derived, cited in EmberweaveGrove notes in full):** 63-card corpus
+(6 Profession defaults + 57 KeystoneType.StartingCard keystone cards): cost 1 on 51/63
+(81%), rarity 22C/19U/18R/4L (defaults 5C/1U), Utility 40 / Melee 10 dominant, 1-3
+effect lines (median 2), 62/63 normal reward-pool cards (NOT excludeFromRewards),
+7/63 "Make a Basic Attack". The pick enters the starting deck ONCE (surges + weapon x6 +
+Block x2 + card x1) and is an ordinary card thereafter.
+
+### Starting card: Calibrated Strike — 700000295, Magic (Chain), C, 1 INT, Arcanist/Seeker
+- **Role in loadout:** the turn-1 sequencing seed. Tickwright's Baton wants to be played
+  third-or-later (Flow 2); Ratchetwind seeds the 0-cost links. Calibrated Strike is the
+  1-cost middle beat: basic attack + gated 2 Chain — played third it cashes its own gate
+  AND triggers the Baton's Flow-2 Cogspark mint. Weapon (combo finisher basic) + power
+  (token opener) + card (the mid-turn link) = the archetype's 0-1-0 weave as a loadout.
+- **Budget vs curve:** cost 1 (81% mode), Common, 2 effect lines, basic-attack skeleton
+  (7/63). Basic (~2 dmg) + CardsPlayedThisTurn-gated 2 Chain (~2 dmg-equiv on future
+  lightning hits, expires end of turn) ≈ Backswing par (basic + Flanking-gated 1 Haste).
+  `bless:2` + referenceStatus Chain is Mainspring Coil's verified encoding; the gate is
+  the pack's verified Vigorating-Strike encoding (IsMoreThan 1 = "2 or more others").
+- **Nearest existing:** Backswing (Warrior default — identical skeleton, positioning
+  gate, Haste payoff) / Arcane_Slice (Knight keystone — basic + Flow-gated random
+  conjure). **Different:** pays in the pack's own currency on a play-count gate, and
+  carries Chain so it never wipes the stack it builds. Of the 63 only Shocking Grasp
+  touches Chain — a *spender*; this is the builder, so Arcanist's pick list now holds a
+  coherent build-a-chain / spend-a-chain pair.

@@ -830,5 +830,68 @@
         "powerNotes": "cd5 curve point: card destruction is the shipped cd5 effect (Voracious). Gold 2xlvl one-shot vs Voracious' repeatable heal-on-destroy passive (which also triggers off other destroy effects) - at worst equal value. Both codeLines shipped verbatim (remove per Voracious, gold per Jewelled/Bloodtithe)."
       }
     }
+  ],
+  "startingCards": [
+    {
+      "name": "Repossession",
+      "cardID": 700000395,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {
+        "Neutral": 1
+      },
+      "description": "Deal [damage:3] damage.\nIf you have 3 or more <b>Souls</b>, spend 3 to deal [damage:3] more.",
+      "keywords": [],
+      "cardKeywords": [
+        "souls"
+      ],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:3",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:3;souls:-3",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            {
+              "value": "AnyValue",
+              "op": "IsMoreThan",
+              "target": "[[souls]]:2",
+              "ignoreForDisplay": false
+            }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Repossession.png",
+      "classes": [
+        "Warrior",
+        "Knight"
+      ],
+      "meta": {
+        "archetype": "souls-spending starting card - closes the Falchion's bank-to-cash loop",
+        "nearestExisting": "Soultap.json (Hunter keystone starting card - the ONLY souls card among the 63, gain-only); Mojo.json (souls-gated spend in the bard/perform shell; not a starting card)",
+        "whyDifferent": "0 of the 63 shipped starting cards SPEND Souls (Soultap only banks them). Repossession makes Bloodprice Falchion's 1-Soul-per-swing drip a decision from combat 1 instead of a 100-soul revive abstraction, and it is the pack's small souls outlet below Usurer's Bargain's 12-soul liquidation. Gate and spend are Mojo-verbatim: AnyValue IsMoreThan '[[souls]]:2' + a ';'-joined 'payoff;souls:-3' line (Mojo ships 'perform:4;souls:-3' under '[[souls]]:2').",
+        "intendedDeck": "Loadout: Bloodprice Falchion (1 Life, 0 energy, banks 1 Soul/swing) + Soulscribe Weapon (blood->souls dividend) + this. Three swings fund a boosted Repossession; Ledger of Vitae / Flesh Installment accelerate it.",
+        "powerNotes": "Starting-card curve: cost 1 (81% mode), Common, 2 effect lines. Base 3 dmg at 1 Neutral is under the 4-dmg 1-cost common par; conditional 6 total is priced by 3 banked Souls (~3 HP of battery at the pack's derived 1 Soul ~ 0.5-1 HP rate) - net ~ par with loadout support, never free. Renders Brown neutral (no Life cost - the SPEND side of the ledger, deliberately playable when at low HP)."
+      }
+    }
   ]
 }

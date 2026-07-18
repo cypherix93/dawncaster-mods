@@ -278,3 +278,47 @@ extracted tier-0 talents distribute cooldown 1×1, 2×20, 3×32, 4×8, 5×2, 6×
 - **Budget vs curve:** Armor 2×lvl + 1 Burning vs Fortified's cd-2 Armor 3×lvl + free
   card — strictly inside. All codeLines shipped-verbatim startstatus forms. **Nearest:**
   Fortified Weapon.
+
+---
+
+## Starting cards (manifest v1.2)
+
+**Shipped curve derived first (WEAPON-SPEC §4; this is the full derivation the other
+three packs cite).** Corpus = **63 cards**: the 6 Profession defaults
+(`Profession.startingCards` PPtrs resolved via `tools/out/data-index.json` —
+Knight=Bolstered Strike, Rogue=Sneak Attack, Arcanist=Shocking Grasp, Hunter=Feral
+Strikes, Seeker=Mindstrike, Warrior=Backswing; Scion has none) + **57 distinct
+`KeystoneType.StartingCard` keystone cards** (type 0 scan of
+`tools/out/data/Keystone/*.json`). Measured over the 63 extracted Card JSONs:
+
+- **Cost:** total 1 energy on 51/63 (**81%**); 7× cost-2, 3× cost-3, 2× cost-0. All six
+  defaults are exactly 1-cost in class colors.
+- **Rarity:** 22 C / 19 U / 18 R / 4 L (defaults: 5 C + 1 U — Rare is the keystone
+  build-around tier, so always-available mod starting cards stay C/U).
+- **Type:** Utility 40, Melee 10, Magic 5, Divine 5, Corruption 2, Ranged 1.
+  **Category:** Action 56, Enchantment 4, Equipment 3.
+- **Complexity:** 1–3 effect codeLines on 60/63 (median 2).
+- **Flags:** 62/63 are normal acquirable reward-pool cards (`canBeAcquired: 1`,
+  `excludeFromRewards: 0`; sole exception Battleclaw, a starts-in-play equipment) —
+  starting cards are NOT reward-excluded, unlike our weapon default.
+- **Shape:** 7/63 literally "Make a Basic Attack" (3 of the 6 defaults) — the corpus
+  leans on the weapon; each card is one cheap archetype seed with usually one gate.
+- **Engine facts:** the pick enters the starting deck **once** (`CreateStartingDeck`:
+  surges + weapon ×6 + Block ×2 + starting card ×1, CreateCharacterFunctions.cs:251-267)
+  and persists as a plain int record (`startingCardID`) — an ordinary deck card
+  thereafter, drawn turn 1–2 of nearly every early combat. Reliability, not raw power,
+  is the budget axis.
+
+### Starting card: Stoke the Coals — 700000095, Magic/Fire, C, 1 INT, Arcanist/Knight
+- **Role in loadout:** Cinderbough Wand's rider needs `CardsBurned > 0`; Cindersong's
+  rider needs burials. Stoke the Coals is the turn-1 ignition — 3 fire damage + bury a
+  card — so the weapon and power are live from the first turn, and the buried card spins
+  the Firecast roulette. Weapon (bury-gated burn basic) + power (burn opener) + card
+  (the bury) = one coherent turn-1 identity.
+- **Budget vs curve:** cost 1 (81% mode), Common, 2 effect lines. 3 dmg is the low end
+  of the 1-cost common band (3–5); the bury rider is archetype-positive here and
+  neutral-to-negative outside bury shells. Strictly under in-pack Ashfeast.
+- **Nearest existing:** Dedication (the ONLY burier among the 63 — bury→HOLY economy,
+  Divine) / Singe (0-cost 2 Burning + bury, not a starting card). **Different:** the
+  attack version that stocks the graveyard as a resource; Dedication's burial is fuel
+  for energy, not stock, and no shipped starting card feeds a graveyard archetype.

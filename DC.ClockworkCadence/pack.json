@@ -774,5 +774,71 @@
         "powerNotes": "cd3 curve point: choice-of-3 start-of-combat card is the modal shipped cd3 payoff (Artificer's/Deathdealers/Explosive/Familiar). All three refs are the pack's own 1-cost C/U cards - materially in line with shipped Contract/Equipment pulls. addnextcard:3 + referenceCard list is shipped-verbatim."
       }
     }
+  ],
+  "startingCards": [
+    {
+      "name": "Calibrated Strike",
+      "cardID": 700000295,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Lightning",
+      "rarity": "Common",
+      "cost": {
+        "INT": 1
+      },
+      "description": "Make a Basic Attack.\nIf you've played 2 or more cards this turn, gain <b>2 Chain</b>.",
+      "keywords": [
+        "Chain"
+      ],
+      "cardKeywords": [
+        "lightning",
+        "chain"
+      ],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "basicattack:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:2",
+          "forecast": false,
+          "referenceStatus": "Chain",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            {
+              "value": "CardsPlayedThisTurn",
+              "op": "IsMoreThan",
+              "target": "1",
+              "ignoreForDisplay": false
+            }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/CalibratedStrike.png",
+      "classes": [
+        "Arcanist",
+        "Seeker"
+      ],
+      "meta": {
+        "archetype": "chain/combo starting card - the loadout's turn-1 sequencing seed",
+        "nearestExisting": "Backswing.json (Warrior default: Make a Basic Attack + Flanking: 1 Haste); Arcane_Slice.json (Knight keystone starting card: basic attack + Flow-gated random conjure)",
+        "whyDifferent": "Backswing gates on a positioning keyword and pays Haste; Arcane Slice pays random value at Flow 3. Calibrated Strike pays in the pack's own currency (Chain) on the verified CardsPlayedThisTurn gate (counts exclude the resolving card - 'played 2 or more' = IsMoreThan 1, Vigorating Strike encoding), and carries Chain so it never wipes the stack it builds. Of the 63 shipped starting cards only Shocking Grasp touches Chain - a SPENDER; this is the builder that feeds it, so an Arcanist can open Shocking Grasp + Calibrated Strike as a coherent pair.",
+        "intendedDeck": "Loadout: Tickwright's Baton (Chain basic, Flow 2 Cogspark mint) + Ratchetwind/Flywheel opener + this. Played third in a turn it both cashes its own gate and triggers the Baton's Flow 2.",
+        "powerNotes": "Starting-card curve: cost 1 (the 81% mode of the 63-card corpus), Common (defaults are 5C/1U), 2 effect lines (median 2), basic-attack skeleton (7/63). Basic attack (~2 dmg via any starting weapon) + gated 2 Chain (~2 dmg-equiv on future lightning hits, expiring at end of turn) ~ Backswing par. bless:2 + referenceStatus Chain is Mainspring Coil's verified encoding."
+      }
+    }
   ]
 }
