@@ -264,6 +264,14 @@ is the game's own, and removal degrades safely:
   as a pure public-API consumer; sandbox shrinks to the hello-world card via the API.
   Test: all four `DC.*` packs load through the public API with zero private hooks and
   log-diff-clean output vs the 0.4.0 monolith.
+  **Status: DONE (2026-07-18, DawnKit 0.5.0).** Live-verified: 16/16 targets found
+  (+4 members), 4 packs / 47 cards / 5 weapons / 11 powers / 56 refs / sets
+  1000–1003 [13/14/13/12] / class counts identical to the 0.4.0 baseline, 0 errors
+  (`src/README.md`). `DawnKit.Packs.csproj` references no Assembly-CSharp and no
+  Harmony (compiler-enforced public-API-only guard). Config migrated to per-GUID
+  cfgs with a legacy-cfg fallback + hint. Pulled forward from M1b: "Target found"
+  logging, `[Engine] Enabled`/`VerboseLogging`, `RegisterResult` objects; M1b seams
+  stubbed (`Core.Ownership.RegistrationLedger`, `Core.Status`).
 - **M1b — the NEW parts**: ownership registry + boot conflict report (§3.5), AutoId
   (§4.3), player-facing status row + `DiagnosticsDump` (§2, §5), `Enabled`/
   `VerboseLogging` knobs, "Target found" logging, Register() result objects.
@@ -272,15 +280,16 @@ is the game's own, and removal degrades safely:
 
 ## 11. Open questions
 
-1. **Builders vs attributes** (MOD-TOOLKIT #6): fluent builders (specced) vs
-   `[DawnCard]`-attribute declarations vs both — decide in M1c against the real
-   example mod.
-2. **Status surface placement**: v1 proposal is the run-settings set screen (known
-   reachable). Is a true main-menu badge worth a target-research pass now, or M2?
-3. **AutoId block size**: 100 IDs per owner. Enough? If not: explicit multi-block
-   claim API (`.AutoId(blocks: 2)`) vs just requiring explicit blocks for big mods.
-4. **Clean-enum migration**: should the C# API *also* accept the game's typo'd
-   spellings (warn-and-map) for people porting from raw manifests, or hard-refuse?
+1. ~~**Builders vs attributes**~~ — **decided (2026-07-18): fluent builders** are the
+   C# API (implemented in M1a); attributes may still be evaluated as an *addition*
+   in M1c, but builders are the contract.
+2. ~~**Status surface placement**~~ — **decided: run-settings set screen for v1**
+   (inside existing patch #5); main-menu badge deferred to M2 research.
+3. ~~**AutoId block size**~~ — **decided: 100 IDs per author/modName block** (§4.3
+   as specced); big mods use explicit blocks.
+4. ~~**Clean-enum migration**~~ — **decided: the C# API stays clean-spelled only**;
+   the data-pack path warn-and-accepts the game's typo'd spellings (string setters
+   parse exact-then-case-insensitive with a warning — M1a behavior).
 5. **Sim-gate provenance** (MOD-TOOLKIT #7): should `DawnKit.Packs` surface a status
    warning for packs without a sim/balance stamp?
 6. **Semver/capability handshake** (MOD-TOOLKIT §2.2): schema/API version refusal in
