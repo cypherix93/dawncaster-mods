@@ -65,9 +65,13 @@ tools/contact_sheet.py — HTML review sheet: art rendered at game display size 
                          name/cost/rarity, like ftk2's *-contact-sheet.html
 ```
 
-Status: **directory contract defined; the three scripts are not written yet** (next spike).
-`artforge` transforms should be deterministic (same input → same bytes) per the ftk2
-iconforge convention.
+Status: **art sourcing is recipe-driven sprite mutation — see `ART-MUTATION-SPEC.md`.**
+`tools/artmutate.py` (build/preview from `packs/*/art-recipes.json`),
+`tools/validate_art.py` (512×512 RGBA gate + `--distinctness` perceptual-hash check)
+and `tools/contact_sheet.py` (source→result pair sheets) exist and are deterministic
+(same inputs → same bytes) per the ftk2 iconforge convention. `artforge.py`
+(normalizing external/original art) remains unwritten — only needed if this mod is
+ever distributed, when mutated art must be replaced by original art.
 
 ### Style reference workflow
 

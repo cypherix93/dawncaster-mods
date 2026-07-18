@@ -5,6 +5,13 @@ tools/out/
 # Downloaded third-party binaries
 tools/bin/
 
+# Mutated card art + review artifacts — derivative works of the game's art,
+# rebuilt locally from recipes (ART-MUTATION-SPEC.md §1); never commit
+packs/*/art/
+packs/*/.build-state.json
+packs/*/contact-sheet.html
+packs/contact-sheets.html
+
 # Python
 __pycache__/
 .pytest_cache/

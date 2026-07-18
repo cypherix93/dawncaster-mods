@@ -41,6 +41,11 @@ Goal: custom content — cards first, then opportunity events and talents/passiv
   `CrimsonLedger` (blood/souls/artifice). Each: `pack.json` + `DESIGN-NOTES.md` +
   `BALANCE-REPORT.md`. `packs/ID-REGISTRY.md` allocates ID blocks.
 - `tools/validate_pack.py` — static gate (schema/enums/vocabulary/collisions/art).
+- **Art build** (`ART-MUTATION-SPEC.md` — recipe-driven mutation of extracted sprites;
+  outputs are gitignored derivative works, local use only):
+  - `python tools/artmutate.py build --all` — recipes → `packs/<Pack>/art/*.png` (512×512 RGBA)
+  - `python tools/validate_art.py --all --distinctness` — shipping + perceptual-hash gate
+  - `python tools/contact_sheet.py --all` — source→result review sheets (gitignored)
 - `tools/sim/` — balance harness: DSL-subset combat sim with verified status timings,
   envelopes calibrated on the shipped pool (self-check 17/20 shipped commons ON-CURVE).
   68 pytest tests in `tools/tests/`.
@@ -50,5 +55,6 @@ Goal: custom content — cards first, then opportunity events and talents/passiv
 - ✅ Grounding: architecture + mechanics docs, full data/sprite extraction
 - ✅ BepInEx bootstrap + hello-card verified live in-game (`SandboxStrike`, `damage:6`)
 - ✅ Wave-1 pack designs + balance reports (3 cards flagged, see BALANCE-REPORTs)
-- Next: fix flagged cards; JSON pack loader in the plugin; art generation
-  (artforge/contact-sheet scripts); in-game QA pass (gate 4); hello-event (Ink) spike
+- ✅ Art tooling: artmutate/validate_art/contact_sheet (recipe → mutated sprite art)
+- Next: fix flagged cards; author `packs/*/art-recipes.json` (47 cards); in-game QA
+  pass (gate 4); hello-event (Ink) spike
