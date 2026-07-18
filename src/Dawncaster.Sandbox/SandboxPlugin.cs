@@ -14,7 +14,7 @@ namespace Dawncaster.Sandbox
     {
         public const string PluginGuid = "com.dawncastermods.sandbox";
         public const string PluginName = "Dawncaster Sandbox";
-        public const string PluginVersion = "0.2.0";
+        public const string PluginVersion = "0.3.0";
 
         private const string CardName = "SandboxStrike";
         private const int CardId = 900001;
@@ -23,6 +23,7 @@ namespace Dawncaster.Sandbox
 
         private ConfigEntry<string> packsPath;
         private ConfigEntry<string> expansionOverride;
+        private ConfigEntry<bool> autoDiscoverModCards;
         private ConfigEntry<bool> injectSandboxCard;
 
         private void Awake()
@@ -33,19 +34,24 @@ namespace Dawncaster.Sandbox
                 Path.Combine(Paths.PluginPath, "DawncasterPacks"),
                 "Directory scanned for <Pack>/pack.json card-pack manifests (CARD-PACK-SPEC.md schema).");
             expansionOverride = Config.Bind("Packs", "ExpansionOverride",
-                "Core",
-                "When non-empty, every loaded card's manifest expansion is overridden with this " +
-                "AssetManager.CardExpansions member. Default 'Core' keeps mod cards in the run pool " +
-                "even when all non-core sets are disabled in-game (CreateRunLists filters by " +
-                "excludedsets, which would drop the manifests' 'Extended'). Empty = use manifest values.");
+                "",
+                "Emergency override: when non-empty, every loaded card's expansion is forced to this " +
+                "AssetManager.CardExpansions member and per-pack synthetic card sets are disabled " +
+                "(no set rows in run settings). Default empty = each pack becomes its own card set, " +
+                "toggleable in the run-settings 'card sets' screen like the official sets.");
+            autoDiscoverModCards = Config.Bind("Packs", "AutoDiscoverModCards",
+                true,
+                "Mark all loaded mod cards as discovered in the Codex (in-memory injection into the " +
+                "codex card list) so they render face-up instead of as undiscovered silhouettes.");
             injectSandboxCard = Config.Bind("Sandbox", "InjectSandboxCard",
                 false,
                 "Inject the SandboxStrike hello-world test card (id 900001).");
 
-            PackLoader.Configure(packsPath.Value, expansionOverride.Value);
+            PackLoader.Configure(packsPath.Value, expansionOverride.Value, autoDiscoverModCards.Value);
 
             var harmony = new Harmony(PluginGuid);
             harmony.PatchAll(typeof(AssetLoadHooks));
+            harmony.PatchAll(typeof(SetScreenPatches));
             Logger.LogInfo($"[Sandbox] {PluginName} {PluginVersion} loaded, hooks installed.");
         }
 

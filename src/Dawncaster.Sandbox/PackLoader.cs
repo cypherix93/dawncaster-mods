@@ -57,12 +57,36 @@ namespace Dawncaster.Sandbox
 
         private static string packsPath;
         private static AssetManager.CardExpansions? expansionOverride;
+        private static bool autoDiscoverModCards;
         private static HashSet<string> knownCommands; // null => runtime command validation unavailable
         private static readonly List<InjectedCard> tracked = new List<InjectedCard>();
 
-        internal static void Configure(string configuredPacksPath, string configuredExpansionOverride)
+        /// <summary>
+        /// One entry per loaded pack whose cards carry a synthetic CardExpansions
+        /// value (see PackSetInfo docs for the formula). Consumed by
+        /// SetScreenPatches to build set rows / codex filters. Rebuilt on every
+        /// injection pass so re-injection after ForceReloadAssets stays consistent.
+        /// </summary>
+        internal static readonly List<PackSetInfo> PackSets = new List<PackSetInfo>();
+
+        internal static bool IsModExpansion(AssetManager.CardExpansions e) => (int)e >= 1000;
+
+        internal static PackSetInfo FindSet(AssetManager.CardExpansions e)
+        {
+            foreach (PackSetInfo s in PackSets)
+            {
+                if (s.Expansion == e)
+                {
+                    return s;
+                }
+            }
+            return null;
+        }
+
+        internal static void Configure(string configuredPacksPath, string configuredExpansionOverride, bool configuredAutoDiscover)
         {
             packsPath = configuredPacksPath;
+            autoDiscoverModCards = configuredAutoDiscover;
             expansionOverride = null;
             if (!string.IsNullOrEmpty(configuredExpansionOverride))
             {
@@ -77,7 +101,7 @@ namespace Dawncaster.Sandbox
                 }
             }
             knownCommands = LoadKnownCommands();
-            Log.LogInfo($"[PackLoader] Configured. PacksPath={packsPath}, ExpansionOverride={(expansionOverride.HasValue ? expansionOverride.Value.ToString() : "(none)")}, command vocabulary: {(knownCommands != null ? knownCommands.Count.ToString() : "unavailable")}.");
+            Log.LogInfo($"[PackLoader] Configured. PacksPath={packsPath}, ExpansionOverride={(expansionOverride.HasValue ? expansionOverride.Value.ToString() : "(none — per-pack synthetic sets)")}, AutoDiscoverModCards={autoDiscoverModCards}, command vocabulary: {(knownCommands != null ? knownCommands.Count.ToString() : "unavailable")}.");
         }
 
         private static HashSet<string> LoadKnownCommands()
@@ -172,6 +196,7 @@ namespace Dawncaster.Sandbox
                 }
 
                 string packName = string.IsNullOrEmpty(pm.pack) ? Path.GetFileName(packDir) : pm.pack;
+                AssetManager.CardExpansions? syntheticSet = ComputeSyntheticSet(pm, packName);
                 int injected = 0, skipped = 0, alreadyPresent = 0;
 
                 foreach (CardManifest cm in pm.cards)
@@ -208,7 +233,7 @@ namespace Dawncaster.Sandbox
                             continue;
                         }
 
-                        InjectedCard ic = BuildCard(packName, packDir, cm);
+                        InjectedCard ic = BuildCard(packName, packDir, cm, syntheticSet);
                         RegisterCard(ic.Card);
                         tracked.Add(ic);
                         injected++;
@@ -238,11 +263,106 @@ namespace Dawncaster.Sandbox
                 Log.LogInfo($"[PackLoader] {packName}: {injected} cards injected, {skipped} skipped{presentNote} (hook: {source})");
             }
 
+            RebuildPackSets();
+            MarkModCardsDiscovered(source);
+
             // Opportunistic ref resolution: shipped cards and same-batch mod cards
             // are all registered by now, and if statuses happen to be loaded too
             // (re-inject passes), everything can resolve immediately. Never a
             // final pass here — statuses legitimately aren't loaded yet on boot.
             ResolveReferences(source + "/phase1", finalPass: false);
+        }
+
+        /// <summary>
+        /// Synthetic per-pack card set: 1000 + (idBlock.start − 700,000,000) / 100
+        /// (CARD-PACK-SPEC.md §3 amendment). Returns null (with a warning) when the
+        /// pack has no usable idBlock, in which case the manifest expansion is used
+        /// and the pack gets no set row.
+        /// </summary>
+        private static AssetManager.CardExpansions? ComputeSyntheticSet(PackManifest pm, string packName)
+        {
+            if (expansionOverride.HasValue)
+            {
+                return null; // explicit override wins; no synthetic sets at all
+            }
+            if (pm.idBlock == null || pm.idBlock.Count < 1)
+            {
+                Log.LogWarning($"[PackLoader] {packName}: manifest has no idBlock — no synthetic card set, manifest expansion used as-is.");
+                return null;
+            }
+            long start = pm.idBlock[0];
+            if (start < 700000000L || start > 799999999L || start % 100 != 0)
+            {
+                Log.LogWarning($"[PackLoader] {packName}: idBlock start {start} is outside the mod range 700,000,000–799,999,999 or not block-aligned — no synthetic card set.");
+                return null;
+            }
+            var value = (AssetManager.CardExpansions)(1000 + (int)((start - 700000000L) / 100L));
+            return value;
+        }
+
+        /// <summary>
+        /// Rebuild the PackSets registry from the tracked cards (grouped by pack,
+        /// synthetic expansions only). Idempotent; runs after every injection pass.
+        /// </summary>
+        private static void RebuildPackSets()
+        {
+            PackSets.Clear();
+            foreach (InjectedCard t in tracked)
+            {
+                if (t.Card == null || !IsModExpansion(t.Card.cardexpansion))
+                {
+                    continue;
+                }
+                PackSetInfo set = FindSet(t.Card.cardexpansion);
+                if (set == null)
+                {
+                    set = new PackSetInfo { DisplayName = t.PackName, Expansion = t.Card.cardexpansion };
+                    PackSets.Add(set);
+                }
+                set.Cards.Add(t.Card);
+            }
+            PackSets.Sort((a, b) => ((int)a.Expansion).CompareTo((int)b.Expansion));
+            if (PackSets.Count > 0)
+            {
+                Log.LogInfo("[PackLoader] Synthetic card sets: " +
+                    string.Join(", ", PackSets.Select(s => $"{s.DisplayName}=(CardExpansions){(int)s.Expansion} [{s.Cards.Count} cards]")));
+            }
+        }
+
+        /// <summary>
+        /// Codex auto-discovery: mod cards render as discovered when their IDs are
+        /// in CodexHandler.codex.cardList. Adds them in memory only — we never call
+        /// SaveCodex ourselves (the game persists the list on its own saves; stale
+        /// mod IDs in Codex.dtt are harmless to the base game, whose checks are
+        /// pure Contains() and whose cleanup skips unknown IDs).
+        /// </summary>
+        internal static void MarkModCardsDiscovered(string source)
+        {
+            try
+            {
+                if (!autoDiscoverModCards || !CodexHandler.codexLoaded ||
+                    CodexHandler.codex == null || CodexHandler.codex.cardList == null)
+                {
+                    return;
+                }
+                int added = 0;
+                foreach (InjectedCard t in tracked)
+                {
+                    if (t.Card != null && !CodexHandler.codex.cardList.Contains(t.Card.cardID))
+                    {
+                        CodexHandler.codex.cardList.Add(t.Card.cardID);
+                        added++;
+                    }
+                }
+                if (added > 0)
+                {
+                    Log.LogInfo($"[PackLoader] Codex: marked {added} mod cards as discovered (in-memory; hook: {source})");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError($"[PackLoader] Codex auto-discovery failed (hook: {source}): {ex}");
+            }
         }
 
         // ------------------------------------------------------------------
@@ -329,7 +449,8 @@ namespace Dawncaster.Sandbox
         // Manifest → Card construction
         // ------------------------------------------------------------------
 
-        private static InjectedCard BuildCard(string packName, string packDir, CardManifest m)
+        private static InjectedCard BuildCard(string packName, string packDir, CardManifest m,
+            AssetManager.CardExpansions? syntheticSet)
         {
             if (string.IsNullOrEmpty(m.name))
             {
@@ -347,7 +468,10 @@ namespace Dawncaster.Sandbox
             card.hideFlags = HideFlags.HideAndDontSave; // survive scene loads, hide from Unity teardown
             card.cardID = m.cardID;
 
-            card.cardexpansion = expansionOverride ?? ParseEnum<AssetManager.CardExpansions>(m.expansion, "expansion", m.name);
+            // Precedence: explicit config override > per-pack synthetic set > manifest value.
+            card.cardexpansion = expansionOverride
+                ?? syntheticSet
+                ?? ParseEnum<AssetManager.CardExpansions>(m.expansion, "expansion", m.name);
             card.cardType = ParseEnum<Card.CardType>(m.type, "type", m.name);
             card.cardCategory = ParseEnum<Card.CardCategory>(m.category, "category", m.name);
             card.cardSuffix = ParseEnum<Card.Suffix>(m.suffix, "suffix", m.name);

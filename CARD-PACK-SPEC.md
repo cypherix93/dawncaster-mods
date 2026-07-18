@@ -97,6 +97,22 @@ at load via `AssetManager.GetStatus` / `GetCard` (both verified public).
   - (SandboxStrike id 900001 predates this policy; migrate when the pack loader lands.)
 - **Names** must not collide with any existing card name (case-insensitive) — check
   `tools/out/data/Card/` filenames. Loader refuses colliding names/IDs.
+- **Synthetic card sets** (amendment, loader ≥ 0.3.0): each pack is surfaced in-game as
+  its own card set. The loader assigns every card in the pack a synthetic
+  `AssetManager.CardExpansions` value derived deterministically from the pack's ID block:
+
+  ```
+  expansion = 1000 + (idBlock.start − 700,000,000) / 100
+  ```
+
+  e.g. EmberweaveGrove (block 700000000) → `(CardExpansions)1000`, VenomousLegacy →
+  `1001`, Clockwork Cadence → `1002`, CrimsonLedger → `1003`. The value is stable across
+  sessions, saves and machines because block allocations in `packs/ID-REGISTRY.md` are
+  permanent. Values 1000+ can never collide with official sets (enum tops out at
+  `Synthesis = 8`; the game stores the enum as int everywhere it persists). The
+  manifest's `expansion` field remains required as documentation/fallback: it is used
+  only when the pack has no valid `idBlock` (or when the emergency config
+  `Packs.ExpansionOverride` is set, which disables synthetic sets entirely).
 
 ## 4. Power budgets (derived from the live pool)
 

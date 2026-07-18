@@ -1,12 +1,19 @@
 # Dawncaster.Sandbox — BepInEx content-injection plugin
 
-BepInEx plugin for Dawncaster (Steam, Unity 2022.3.62f2, Mono). Two features:
+BepInEx plugin for Dawncaster (Steam, Unity 2022.3.62f2, Mono). Features:
 
 1. **Card-pack loader** (`PackLoader.cs` + `PackManifest.cs`) — loads every
    `<PacksPath>/<Pack>/pack.json` manifest (schema: `CARD-PACK-SPEC.md` §2) into
    `AssetManager.allCards`/`playercards` at asset-load time. This is how the four
    repo packs (47 cards) get into the game.
-2. **SandboxStrike hello-card** — the original proof-of-concept injection, now behind
+2. **Per-pack card sets** (`SetScreenPatches.cs`, v0.3.0) — every pack shows up as its
+   own toggleable row in the run-settings "card sets" screen (and the Sunforge set
+   screen), wired to the same `excludedsets` logic as the official Core/Extended/…
+   rows. Set value formula: `1000 + (idBlock.start − 700,000,000)/100`
+   (CARD-PACK-SPEC.md §3).
+3. **Codex auto-discovery** — mod cards render face-up in the Codex instead of as
+   undiscovered silhouettes (config `AutoDiscoverModCards`, default on).
+4. **SandboxStrike hello-card** — the original proof-of-concept injection, now behind
    the `InjectSandboxCard` config flag (default **off**).
 
 No game files are modified; everything is runtime injection via Harmony.
@@ -46,7 +53,8 @@ Launch the game normally (Steam must be running).
 | Section.Key | Default | Meaning |
 |---|---|---|
 | `Packs.PacksPath` | `<plugin dir>\DawncasterPacks` | Directory scanned for `<Pack>/pack.json` manifests. **Dev setup**: point it at the repo — `D:\temp\claude\dawncaster-mods\packs` — so the checked-in manifests are the live source. **Non-dev deployment**: copy each `packs\<Pack>\` folder (with its `pack.json` + optional `art\`) into `BepInEx\plugins\DawncasterPacks\`. |
-| `Packs.ExpansionOverride` | `Core` | When non-empty, every loaded card's manifest `expansion` is overridden with this `AssetManager.CardExpansions` member at load. The manifests say `Extended`; if you disable all non-core sets in-game, `CreateRunLists()` would filter `Extended` cards out via `excludedsets`. With the default `Core` override the mod cards stay in the run pool alongside the base set. Set to empty to respect the manifest values (then keep the Extended set enabled in-game). |
+| `Packs.ExpansionOverride` | *(empty)* | **Emergency override.** When non-empty, every loaded card's expansion is forced to this `AssetManager.CardExpansions` member and per-pack synthetic sets are disabled (no set rows). Default empty = each pack becomes its own card set (see below). *(v0.2.0 defaulted this to `Core`; if your cfg predates 0.3.0, blank the line or delete the cfg.)* |
+| `Packs.AutoDiscoverModCards` | `true` | Add all loaded mod card IDs to the in-memory Codex list so they render as discovered. In-memory only — the plugin never writes `Codex.dtt` itself (the game persists the list on its own saves; stale mod IDs are harmless, see save-compatibility below). |
 | `Sandbox.InjectSandboxCard` | `false` | Inject the SandboxStrike test card (id 900001). |
 
 ## How the pack loader works
@@ -85,7 +93,98 @@ Launch the game normally (Steam must be running).
 - **audioClip** stays `null` — verified safe: every usage site null-checks it
   (`CodexUI.cs:1229`, `CombatUIHandler.cs:1224`, `SpellEffects.cs:260`, `SpellManager.cs:630`).
 
+## How the set / Codex integration works (v0.3.0, `SetScreenPatches.cs`)
+
+**Synthetic sets.** Each pack's cards get `cardexpansion = (CardExpansions)(1000 +
+(idBlock.start − 700,000,000)/100)` — EmberweaveGrove→1000, VenomousLegacy→1001,
+Clockwork Cadence→1002, CrimsonLedger→1003. Undefined enum members are legal in C#;
+every pipeline touchpoint (`CreateRunLists` excludedsets filter, save serialization via
+`JsonUtility`, PlayerPrefs `lastExcludedSets` round-trip through `Enum.TryParse`, which
+accepts numeric strings) treats the enum as an int, verified against the decompiled
+source. Packs without a valid `idBlock` fall back to their manifest `expansion` and get
+no set row (warning logged).
+
+**Run-settings rows** — the native screen (`NameSelectorDisplay.SetSettings`,
+decompiled:498) builds one row per enum value that has a `Resources/Sets/<name>`
+`SetConfig`; synthetic values have neither, so a postfix appends one row per pack using
+the same prefab (`setSelectionSetting`), a runtime-built `SetConfig`
+(name/colors/preview cards/promo banner generated from the pack), and the game's own
+private `ToggleSet(SetConfig, SunforgeSettingButton)` for the toggle — so
+`excludedsets`, sounds, accessibility lines and `SetExcludedSetsModified()` all behave
+exactly like native rows. The eye icon is fully supported: it opens the native
+`SetPreviewPanel` showing the pack's actual cards. Cosmetic patches fix every spot that
+would render the raw enum int ("1002"): row label (`SunforgeSettingButton.SetDisplay`),
+preview title (`SetPreviewPanel.SetDisplay`), set description
+(`SetConfig.GetDescription`), and the "(x/y)" sets counter
+(`NameSelectorDisplay.ExpansionInfo`).
+
+**Balance guards.** `GetBonusTalent`/`GetBonusTransmute` grant run bonuses keyed on
+`excludedsets.Count`; prefixes make them count only *native* exclusions so disabling a
+mod pack never eats a bonus. The Sunforge settings screen gets the same rows
+(`SunforgeSettings.SetSettings` postfix), and its reroll baseline (+1 per disableable
+set) is raised by one per mod pack so mod sets follow the native reroll economy.
+
+**Codex.** Discovery = `CodexHandler.codex.cardList.Contains(cardID)`
+(decompiled `CodexUI.cs:1353,685`). A `LoadCodex` postfix (plus a call after each
+injection pass) adds all mod IDs to that list **in memory**; the plugin never calls
+`SaveCodex`. `CodexUI.Start` seeds its expansion filter from `Enum.GetValues`, which
+misses synthetic values — a postfix appends them to the private `shownExpansions` list
+so mod cards survive any filter pass.
+
+**Save compatibility if the mod is removed.** Everything degrades to no-ops:
+- `excludedsets` with synthetic ints (save file / `lastExcludedSets` PlayerPrefs /
+  `LastCharacterConfig.json`): `JsonUtility` and `Enum.TryParse("1002")` both
+  deserialize undefined members fine; a stale `(CardExpansions)1002` in `excludedsets`
+  simply excludes nothing because no card carries that expansion. The base game's set
+  screen never renders it (rows come from `Enum.GetValues` + `Resources/Sets`), so at
+  worst the vanilla "(x/y)" counter under-counts until the next run reset clears it.
+  One vanilla quirk returns: stale exclusions count toward `GetBonusTalent/Transmute`
+  thresholds (fewer bonus talents/transmutes) until cleared — cleared automatically on
+  the next non-run-it-back character screen visit if the player ever toggles sets.
+- Mod card IDs persisted into `Codex.dtt` by the game's own saves: harmless — all reads
+  are `Contains()`, and the Codex cleanup pass (`CodexUI.Start`, decompiled:251-279)
+  only removes IDs whose card still exists but is no longer collectible; unknown IDs
+  (`GetCard` returns null) are left untouched.
+- In-run save with mod cards in the deck: **not** covered by set machinery — that was
+  already true in 0.2.0 (cards vanish from `AssetManager` and the deck load logs
+  missing cards). Finish runs before uninstalling.
+
 ## Verification results
+
+### Per-pack card sets + Codex discovery (2026-07-18, plugin 0.3.0)
+
+Game launched with the new build (`ExpansionOverride` blanked in the cfg);
+`BepInEx\LogOutput.log`:
+
+```
+[Info   :   BepInEx] Loading [Dawncaster Sandbox 0.3.0]
+[Info   :PackLoader] [PackLoader] Configured. PacksPath=D:\temp\claude\dawncaster-mods\packs, ExpansionOverride=(none — per-pack synthetic sets), AutoDiscoverModCards=True, command vocabulary: 565.
+[Info   :PackLoader] [PackLoader] Clockwork Cadence: 12 cards injected, 0 skipped (hook: SetPlayerAssetsLoaded)
+[Info   :PackLoader] [PackLoader] CrimsonLedger: 11 cards injected, 0 skipped (hook: SetPlayerAssetsLoaded)
+[Info   :PackLoader] [PackLoader] EmberweaveGrove: 12 cards injected, 0 skipped (hook: SetPlayerAssetsLoaded)
+[Info   :PackLoader] [PackLoader] VenomousLegacy: 12 cards injected, 0 skipped (hook: SetPlayerAssetsLoaded)
+[Info   :PackLoader] [PackLoader] Synthetic card sets: EmberweaveGrove=(CardExpansions)1000 [12 cards], VenomousLegacy=(CardExpansions)1001 [12 cards], Clockwork Cadence=(CardExpansions)1002 [12 cards], CrimsonLedger=(CardExpansions)1003 [11 cards]
+[Info   :PackLoader] [PackLoader] Reference resolution: 40 resolved, 0 unresolved (hook: SetPlayerAssetsLoaded/phase1)
+[Info   :PackLoader.UI] [PackLoader] Run-settings set row added: EmberweaveGrove -> (CardExpansions)1000, 12 cards
+[Info   :PackLoader.UI] [PackLoader] Run-settings set row added: VenomousLegacy -> (CardExpansions)1001, 12 cards
+[Info   :PackLoader.UI] [PackLoader] Run-settings set row added: Clockwork Cadence -> (CardExpansions)1002, 12 cards
+[Info   :PackLoader.UI] [PackLoader] Run-settings set row added: CrimsonLedger -> (CardExpansions)1003, 11 cards
+[Info   :PackLoader.UI] [PackLoader] Set toggle: EmberweaveGrove ((CardExpansions)1000) excluded=True
+[Info   :PackLoader.UI] [PackLoader] Set toggle: EmberweaveGrove ((CardExpansions)1000) excluded=False
+```
+
+- All 47 cards injected with their per-pack synthetic expansions; formula values match
+  the ID registry blocks exactly.
+- 4 set rows appended to the run-settings screen, with pack display names and preview
+  wiring.
+- Clicking a mod row round-trips `excludedsets` (add on first click, remove on second)
+  through the game's own `ToggleSet`.
+- No errors/exceptions in the log.
+- `[PackLoader] CreateRunLists: runcards=N [...] excludedsets=[...]` probe lines fire on
+  every run-pool rebuild and show per-pack counts — check these after toggling a set and
+  starting a run to confirm exclusion end-to-end.
+- Codex: on any codex load the log shows
+  `[PackLoader] Codex: marked N mod cards as discovered (in-memory; hook: LoadCodex)`.
 
 ### Pack loader (2026-07-18, plugin 0.2.0)
 
