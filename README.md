@@ -4,6 +4,26 @@ Multi-mod monorepo for **Dawncaster: The RPG Cardventure** (Steam app 3966890; U
 BepInEx 5 + HarmonyX). One directory per shippable package (`DC.*`), shared docs and Python
 toolchain at the root. Direction doc: [MOD-TOOLKIT.md](MOD-TOOLKIT.md).
 
+## Start here
+
+- **I want to play with mod packs** → install BepInEx + the DawnKit DLLs
+  ([DC.DawnKit/src/README.md](DC.DawnKit/src/README.md)), then drop packs into
+  `BepInEx\plugins\DawncasterPacks\`
+  ([ExamplePack/README.md](DC.DawnKit/examples/ExamplePack/README.md) shows it) —
+  the packages table below is the menu.
+- **I want to make a pack (no code)** → [docs/TUTORIAL.md](docs/TUTORIAL.md)
+  ("your first card in 15 minutes": `dmk new` → edit → gates → install), then
+  [CARD-PACK-SPEC](DC.DawnKit/CARD-PACK-SPEC.md) for the contract and
+  [GAME-MECHANICS](docs/research/GAME-MECHANICS.md) to design well.
+- **I want to write a C# mod** → the public builder API in
+  [DC.DawnKit/API.md](DC.DawnKit/API.md), starting from the ~20-line
+  [MyFirstMod](DC.DawnKit/examples/MyFirstMod/README.md); engine internals in
+  [DC.DawnKit/SPEC.md](DC.DawnKit/SPEC.md).
+- **I want to work on the toolkit itself** → direction in
+  [MOD-TOOLKIT.md](MOD-TOOLKIT.md), the rules in
+  [docs/CONVENTIONS.md](docs/CONVENTIONS.md), verified engine knowledge in
+  [docs/research/GROUND-TRUTH.md](docs/research/GROUND-TRUTH.md).
+
 ## Packages
 
 | Package | What it is | Status |
@@ -22,6 +42,7 @@ rebuilt locally).
 
 ## Docs
 
+- [docs/TUTORIAL.md](docs/TUTORIAL.md) — "your first card in 15 minutes" (the data-path walkthrough)
 - [docs/CONVENTIONS.md](docs/CONVENTIONS.md) — per-package rules + SPEC template
 - [docs/ID-REGISTRY.md](docs/ID-REGISTRY.md) — cardID/talentID block allocations (mods own 700,000,000+)
 - [docs/research/GROUND-TRUTH.md](docs/research/GROUND-TRUTH.md) — verified architecture findings from the decompiled game. Start here.
@@ -31,6 +52,12 @@ rebuilt locally).
 
 ## Tools (`tools/`, Python; game dir is READ-ONLY)
 
+Deps: `pip install --user -r tools/requirements.txt`. One entry point for the
+whole chain: **`python tools/dmk.py -h`** (`new` / `validate` / `sim` / `art` /
+`artcheck` / `sheet` / `stats`, plus `dmk all <pack>` for the full gate chain);
+the standalone CLIs below keep working unchanged.
+
+- `new_pack.py "<Name>" --author "<you>"` — scaffold a valid pack (AutoId block, starter card, recipes/notes skeletons); `schemas/pack.schema.json` gives editors autocomplete + inline docs for `pack.json`
 - `extract_data.py` — content ScriptableObjects → `tools/out/data/` (2525 cards, 383 talents, 49 statuses, ...)
 - `extract_sprites.py` — sprites → `tools/out/sprites/` + `sprite-index.json` (3,774 images)
 - `validate_pack.py --all` — gate 1: schema/enums/vocabulary/collisions (exit 1 on errors)
