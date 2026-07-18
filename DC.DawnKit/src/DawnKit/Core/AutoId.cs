@@ -12,7 +12,8 @@ namespace DawnKit.Core.Ownership
     ///
     /// 1,000,000 blocks of 100 IDs inside the verified-free mod range
     /// 700,000,000–799,999,999. Within a block: cards allocate bottom-up from the
-    /// block start, weapons top-down from the block end (WEAPON-SPEC §3), weapon
+    /// block start, weapons and starting cards top-down from the block end on one
+    /// shared cursor (WEAPON-SPEC §3), weapon
     /// powers (talents) top-down from the block end in their own ID space
     /// ("talent IDs reuse the same numbers"). Same owner string → same block on
     /// every machine, forever (set values and save data depend on it) — the
@@ -104,7 +105,8 @@ namespace DawnKit.Core.Ownership
             return block + c.NextCardOffset++;
         }
 
-        /// <summary>Next weapon cardID (top-down from block end). -1 when exhausted.</summary>
+        /// <summary>Next loadout cardID (top-down from block end) — weapons and
+        /// starting cards share this cursor (WEAPON-SPEC §3). -1 when exhausted.</summary>
         internal static long AllocateWeaponId(long block)
         {
             Cursors c = CursorsFor(block);

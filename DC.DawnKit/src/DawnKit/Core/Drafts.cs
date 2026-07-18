@@ -2,7 +2,22 @@ using System.Collections.Generic;
 
 namespace DawnKit.Core.Lifecycle
 {
-    /// <summary>Raw builder inputs for a card/weapon, validated by Validator at Register().</summary>
+    /// <summary>
+    /// What a card registration IS in the loadout sense. Weapons and starting
+    /// cards are both Cards (shared cardID/name space) but diverge in structure
+    /// rules, pool routing and Profession attachment target:
+    /// Card → normal pools; Weapon → allCards only, excludeFromRewards forced,
+    /// Profession.weapons; StartingCard → normal pools (WEAPON-SPEC §1: 62/63
+    /// shipped starting cards are reward-pool legal), Profession.startingCards.
+    /// </summary>
+    internal enum CardKind
+    {
+        Card,
+        Weapon,
+        StartingCard,
+    }
+
+    /// <summary>Raw builder inputs for a card/weapon/starting card, validated by Validator at Register().</summary>
     internal sealed class CardDraft
     {
         internal string Owner;
@@ -32,7 +47,7 @@ namespace DawnKit.Core.Lifecycle
         internal EnchantmentSpec Enchantment;
         internal string ArtPath;
         internal bool CodexDiscovered = true;
-        internal List<string> Classes; // weapons only
+        internal List<string> Classes; // weapons & starting cards only
     }
 
     /// <summary>Raw builder inputs for a weapon power (tier-0 Talent).</summary>
@@ -113,8 +128,11 @@ namespace DawnKit.Core.Lifecycle
         internal ParsedEnchantment Enchantment; // null => empty non-null default payload
         internal string ArtPath;
         internal bool CodexDiscovered;
-        internal bool IsWeapon;
+        internal CardKind Kind;
         internal List<string> Classes;
+
+        internal bool IsWeapon => Kind == CardKind.Weapon;
+        internal bool IsStartingCard => Kind == CardKind.StartingCard;
     }
 
     internal sealed class ParsedTalent

@@ -222,7 +222,7 @@ namespace DawnKit.Core.Status
                 return "";
             }
             string cardSet = DawnKit.Sets.FindDisplayName((int)c.Spec.Expansion) ?? c.Spec.Expansion.ToString();
-            string cardClasses = c.Spec.IsWeapon && c.Spec.Classes != null && c.Spec.Classes.Count > 0
+            string cardClasses = c.Spec.Kind != CardKind.Card && c.Spec.Classes != null && c.Spec.Classes.Count > 0
                 ? $" classes={string.Join("/", c.Spec.Classes)}" : "";
             return $" set={cardSet}{cardClasses}";
         }

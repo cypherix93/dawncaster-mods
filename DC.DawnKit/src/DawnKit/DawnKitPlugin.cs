@@ -13,15 +13,15 @@ namespace DawnKit
     /// set-screen/Codex/class integration and re-injection after asset wipes.
     /// Ships zero content and zero tuning numbers (docs/CONVENTIONS.md). Client
     /// mods declare a BepInDependency on <see cref="Guid"/> and register content
-    /// through the public API (DawnKit.Cards/Sets/Weapons/WeaponPowers) in
-    /// Awake(); they never patch the game for content injection.
+    /// through the public API (DawnKit.Cards/Sets/Weapons/WeaponPowers/
+    /// StartingCards) in Awake(); they never patch the game for content injection.
     /// </summary>
     [BepInPlugin(Guid, PluginName, Version)]
     public sealed class DawnKitPlugin : BaseUnityPlugin
     {
         public const string Guid = "dcmods.dawnkit";
         public const string PluginName = "DawnKit";
-        public const string Version = "0.7.0";
+        public const string Version = "0.8.0";
 
         internal static ManualLogSource Log;
         internal static bool Verbose;

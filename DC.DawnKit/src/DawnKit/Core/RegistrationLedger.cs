@@ -12,9 +12,9 @@ namespace DawnKit.Core.Ownership
     /// cross-mod collision validation at Register(), the boot conflict report
     /// and the player-facing status row.
     ///
-    /// ID/name spaces: cards and weapons share the cardID/card-name space;
-    /// weapon powers (talents) are their own space; sets are their own space.
-    /// Names are identity and compared case-insensitively (P7).
+    /// ID/name spaces: cards, weapons and starting cards share the cardID/
+    /// card-name space; weapon powers (talents) are their own space; sets are
+    /// their own space. Names are identity and compared case-insensitively (P7).
     /// </summary>
     internal static class RegistrationLedger
     {
@@ -56,7 +56,7 @@ namespace DawnKit.Core.Ownership
             return count;
         }
 
-        private static bool IsCardSpace(string kind) => kind == "card" || kind == "weapon";
+        private static bool IsCardSpace(string kind) => kind == "card" || kind == "weapon" || kind == "startingCard";
 
         /// <summary>
         /// Cross-mod validation at Register(): an already-registered (Ok) entry in

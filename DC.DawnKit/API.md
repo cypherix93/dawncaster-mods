@@ -1,4 +1,4 @@
-# DawnKit public API reference (engine 0.7.0)
+# DawnKit public API reference (engine 0.8.0)
 
 Terse reference for the C# surface of `DawnKit.dll`. Tutorials live in the
 examples ([examples/MyFirstMod](examples/MyFirstMod/README.md) — C#,
@@ -43,8 +43,8 @@ engine records it and:
 3. **re-applies automatically** after the game's version-change asset wipe
    (`ForceReloadAssets`) — pruned by list membership, rebuilt idempotently by
    ID/name;
-4. re-attaches weapons/powers to freshly reloaded `Profession` assets (keyed
-   by ID/name, never object identity).
+4. re-attaches weapons/powers/starting cards to freshly reloaded
+   `Profession` assets (keyed by ID/name, never object identity).
 
 Clients never observe phases, hooks, or reloads, and never call
 `AssetManager.GetStatus`/`GetCard` themselves. Registering after boot is
@@ -58,15 +58,16 @@ recommended.
 | `DawnKit.Sets` | `Register(...)` → `SetHandle` | `IReadOnlyList<SetHandle>` (registration order) |
 | `DawnKit.Cards` | `Build(name)` → `CardBuilder` | `IReadOnlyList<RegistrationInfo>` of kind `"card"` |
 | `DawnKit.Weapons` | `Build(name)` → `WeaponBuilder` | kind `"weapon"` |
+| `DawnKit.StartingCards` | `Build(name)` → `StartingCardBuilder` | kind `"startingCard"` |
 | `DawnKit.WeaponPowers` | `Build(name)` → `WeaponPowerBuilder` | kind `"weaponPower"` |
 
 `RegistrationInfo` (one row per Register() **attempt**, including failed
-ones): `Owner`, `Kind` (`"card"`/`"weapon"`/`"weaponPower"`/`"set"`), `Id`,
-`Name`, `Ok`, `Error`.
+ones): `Owner`, `Kind` (`"card"`/`"weapon"`/`"startingCard"`/`"weaponPower"`/
+`"set"`), `Id`, `Name`, `Ok`, `Error`.
 
-ID/name spaces: cards and weapons share the cardID + card-name space; weapon
-powers (talents) have their own talentID + talent-name space; sets have their
-own value space. **Names are identity** and compared case-insensitively
+ID/name spaces: cards, weapons and starting cards share the cardID +
+card-name space; weapon powers (talents) have their own talentID + talent-name
+space; sets have their own value space. **Names are identity** and compared case-insensitively
 everywhere.
 
 ### 3.1 `Sets`
@@ -94,10 +95,11 @@ idempotent (returns the existing handle).
 `CardExpansions` int: `1000 + (idBlockStart − 700,000,000)/100`),
 `IdBlockStart`.
 
-### 3.2 Card / weapon builders
+### 3.2 Card / weapon / starting-card builders
 
-`Cards.Build(name)` → `CardBuilder`; `Weapons.Build(name)` → `WeaponBuilder`
-(same surface plus `.ForClasses`). All setters return the builder. String
+`Cards.Build(name)` → `CardBuilder`; `Weapons.Build(name)` → `WeaponBuilder`;
+`StartingCards.Build(name)` → `StartingCardBuilder` (same surface plus
+`.ForClasses`). All setters return the builder. String
 overloads take the **game's exact enum spellings** (data-path parity); typed
 overloads take the clean-spelled mirror enums (§6). Everything validates at
 `Register()` (§5).
@@ -106,7 +108,7 @@ overloads take the clean-spelled mirror enums (§6). Everything validates at
 |---|---|
 | `.Owner(string)` | Ownership string for logs/ledger/conflicts. Default: resolved from the call stack — the calling plugin's BepInEx GUID when its chainloader entry is complete, else the plugin's assembly name (the usual result for Awake-time registration). |
 | `.Id(int)` | Explicit cardID from your registered block ([docs/ID-REGISTRY.md](../docs/ID-REGISTRY.md)). Mutually exclusive with `.AutoId()`. |
-| `.AutoId()` | Next ID from the mod's deterministic block (§7): the set's block when combined with `.InSet`, else the block hashed from the owner string (requires `.Owner("author/ModName")` in that case). Cards bottom-up, weapons top-down. |
+| `.AutoId()` | Next ID from the mod's deterministic block (§7): the set's block when combined with `.InSet`, else the block hashed from the owner string (requires `.Owner("author/ModName")` in that case). Cards bottom-up; weapons and starting cards share one top-down cursor. |
 | `.InSet(SetHandle)` | Membership in a registered mod set — the card carries its synthetic expansion. Wins over `.Expansion(...)`. |
 | `.Expansion(string \| Expansion)` | Native `AssetManager.CardExpansions` member. A card with neither `.InSet` nor `.Expansion` fails ("missing expansion"). `None`/`Metaprogress` never reach the player pool (game-side `ProcessCard` filter). |
 | `.Type(string \| CardType)` | Required. `Card.CardType` member. |
@@ -124,12 +126,23 @@ overloads take the clean-spelled mirror enums (§6). Everything validates at
 | `.CodexDiscovery(bool)` | Mark discovered in the Codex (in-memory only; default true). |
 | `.Register()` | Runs all validation; returns `RegisterResult` (§5). |
 
-`WeaponBuilder` extras: `.ForClasses(params string[] | IEnumerable<string>)` —
-exact `Profession` asset names; `"all"` = every class. Unknown class name
-skips **that attachment only** at injection, never the weapon. Weapon
-structural conventions enforced by the engine: category `BasicAttack`,
+`WeaponBuilder` / `StartingCardBuilder` extras: `.ForClasses(params string[] |
+IEnumerable<string>)` — exact `Profession` asset names; `"all"` = every class.
+Unknown class name skips **that attachment only** at injection, never the item.
+Weapon structural conventions enforced by the engine: category `BasicAttack`,
 `excludeFromRewards` forced true, registered in `allCards` only (offered at
 character creation, never in reward pools).
+
+**Starting cards** (`StartingCards.Build(name)`, WEAPON-SPEC v1.2): the third
+character-creation loadout slot (weapon + weapon power + starting card, phase
+5). A starting card is a **normal card** — any legal card shape (no category
+pinning), registered in the regular pools (playercards-eligible, **not**
+reward-excluded; 62/63 shipped starting cards are ordinary reward-pool cards)
+— and additionally appended to `Profession.startingCards` for its classes,
+which `CharacterBuilder.LoadStartingCards` reads live. The pick enters the
+starting deck ×1 (`CreateStartingDeck`) and round-trips inside `playerDeck`
+like any other card — no fallback plumbing exists or is needed
+(`startingCardID` is a plain int record).
 
 ### 3.3 Weapon power builder
 
@@ -203,7 +216,8 @@ Rules:
   exhaustion) → enum membership → codeLine vocabulary (per `;`-statement,
   command = text before the first `:`; 565 effect commands for cards, 660
   talent-union for powers) → cost-key whitelist → flag whitelist → weapon
-  `BasicAttack` requirement → cross-mod ID/name conflict vs every other
+  `BasicAttack` requirement (starting cards have **no** category restriction)
+  → cross-mod ID/name conflict vs every other
   registered mod → shipped-pool ID/name conflict (once pools are loaded;
   re-checked at injection either way).
 - **Enum parsing** (string setters): exact match first, then
@@ -245,9 +259,10 @@ value follows: `1000 + (block − 700M)/100`.
   machine, forever. Set values and save data depend on it — never rename your
   author/mod pair after shipping.
 - Allocation within a block, in registration order: cards bottom-up from the
-  block start; weapons top-down from the block end; talents top-down in their
-  own ID space. Exhaustion (cards meet weapons, or 100 talents) fails the item
-  with a named error.
+  block start; weapons and starting cards top-down from the block end on one
+  shared loadout cursor; talents top-down in their own ID space. Exhaustion
+  (cards meet the loadout cursor, or 100 talents) fails the item with a named
+  error.
 - **Hard refusal, no probing**: a block already claimed by a different owner
   string (another AutoId mod, or an explicit `Sets.Register(name,
   idBlockStart)` claim) refuses the registration with both owners named. The
@@ -324,10 +339,10 @@ boot sequence a healthy install prints:
 | `Command vocabulary: 565 effect / 660 talent-union.` | Embedded DSL vocabularies loaded. |
 | `AutoId self-check: 5/5 reference vectors OK.` | AutoId determinism verified (§7). |
 | `Target found: <Class.Method>` ×16 + `Target found: <member> (member)` ×4 | Every Harmony patch target / private member resolved. **After a game update, count these first**: a missing one logs `Target MISSING: <label> — that integration is disabled.` and only that integration is off (skip-don't-crash) — the log names exactly what broke. |
-| `DawnKit 0.7.0 loaded — 16/16 patch targets applied.` | Boot summary. |
+| `DawnKit 0.8.0 loaded — 16/16 patch targets applied.` | Boot summary. |
 | `<owner>: N cards injected, M skipped (hook: <hook>)` | Phase-1 injection per mod. |
-| `<owner>: N weapons, M weapon powers injected (classes: …)` | Weapon/power injection + class attachment. |
-| `Class weapon/talent counts: Arcanist=3w/6t, …` | Post-attachment per-class totals. |
+| `<owner>: N weapons, M weapon powers, S starting cards injected (classes: …)` | Loadout injection + class attachment. |
+| `Class weapon/talent/starting-card counts: Arcanist=3w/6t/2s, …` | Post-attachment per-class totals. |
 | `Synthetic card sets: <Name>=(CardExpansions)<value> [N cards], …` | Set table with values and counts. |
 | `Reference resolution: N resolved, M unresolved (hook: …)` | Phase-1/phase-2 ref passes; unresolved names are listed. |
 | `── Boot report ──` … `── end boot report ──` | Consolidated per-mod counts + conflicts (§8). |

@@ -19,11 +19,11 @@ namespace DawnKit.Core.Lifecycle
     /// </summary>
     internal static class Validator
     {
-        internal static ParsedCard ParseCard(CardDraft d, bool isWeapon)
+        internal static ParsedCard ParseCard(CardDraft d, CardKind kind)
         {
             if (string.IsNullOrEmpty(d.Name))
             {
-                throw new ManifestError(isWeapon ? "weapon has no name" : "card has no name");
+                throw new ManifestError(KindLabel(kind) + " has no name");
             }
             if (d.CardId == 0)
             {
@@ -35,7 +35,7 @@ namespace DawnKit.Core.Lifecycle
                 Owner = d.Owner ?? "(unknown)",
                 Name = d.Name,
                 CardId = d.CardId,
-                IsWeapon = isWeapon,
+                Kind = kind,
                 Classes = d.Classes,
                 CodexDiscovered = d.CodexDiscovered,
                 ArtPath = d.ArtPath,
@@ -70,10 +70,13 @@ namespace DawnKit.Core.Lifecycle
                 ? ParseEnum<Card.Suffix>(d.SuffixRaw, "suffix", d.Name)
                 : Card.Suffix.None;
 
-            if (isWeapon && p.Category != Card.CardCategory.BasicAttack)
+            if (kind == CardKind.Weapon && p.Category != Card.CardCategory.BasicAttack)
             {
                 throw new ManifestError($"weapon category is {p.Category}, must be BasicAttack");
             }
+            // Starting cards deliberately carry NO category restriction: the
+            // shipped 63-card corpus spans Action/Enchantment/Equipment
+            // (WEAPON-SPEC §1) — any legal card shape may be a starting card.
 
             p.Costs = ValidateCosts(d.Costs);
 
@@ -183,6 +186,16 @@ namespace DawnKit.Core.Lifecycle
             }
 
             return p;
+        }
+
+        internal static string KindLabel(CardKind kind)
+        {
+            switch (kind)
+            {
+                case CardKind.Weapon: return "weapon";
+                case CardKind.StartingCard: return "starting card";
+                default: return "card";
+            }
         }
 
         private static string RequireRaw(string raw, bool wasSet, string field)

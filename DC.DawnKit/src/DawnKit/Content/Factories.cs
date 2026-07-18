@@ -46,6 +46,8 @@ namespace DawnKit.Content.Factories
             {
                 card.excludeFromRewards = true; // forced default for weapons (WEAPON-SPEC §5.2)
             }
+            // Starting cards are deliberately NOT reward-excluded: 62/63 shipped
+            // starting cards are normal acquirable reward-pool cards (WEAPON-SPEC §1).
 
             card.playConditions = BuildConditions(m.PlayConditions);
 
@@ -91,7 +93,11 @@ namespace DawnKit.Content.Factories
             reg.Card = card;
         }
 
-        /// <summary>Pool routing, mirroring AssetManager.ProcessCard. Weapons register in allCards ONLY.</summary>
+        /// <summary>
+        /// Pool routing, mirroring AssetManager.ProcessCard. Weapons register in
+        /// allCards ONLY; starting cards route like normal cards (playercards-
+        /// eligible per ProcessCard rules — WEAPON-SPEC §1 corpus rule).
+        /// </summary>
         internal static void RegisterInPools(Card card, bool isWeapon)
         {
             if (isWeapon)

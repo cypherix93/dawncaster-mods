@@ -83,9 +83,10 @@ namespace DawnKit.Packs
             bool hasCards = pm.cards != null && pm.cards.Count > 0;
             bool hasWeapons = pm.weapons != null && pm.weapons.Count > 0;
             bool hasPowers = pm.weaponPowers != null && pm.weaponPowers.Count > 0;
-            if (!hasCards && !hasWeapons && !hasPowers)
+            bool hasStartingCards = pm.startingCards != null && pm.startingCards.Count > 0;
+            if (!hasCards && !hasWeapons && !hasPowers && !hasStartingCards)
             {
-                PacksPlugin.Log.LogError($"[DawnKit.Packs] {manifestFile}: no cards/weapons/weaponPowers in manifest — pack skipped.");
+                PacksPlugin.Log.LogError($"[DawnKit.Packs] {manifestFile}: no cards/weapons/weaponPowers/startingCards in manifest — pack skipped.");
                 return;
             }
 
@@ -104,7 +105,7 @@ namespace DawnKit.Packs
                 }
             }
 
-            int cards = 0, weapons = 0, powers = 0, failed = 0;
+            int cards = 0, weapons = 0, powers = 0, startingCards = 0, failed = 0;
 
             foreach (CardManifest cm in pm.cards ?? new List<CardManifest>())
             {
@@ -143,11 +144,25 @@ namespace DawnKit.Packs
                 if (RegisterPower(wp, packName, packDir, set, expansionOverride).Ok) powers++; else failed++;
             }
 
+            foreach (StartingCardManifest sc in pm.startingCards ?? new List<StartingCardManifest>())
+            {
+                if (sc == null)
+                {
+                    PacksPlugin.Log.LogError($"[DawnKit.Packs] {packName}: null startingCard entry — skipped.");
+                    failed++;
+                    continue;
+                }
+                StartingCardBuilder b = StartingCards.Build(sc.name).Owner(packName).ForClasses(sc.classes);
+                MapCard(b, sc, packDir, set, expansionOverride, autoDiscover);
+                if (b.Register().Ok) startingCards++; else failed++;
+            }
+
             string failNote = failed > 0 ? $", {failed} failed validation" : "";
-            PacksPlugin.Log.LogInfo($"[DawnKit.Packs] {packName}: registered {cards} cards, {weapons} weapons, {powers} weapon powers{failNote} (applied at asset load).");
+            PacksPlugin.Log.LogInfo($"[DawnKit.Packs] {packName}: registered {cards} cards, {weapons} weapons, {powers} weapon powers, {startingCards} starting cards{failNote} (applied at asset load).");
         }
 
-        /// <summary>Manifest → builder mapping shared by cards and weapons (a weapon IS a card + classes).</summary>
+        /// <summary>Manifest → builder mapping shared by cards, weapons and starting
+        /// cards (weapons/starting cards ARE cards + classes).</summary>
         private static void MapCard<T>(CardBuilderBase<T> b, CardManifest m, string packDir,
             SetHandle set, string expansionOverride, bool autoDiscover) where T : CardBuilderBase<T>
         {

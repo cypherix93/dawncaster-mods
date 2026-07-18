@@ -23,6 +23,8 @@ namespace DawnKit.Packs
         // v1.1 (WEAPON-SPEC.md §2) — both optional.
         public List<WeaponManifest> weapons;
         public List<WeaponPowerManifest> weaponPowers;
+        // v1.2 (WEAPON-SPEC.md §2) — optional.
+        public List<StartingCardManifest> startingCards;
     }
 
     public class CardManifest
@@ -54,6 +56,16 @@ namespace DawnKit.Packs
     /// the Professions that offer it at character creation.
     /// </summary>
     public class WeaponManifest : CardManifest
+    {
+        public List<string> classes; // exact Profession asset names; "all" allowed
+    }
+
+    /// <summary>
+    /// WEAPON-SPEC.md §2 (v1.2) — a starting card IS a card (full card schema,
+    /// any legal category — no BasicAttack pinning) plus the Professions that
+    /// offer it as the third character-creation loadout slot.
+    /// </summary>
+    public class StartingCardManifest : CardManifest
     {
         public List<string> classes; // exact Profession asset names; "all" allowed
     }

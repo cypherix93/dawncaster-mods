@@ -45,7 +45,23 @@ namespace DawnKit
     }
 
     /// <summary>
-    /// Shared card/weapon builder surface. Setters mirror the pack.json fields
+    /// Starting cards (WEAPON-SPEC.md v1.2): a starting card IS a normal card —
+    /// any legal card shape, registered in the regular pools (playercards-eligible,
+    /// NOT reward-excluded; 62/63 shipped starting cards are ordinary reward-pool
+    /// cards) — additionally offered as the third character-creation loadout slot
+    /// via Profession.startingCards for its classes. The pick enters the starting
+    /// deck ×1 (CreateStartingDeck); no fallback plumbing is needed — it
+    /// round-trips inside playerDeck like any other card.
+    /// </summary>
+    public static class StartingCards
+    {
+        public static StartingCardBuilder Build(string name) => new StartingCardBuilder(name);
+
+        public static IReadOnlyList<RegistrationInfo> All => Core.Ownership.RegistrationLedger.OfKind("startingCard");
+    }
+
+    /// <summary>
+    /// Shared card/weapon/starting-card builder surface. Setters mirror the pack.json fields
     /// (CARD-PACK-SPEC.md §2); string overloads take the game's exact enum
     /// spellings (for 1:1 data-pack traceability), typed overloads take the
     /// clean-spelled mirror enums. All validation runs at Register() — enum
@@ -74,7 +90,8 @@ namespace DawnKit
         /// Automatic ID from your mod's deterministic 100-ID block (SPEC.md §4.3):
         /// the set's block when combined with .InSet(...), else the block hashed
         /// (FNV-1a 32) from the owner string. Cards allocate bottom-up in
-        /// registration order, weapons top-down from the block end. A block owned
+        /// registration order; weapons and starting cards share one top-down
+        /// cursor from the block end. A block owned
         /// by a different mod is a hard refusal at Register() — no probing.
         /// </summary>
         public TSelf AutoId() { Draft.AutoIdRequested = true; return Self; }
@@ -221,7 +238,7 @@ namespace DawnKit
         internal CardBuilder(string name) : base(name) { }
 
         /// <summary>Validate and register. The engine applies the card at the next asset-load phase.</summary>
-        public RegisterResult Register() => Registry.RegisterCard(Draft, isWeapon: false);
+        public RegisterResult Register() => Registry.RegisterCard(Draft, CardKind.Card);
     }
 
     public sealed class WeaponBuilder : CardBuilderBase<WeaponBuilder>
@@ -242,7 +259,33 @@ namespace DawnKit
         }
 
         /// <summary>Validate and register. Category must be BasicAttack; excludeFromRewards is forced true.</summary>
-        public RegisterResult Register() => Registry.RegisterCard(Draft, isWeapon: true);
+        public RegisterResult Register() => Registry.RegisterCard(Draft, CardKind.Weapon);
+    }
+
+    public sealed class StartingCardBuilder : CardBuilderBase<StartingCardBuilder>
+    {
+        internal StartingCardBuilder(string name) : base(name) { }
+
+        /// <summary>Profession asset names offered this starting card at character creation ("all" = every class).</summary>
+        public StartingCardBuilder ForClasses(params string[] classes)
+        {
+            Draft.Classes = classes != null ? new List<string>(classes) : null;
+            return this;
+        }
+
+        public StartingCardBuilder ForClasses(IEnumerable<string> classes)
+        {
+            Draft.Classes = classes != null ? new List<string>(classes) : null;
+            return this;
+        }
+
+        /// <summary>
+        /// Validate and register. No category restriction (any legal card shape);
+        /// the card registers in the normal pools (NOT reward-excluded) and is
+        /// offered via Profession.startingCards. With .AutoId(), the ID comes from
+        /// the block's top-down loadout cursor, shared with weapons (WEAPON-SPEC §3).
+        /// </summary>
+        public RegisterResult Register() => Registry.RegisterCard(Draft, CardKind.StartingCard);
     }
 
     public sealed class WeaponPowerBuilder

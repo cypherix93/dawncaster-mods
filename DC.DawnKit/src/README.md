@@ -7,8 +7,8 @@ reference: [`../API.md`](../API.md)**; tutorials: `../examples/MyFirstMod`
 
 | Assembly | Plugin GUID | Role |
 |---|---|---|
-| `DawnKit.dll` | `dcmods.dawnkit` | **Engine.** Owns ALL Harmony patches (SPEC §6, 16 targets + 4 private members, each logged "Target found: X" at boot). Lifecycle (two-phase load, re-injection after `ForceReloadAssets`), ref resolver, SO factories, embedded command vocabularies, art loading/placeholders, set-screen/Codex/class integration. Public API: `DawnKit.Cards` / `Sets` / `Weapons` / `WeaponPowers` builders validating at `Register()` (with did-you-mean hints), clean-spelled enum mirrors (`Rarity`, `Suffix.Physical`, …) mapped to the game's typo'd enums. M1b: ownership registry with cross-mod collision refusal at `Register()`, `.AutoId()` / `Sets.Register(name, author)` deterministic ID blocks (SPEC §4.3), consolidated boot conflict report, in-game status row, `DiagnosticsDump`. Ships zero content. |
-| `DawnKit.Packs.dll` | `dcmods.dawnkit.packs` | **Data client.** `[BepInDependency("dcmods.dawnkit")]`. Scans `<PacksPath>/<Pack>/pack.json` (manifest v1.1: cards + weapons + weaponPowers), registers everything through the public API. Runs zero patches; its csproj references **no Assembly-CSharp and no Harmony** — the compiler enforces the "public API only" acceptance guard. |
+| `DawnKit.dll` | `dcmods.dawnkit` | **Engine.** Owns ALL Harmony patches (SPEC §6, 16 targets + 4 private members, each logged "Target found: X" at boot). Lifecycle (two-phase load, re-injection after `ForceReloadAssets`), ref resolver, SO factories, embedded command vocabularies, art loading/placeholders, set-screen/Codex/class integration. Public API: `DawnKit.Cards` / `Sets` / `Weapons` / `WeaponPowers` / `StartingCards` builders validating at `Register()` (with did-you-mean hints), clean-spelled enum mirrors (`Rarity`, `Suffix.Physical`, …) mapped to the game's typo'd enums. M1b: ownership registry with cross-mod collision refusal at `Register()`, `.AutoId()` / `Sets.Register(name, author)` deterministic ID blocks (SPEC §4.3), consolidated boot conflict report, in-game status row, `DiagnosticsDump`. Ships zero content. |
+| `DawnKit.Packs.dll` | `dcmods.dawnkit.packs` | **Data client.** `[BepInDependency("dcmods.dawnkit")]`. Scans `<PacksPath>/<Pack>/pack.json` (manifest v1.2: cards + weapons + weaponPowers + startingCards), registers everything through the public API. Runs zero patches; its csproj references **no Assembly-CSharp and no Harmony** — the compiler enforces the "public API only" acceptance guard. |
 | `Dawncaster.Sandbox.dll` | `com.dawncastermods.sandbox` | **Thin dev sandbox** (never shipped): the SandboxStrike hello-card behind `[Sandbox] InjectSandboxCard` (default off), registered via the typed clean-enum builder API. |
 
 Source layout (namespaces per SPEC §3.2): `DawnKit/` (engine — `Api/`,
@@ -19,11 +19,12 @@ Source layout (namespaces per SPEC §3.2): `DawnKit/` (engine — `Api/`,
 ## VERSIONING
 
 All three plugins version **in lockstep** (one solution, one release unit;
-currently 0.7.0 — the consts in `DawnKitPlugin.cs`, `PacksPlugin.cs`,
+currently 0.8.0 — the consts in `DawnKitPlugin.cs`, `PacksPlugin.cs`,
 `SandboxPlugin.cs`). Semver, applied to the engine like this:
 
 - **The API surface is the public builders and registries** —
-  `DawnKit.Cards` / `Sets` / `Weapons` / `WeaponPowers` / `Mods`, their
+  `DawnKit.Cards` / `Sets` / `Weapons` / `WeaponPowers` / `StartingCards` /
+  `Mods`, their
   builder methods and spec types, `RegisterResult` / `RegistrationInfo`, the
   clean-spelled enum mirrors, and the documented config keys
   (everything in `../API.md`). Internals (patch targets, factories,
@@ -122,15 +123,18 @@ The injection/lifecycle/set/Codex behavior is unchanged from the monolith
 `../WEAPON-SPEC.md`. In short:
 
 - **Lifecycle** (engine): phase 1 on `SetPlayerAssetsLoaded`/`LoadPlayerAssets`
-  (construct + register cards/weapons/talents, per-owner `RefreshCaches` +
-  `CreateRunLists`, class attachment), phase 2 on
+  (construct + register cards/weapons/starting cards/talents, per-owner
+  `RefreshCaches` + `CreateRunLists`, class attachment — weapons/powers/starting
+  cards append to `Profession.weapons`/`.talents`/`.startingCards`, which the
+  char-creation UI reads live), phase 2 on
   `SetWorldAssetsLoaded`/`LoadWorldAssets` (authoritative name→ref resolution).
   Registrations are durable: `ForceReloadAssets` wipes are pruned by list
   membership and rebuilt idempotently by ID/name.
 - **Validation at Register()** (engine): enum membership
   (exact-then-case-insensitive with warning), codeLine commands vs the embedded
   565-effect / 660-talent-union vocabularies, cost-key/flag whitelists, weapon
-  category forced `BasicAttack`. One bad item is skipped with a named error and
+  category forced `BasicAttack` (starting cards: any legal card shape, no
+  category pinning, never reward-excluded). One bad item is skipped with a named error and
   a `RegisterResult.Failed`; collisions vs the live pools are checked at
   injection time. Failures also count into the per-pack "skipped" log line.
 - **schemaVersion handshake (M2)**: `pack.json` may declare an optional

@@ -43,9 +43,9 @@ namespace DawnKit.Core.Lifecycle
         /// <summary>Owner display names in first-registration order (injection log grouping).</summary>
         internal static readonly List<string> OwnerOrder = new List<string>();
 
-        internal static RegisterResult RegisterCard(CardDraft draft, bool isWeapon)
+        internal static RegisterResult RegisterCard(CardDraft draft, CardKind cardKind)
         {
-            string kind = isWeapon ? "weapon" : "card";
+            string kind = LedgerKind(cardKind);
             if (string.IsNullOrEmpty(draft.Owner))
             {
                 draft.Owner = OwnerResolver.ResolveCallingOwner();
@@ -54,8 +54,8 @@ namespace DawnKit.Core.Lifecycle
             ParsedCard spec;
             try
             {
-                ResolveAutoCardId(draft, isWeapon);
-                spec = Validator.ParseCard(draft, isWeapon);
+                ResolveAutoCardId(draft, cardKind);
+                spec = Validator.ParseCard(draft, cardKind);
             }
             catch (ManifestError me)
             {
@@ -121,7 +121,18 @@ namespace DawnKit.Core.Lifecycle
         // string. Hard refusal on block conflicts, never probing.
         // ------------------------------------------------------------------
 
-        private static void ResolveAutoCardId(CardDraft draft, bool isWeapon)
+        /// <summary>"card" / "weapon" / "startingCard" — the ledger/RegisterResult kind string.</summary>
+        private static string LedgerKind(CardKind kind)
+        {
+            switch (kind)
+            {
+                case CardKind.Weapon: return "weapon";
+                case CardKind.StartingCard: return "startingCard";
+                default: return "card";
+            }
+        }
+
+        private static void ResolveAutoCardId(CardDraft draft, CardKind kind)
         {
             if (!draft.AutoIdRequested)
             {
@@ -132,7 +143,12 @@ namespace DawnKit.Core.Lifecycle
                 throw new ManifestError("both .Id(...) and .AutoId() were called — pick one");
             }
             long block = ResolveBlock(draft.Set, draft.Owner, draft.Name);
-            long id = isWeapon ? AutoIdAllocator.AllocateWeaponId(block) : AutoIdAllocator.AllocateCardId(block);
+            // Weapons AND starting cards share the block's top-down cardID cursor
+            // (WEAPON-SPEC §3: one top-down loadout counter per block, directly
+            // below whatever the weapons already claimed); regular cards bottom-up.
+            long id = kind == CardKind.Card
+                ? AutoIdAllocator.AllocateCardId(block)
+                : AutoIdAllocator.AllocateWeaponId(block);
             if (id < 0)
             {
                 throw new ManifestError(

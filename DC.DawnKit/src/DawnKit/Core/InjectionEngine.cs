@@ -78,11 +78,11 @@ namespace DawnKit.Core.Lifecycle
             foreach (string owner in Registry.OwnerOrder)
             {
                 int injected = 0, skipped = 0, alreadyPresent = 0;
-                int weaponsInjected = 0, powersInjected = 0;
+                int weaponsInjected = 0, powersInjected = 0, startingCardsInjected = 0;
 
                 foreach (CardRegistration r in Registry.Cards)
                 {
-                    if (r.Spec.Owner == owner && !r.Spec.IsWeapon)
+                    if (r.Spec.Owner == owner && r.Spec.Kind == CardKind.Card)
                     {
                         InjectCard(r, ref injected, ref skipped, ref alreadyPresent);
                     }
@@ -94,6 +94,13 @@ namespace DawnKit.Core.Lifecycle
                         InjectWeapon(r, ref weaponsInjected);
                     }
                 }
+                foreach (CardRegistration r in Registry.Cards)
+                {
+                    if (r.Spec.Owner == owner && r.Spec.IsStartingCard)
+                    {
+                        InjectStartingCard(r, ref startingCardsInjected);
+                    }
+                }
                 foreach (TalentRegistration r in Registry.Talents)
                 {
                     if (r.Spec.Owner == owner)
@@ -102,7 +109,7 @@ namespace DawnKit.Core.Lifecycle
                     }
                 }
 
-                if (injected + weaponsInjected + powersInjected > 0)
+                if (injected + weaponsInjected + startingCardsInjected + powersInjected > 0)
                 {
                     AssetManager.RefreshCaches();
                     if (PlayerHandler.thePlayerData != null)
@@ -118,17 +125,18 @@ namespace DawnKit.Core.Lifecycle
 
                 // Register()-time failures count as skipped, like the pre-split loader.
                 skipped += RegistrationLedger.FailedCount(owner, "card");
-                bool hasWeaponContent =
-                    Registry.Cards.Any(r => r.Spec.Owner == owner && r.Spec.IsWeapon) ||
+                bool hasLoadoutContent =
+                    Registry.Cards.Any(r => r.Spec.Owner == owner && r.Spec.Kind != CardKind.Card) ||
                     Registry.Talents.Any(r => r.Spec.Owner == owner) ||
                     RegistrationLedger.FailedCount(owner, "weapon") > 0 ||
-                    RegistrationLedger.FailedCount(owner, "weaponPower") > 0;
+                    RegistrationLedger.FailedCount(owner, "weaponPower") > 0 ||
+                    RegistrationLedger.FailedCount(owner, "startingCard") > 0;
 
                 string presentNote = alreadyPresent > 0 ? $", {alreadyPresent} already present" : "";
                 DawnKitPlugin.Log.LogInfo($"[DawnKit] {owner}: {injected} cards injected, {skipped} skipped{presentNote} (hook: {source})");
-                if (hasWeaponContent)
+                if (hasLoadoutContent)
                 {
-                    DawnKitPlugin.Log.LogInfo($"[DawnKit] {owner}: {weaponsInjected} weapons, {powersInjected} weapon powers injected (classes: {(attachedClasses.Count > 0 ? string.Join(", ", attachedClasses) : "none")})");
+                    DawnKitPlugin.Log.LogInfo($"[DawnKit] {owner}: {weaponsInjected} weapons, {powersInjected} weapon powers, {startingCardsInjected} starting cards injected (classes: {(attachedClasses.Count > 0 ? string.Join(", ", attachedClasses) : "none")})");
                 }
             }
 
@@ -203,6 +211,34 @@ namespace DawnKit.Core.Lifecycle
             catch (Exception ex)
             {
                 DawnKitPlugin.Log.LogError($"[DawnKit] {spec.Owner}/{spec.Name}: unexpected error, weapon skipped: {ex}");
+            }
+        }
+
+        private static void InjectStartingCard(CardRegistration r, ref int startingCardsInjected)
+        {
+            ParsedCard spec = r.Spec;
+            try
+            {
+                if (r.Card != null)
+                {
+                    return; // already injected this process and still registered
+                }
+                string conflict = FindPoolConflict(spec, "starting card");
+                if (conflict != null)
+                {
+                    DawnKitPlugin.Log.LogError($"[DawnKit] {conflict} — starting card skipped.");
+                    RegistrationLedger.RecordConflict(spec.Owner, conflict);
+                    return;
+                }
+                CardFactory.Build(r);
+                // Normal pool routing (playercards-eligible): starting cards are
+                // ordinary reward-pool cards per the shipped corpus (WEAPON-SPEC §1).
+                CardFactory.RegisterInPools(r.Card, isWeapon: false);
+                startingCardsInjected++;
+            }
+            catch (Exception ex)
+            {
+                DawnKitPlugin.Log.LogError($"[DawnKit] {spec.Owner}/{spec.Name}: unexpected error, starting card skipped: {ex}");
             }
         }
 
