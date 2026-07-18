@@ -1,0 +1,16 @@
+# Copyrighted game material — NEVER commit (regenerable locally, see README)
+decompiled/
+tools/out/
+
+# Downloaded third-party binaries
+tools/bin/
+
+# Python
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# .NET
+src/**/bin/
+src/**/obj/
+*.csproj.user
