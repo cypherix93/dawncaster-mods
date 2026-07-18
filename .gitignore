@@ -17,6 +17,9 @@ __pycache__/
 .pytest_cache/
 *.pyc
 
+# Release staging + zips (rebuildable via tools/package_release.py)
+dist/
+
 # .NET
 DC.*/src/**/bin/
 DC.*/src/**/obj/
