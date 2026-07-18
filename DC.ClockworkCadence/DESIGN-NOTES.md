@@ -31,7 +31,7 @@ pulls resolve against these; our Cogspark joins that category deliberately.
   `extraturn` → `TurnStat.endPlayerTurn = false`, `addtempkeyword` / `addkeyword` enum-parse (`Chain` valid).
 - `adddamage` idiom: shipped cards put it on **trigger None** with conditions (Daggers, Claw__1, Deep_Slice);
   it's folded into damage calc (Part II step 3), not executed as an action. Gearbite copies this exactly.
-- All commands used are present in `reference/effect-commands.txt`: damage, draw, adddamage, conjure,
+- All commands used are present in `../docs/research/reference/effect-commands.txt`: damage, draw, adddamage, conjure,
   bless, playcopy, enchant, addtempkeyword, extraturn. (`noreset` is NOT in effect-commands.txt — an
   earlier "chain doesn't break this turn" design was cut for that reason and replaced by Unbroken Cadence.)
 - Value tokens used, with a real-codeLine citation each: `[[actionsPlayed]]` (Daring_Dash

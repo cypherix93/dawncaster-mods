@@ -1,8 +1,8 @@
 """Gate 3 CLI: score a pack's cards against the shipped-pool balance envelopes
-and write packs/<Pack>/BALANCE-REPORT.md.
+and write DC.<Pack>/BALANCE-REPORT.md.
 
 Usage:
-    python tools/sim/report.py packs/<Pack>/pack.json [--rebuild-envelopes] [-o OUT.md]
+    python tools/sim/report.py DC.<Pack>/pack.json [--rebuild-envelopes] [-o OUT.md]
     python tools/sim/report.py --all
     python tools/sim/report.py --self-check          # calibration numbers only
 
@@ -171,7 +171,7 @@ def print_self_check(data: dict) -> None:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("pack", nargs="?", help="packs/<Pack>/pack.json")
+    ap.add_argument("pack", nargs="?", help="DC.<Pack>/pack.json")
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--self-check", action="store_true")
     ap.add_argument("--rebuild-envelopes", action="store_true")
@@ -186,7 +186,7 @@ def main(argv=None) -> int:
     if args.all:
         paths = sorted(gd.PACKS_DIR.glob("*/pack.json"))
         if not paths:
-            print("no packs/*/pack.json found")
+            print("no */pack.json content packages found")
             return 0
     elif args.pack:
         paths = [Path(args.pack)]

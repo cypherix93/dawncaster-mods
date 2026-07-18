@@ -1,8 +1,9 @@
 # Card Pack Spec v1
 
 Contract for designing and shipping new Dawncaster card packs. Grounded in:
-`GAME-MECHANICS.md` (mechanics + synergy web — **required reading**), `GROUND-TRUTH.md`
-(architecture), `reference/asset-extraction-notes.md` (real card JSON idioms), and pool
+`../docs/research/GAME-MECHANICS.md` (mechanics + synergy web — **required reading**),
+`../docs/research/GROUND-TRUTH.md` (architecture),
+`../docs/research/asset-extraction-notes.md` (real card JSON idioms), and pool
 statistics computed from all 2,525 extracted cards (`tools/card_stats.py` →
 `tools/out/card-stats.json`).
 
@@ -13,7 +14,7 @@ A **pack** = one JSON manifest + an `art/` folder, loaded at runtime by the
 packs are validated offline by the sim harness + validators).
 
 ```
-packs/<PackName>/
+DC.<PackName>/        # top-level package dir (repo root); dir name has no spaces
   pack.json           # manifest (schema below)
   art/<CardName>.png  # 512×512 RGBA full-bleed (see ART-PIPELINE.md)
   DESIGN-NOTES.md     # per-card rationale: archetype, nearest existing card, why different
@@ -82,14 +83,14 @@ at load via `AssetManager.GetStatus` / `GetCard` (both verified public).
   this). Do NOT use the `Poison:X` status-name-command form (1 card in the whole game).
 - Multi-statement lines use `;` (`damage:5; draw:1`). Value tokens `[[...]]` per
   GAME-MECHANICS Part VI (e.g. `[[lastDamage]]`, `[[my(status)Burning]]`, `/2` arithmetic).
-- Every command used MUST appear in `reference/effect-commands.txt`; every trigger/
+- Every command used MUST appear in `../docs/research/reference/effect-commands.txt`; every trigger/
   condition/enum value must exist in the decompiled enums. No invented vocabulary.
 - All list fields ship non-null; `enchantment: null` becomes an empty `Enchantment` at load.
 
 ## 3. Identity & collision policy
 
 - **cardID**: mods own **700,000,000–799,999,999** (verified zero collisions; existing max
-  41,020,045). Blocks of 100 per pack, allocated in `packs/ID-REGISTRY.md`. First blocks:
+  41,020,045). Blocks of 100 per pack, allocated in `../docs/ID-REGISTRY.md`. First blocks:
   - 700000000–700000099 `EmberweaveGrove` (fire/graveyard cluster)
   - 700000100–700000199 `VenomousLegacy` (attrition cluster)
   - 700000200–700000299 `Clockwork Cadence` (tempo cluster)
@@ -107,7 +108,7 @@ at load via `AssetManager.GetStatus` / `GetCard` (both verified public).
 
   e.g. EmberweaveGrove (block 700000000) → `(CardExpansions)1000`, VenomousLegacy →
   `1001`, Clockwork Cadence → `1002`, CrimsonLedger → `1003`. The value is stable across
-  sessions, saves and machines because block allocations in `packs/ID-REGISTRY.md` are
+  sessions, saves and machines because block allocations in `../docs/ID-REGISTRY.md` are
   permanent. Values 1000+ can never collide with official sets (enum tops out at
   `Synthesis = 8`; the game stores the enum as int everywhere it persists). The
   manifest's `expansion` field remains required as documentation/fallback: it is used

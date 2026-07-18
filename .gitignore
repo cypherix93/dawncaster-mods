@@ -6,11 +6,11 @@ tools/out/
 tools/bin/
 
 # Mutated card art + review artifacts — derivative works of the game's art,
-# rebuilt locally from recipes (ART-MUTATION-SPEC.md §1); never commit
-packs/*/art/
-packs/*/.build-state.json
-packs/*/contact-sheet.html
-packs/contact-sheets.html
+# rebuilt locally from recipes (DC.DawnKit/ART-MUTATION-SPEC.md §1); never commit
+DC.*/art/
+DC.*/.build-state.json
+DC.*/contact-sheet.html
+/contact-sheets.html
 
 # Python
 __pycache__/
@@ -18,6 +18,6 @@ __pycache__/
 *.pyc
 
 # .NET
-src/**/bin/
-src/**/obj/
+DC.*/src/**/bin/
+DC.*/src/**/obj/
 *.csproj.user

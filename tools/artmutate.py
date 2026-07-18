@@ -1,8 +1,8 @@
 """Recipe-driven card-art mutation engine (ART-MUTATION-SPEC.md §3, §5, §7).
 
-Reads `packs/<Pack>/art-recipes.json`, resolves each card's `source` sprite key(s)
+Reads `DC.<Pack>/art-recipes.json`, resolves each card's `source` sprite key(s)
 via `tools/out/sprite-index.json`, applies the op chain (tools/artmutate_ops.py)
-plus the pack-level `finisher`, and writes `packs/<Pack>/art/<CardName>.png`
+plus the pack-level `finisher`, and writes `DC.<Pack>/art/<CardName>.png`
 (512×512 RGBA, full bleed).
 
 Deterministic: same recipe + same source bytes ⇒ byte-identical PNGs (fixed
@@ -13,9 +13,9 @@ fingerprint (engine version + card recipe + finisher + source bytes) per card;
 unchanged cards are skipped unless --force.
 
 Usage:
-    python tools/artmutate.py build --pack EmberweaveGrove [--force]
+    python tools/artmutate.py build --pack DC.EmberweaveGrove [--force]
     python tools/artmutate.py build --all [--force]
-    python tools/artmutate.py preview --pack EmberweaveGrove --card Ashfeast
+    python tools/artmutate.py preview --pack DC.EmberweaveGrove --card Ashfeast
     python tools/artmutate.py preview --recipes some-recipes.json --card X [--out p.png]
 
 Per-card failures (missing sprite key, bad op) are reported and the build
@@ -39,7 +39,8 @@ from artmutate_ops import OpError, apply_ops  # noqa: E402
 
 TOOLS_DIR = Path(__file__).resolve().parent
 REPO_DIR = TOOLS_DIR.parent
-PACKS_DIR = REPO_DIR / "packs"
+# Content packages are top-level DC.<Name>/ dirs; pack.json presence is the filter.
+PACKS_DIR = REPO_DIR
 SPRITE_INDEX = TOOLS_DIR / "out" / "sprite-index.json"
 SPRITES_BASE = TOOLS_DIR / "out"  # index 'file' entries are relative to this
 
@@ -284,7 +285,7 @@ def main(argv=None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     b = sub.add_parser("build", help="build pack art from recipes (incremental)")
-    b.add_argument("--pack", help="pack dir name under packs/")
+    b.add_argument("--pack", help="package dir name (e.g. DC.EmberweaveGrove)")
     b.add_argument("--all", action="store_true", help="build every pack")
     b.add_argument("--force", action="store_true", help="ignore build state, rebuild all")
     b.add_argument("--recipes", help="explicit recipe file (testing/off-tree builds)")
@@ -292,7 +293,7 @@ def main(argv=None) -> int:
     b.set_defaults(fn=cmd_build)
 
     p = sub.add_parser("preview", help="build one card to a temp path and print it")
-    p.add_argument("--pack", help="pack dir name under packs/")
+    p.add_argument("--pack", help="package dir name (e.g. DC.EmberweaveGrove)")
     p.add_argument("--recipes", help="explicit recipe file")
     p.add_argument("--card", required=True, help="card name (recipe key)")
     p.add_argument("--out", help="output path (default: system temp)")

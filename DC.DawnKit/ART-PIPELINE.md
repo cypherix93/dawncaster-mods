@@ -3,7 +3,7 @@
 Static-image pipeline for custom Dawncaster card art, modeled on the `ftk2-mods` tooling
 pattern (offline authoring tools → validated pack → runtime loader; game dir read-only).
 Art facts below are verified from the extracted assets — see
-`reference/asset-extraction-notes.md`.
+`../docs/research/asset-extraction-notes.md`.
 
 ## Verified art specs (ground truth)
 
@@ -66,7 +66,7 @@ tools/contact_sheet.py — HTML review sheet: art rendered at game display size 
 ```
 
 Status: **art sourcing is recipe-driven sprite mutation — see `ART-MUTATION-SPEC.md`.**
-`tools/artmutate.py` (build/preview from `packs/*/art-recipes.json`),
+`tools/artmutate.py` (build/preview from `DC.*/art-recipes.json`),
 `tools/validate_art.py` (512×512 RGBA gate + `--distinctness` perceptual-hash check)
 and `tools/contact_sheet.py` (source→result pair sheets) exist and are deterministic
 (same inputs → same bytes) per the ftk2 iconforge convention. `artforge.py`

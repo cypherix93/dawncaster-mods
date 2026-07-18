@@ -227,7 +227,7 @@ Salt the Wound.
 
 ## Validation done offline
 
-- All codeLine commands present in `reference/effect-commands.txt` (scripted check).
+- All codeLine commands present in `../docs/research/reference/effect-commands.txt` (scripted check).
 - All 12 names collision-free vs the 2,525 extracted `m_Name`s, case-insensitive
   (scripted check).
 - cardIDs sequential 700000100–700000111 inside the allocated block.

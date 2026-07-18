@@ -1,10 +1,10 @@
 """Art gate: shipping checks + perceptual distinctness (ART-MUTATION-SPEC.md §6).
 
 Shipping checks (always):
-  - every card in packs/<Pack>/pack.json has packs/<Pack>/art/<CardName>.png
+  - every card in DC.<Pack>/pack.json has DC.<Pack>/art/<CardName>.png
     (missing-art report), exactly 512×512 RGBA, file < 600 KB
   - no stray files in art/ that don't match a card name
-  - §2 source budget from packs/*/art-recipes.json: a sprite key backing more
+  - §2 source budget from DC.*/art-recipes.json: a sprite key backing more
     than 2 mod cards across all packs, or 2 in one pack, is an ERROR
 
 --distinctness (perceptual-hash gate, Pillow-only):
@@ -33,7 +33,7 @@ Shipping checks (always):
   intentionally fails those recipes; use zoom/rotate/composite instead.
 
 Usage:
-    python tools/validate_art.py --pack EmberweaveGrove [--distinctness]
+    python tools/validate_art.py --pack DC.EmberweaveGrove [--distinctness]
     python tools/validate_art.py --all --distinctness
 
 Exit code 1 on any ERROR (warnings alone exit 0).
@@ -50,7 +50,8 @@ from PIL import Image
 
 TOOLS_DIR = Path(__file__).resolve().parent
 REPO_DIR = TOOLS_DIR.parent
-PACKS_DIR = REPO_DIR / "packs"
+# Content packages are top-level DC.<Name>/ dirs; pack.json presence is the filter.
+PACKS_DIR = REPO_DIR
 SPRITE_INDEX = TOOLS_DIR / "out" / "sprite-index.json"
 SPRITES_BASE = TOOLS_DIR / "out"
 
@@ -350,7 +351,7 @@ def validate(scope_packs: list[Path], packs_dir: Path = PACKS_DIR,
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--pack", help="pack dir name under packs/")
+    ap.add_argument("--pack", help="package dir name (e.g. DC.EmberweaveGrove)")
     ap.add_argument("--all", action="store_true", help="validate every pack")
     ap.add_argument("--distinctness", action="store_true",
                     help="run the perceptual-hash distinctness gate (§6)")

@@ -181,7 +181,7 @@ Structural idioms copied from shipped cards (all read end-to-end):
   blood), Soul Dynamo (souls→artifice), Exsanguine Engine (artifice→blood). ✔
 - **Name uniqueness:** all 11 names grepped case-insensitively against the 2,525 extracted
   filenames — zero collisions ("Dynamo" and "Song of Vitae" exist; full names differ).
-- **Commands:** every codeLine token checked against `reference/effect-commands.txt`:
+- **Commands:** every codeLine token checked against `../docs/research/reference/effect-commands.txt`:
   damage, directdamage, repair, repairself, inflict, bless, changesouls, enchant, addstack,
   adddamage, equip, heal, removeenchant, draw, activate, disable, energyINT,
   convertlastdrawntoblood. ✔

@@ -3,14 +3,14 @@
 Self-contained HTML (images embedded as base64 data URIs, no external assets,
 no timestamps — deterministic output for identical inputs). One row per card
 in pack.json order: source sprite(s) from art-recipes.json, the built art from
-packs/<Pack>/art/, and name/cost/rarity/type/description. Missing art renders
+DC.<Pack>/art/, and name/cost/rarity/type/description. Missing art renders
 as a red placeholder tile; missing recipe as a grey tile.
 
 Outputs are gitignored (they embed copyrighted game art — local review only).
 
 Usage:
-    python tools/contact_sheet.py --pack EmberweaveGrove
-    python tools/contact_sheet.py --all      # all packs + packs/contact-sheets.html index
+    python tools/contact_sheet.py --pack DC.EmberweaveGrove
+    python tools/contact_sheet.py --all      # all packs + repo-root contact-sheets.html index
 """
 
 from __future__ import annotations
@@ -25,7 +25,8 @@ from pathlib import Path
 
 TOOLS_DIR = Path(__file__).resolve().parent
 REPO_DIR = TOOLS_DIR.parent
-PACKS_DIR = REPO_DIR / "packs"
+# Content packages are top-level DC.<Name>/ dirs; pack.json presence is the filter.
+PACKS_DIR = REPO_DIR
 SPRITE_INDEX = TOOLS_DIR / "out" / "sprite-index.json"
 SPRITES_BASE = TOOLS_DIR / "out"
 
@@ -158,9 +159,9 @@ def build_index(pack_dirs: list[Path]) -> str:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--pack", help="pack dir name under packs/")
+    ap.add_argument("--pack", help="package dir name (e.g. DC.EmberweaveGrove)")
     ap.add_argument("--all", action="store_true",
-                    help="all packs + packs/contact-sheets.html index")
+                    help="all packs + repo-root contact-sheets.html index")
     args = ap.parse_args(argv)
 
     if args.all:

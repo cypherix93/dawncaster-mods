@@ -12,7 +12,7 @@ runtime loading, `validate_art` gate, contact sheets) is unchanged — see `ART-
 
 - Mutated outputs are **derivative works of Wanderlost's copyrighted art**. They are for
   personal, local use only.
-- `packs/*/art/*.png` outputs are **gitignored**. What's committed: the recipe files and
+- `DC.*/art/*.png` outputs are **gitignored**. What's committed: the recipe files and
   tooling, which rebuild identical PNGs from the locally-extracted sprite corpus
   (`tools/out/sprites/`, itself gitignored and rebuilt by `tools/extract_sprites.py`).
 - If this mod is ever distributed publicly, mutated art must be replaced with original
@@ -21,7 +21,7 @@ runtime loading, `validate_art` gate, contact sheets) is unchanged — see `ART-
 ## 2. Source selection
 
 - Source corpus: player card art only — `cardart_*`, `cards_metamorphosis*`, and expansion
-  sheet sprites, 512×512 (see `reference/asset-extraction-notes.md`). Do NOT use
+  sheet sprites, 512×512 (see `../docs/research/asset-extraction-notes.md`). Do NOT use
   `creature_abilties_*` (256×256) for player cards, or UI/status icons.
 - Correlate shipped card → its art via `Card.artwork.m_PathID` ↔ `sprite-index.json`
   `path_id` (sprite names do not match card names).
@@ -71,7 +71,7 @@ Mutations pull toward the pack's identity so each pack also gains internal cohes
 
 ## 5. Recipe format
 
-`packs/<Pack>/art-recipes.json` (committed):
+`DC.<Pack>/art-recipes.json` (committed):
 
 ```jsonc
 {
@@ -106,12 +106,12 @@ Mutations pull toward the pack's identity so each pack also gains internal cohes
 ## 7. Pipeline & workflow
 
 ```
-tools/out/sprites/  (local, extracted)          packs/<Pack>/art-recipes.json  (committed)
+tools/out/sprites/  (local, extracted)          DC.<Pack>/art-recipes.json  (committed)
         └──────────────┬─────────────────────────────────┘
                 tools/artmutate.py build [--pack X | --all]
                        │   deterministic Pillow ops
                        ▼
-        packs/<Pack>/art/<CardName>.png   (gitignored, 512×512 RGBA)
+        DC.<Pack>/art/<CardName>.png   (gitignored, 512×512 RGBA)
                        ▼
         tools/validate_art.py --all --distinctness      (gate)
                        ▼
@@ -134,4 +134,4 @@ tools/out/sprites/  (local, extracted)          packs/<Pack>/art-recipes.json  (
 3. Contact sheets show source→result pairs; human review signs off per pack.
 4. In-game: placeholders gone, mutated art renders in hand/Codex/reward screens, no
    visual confusion with the source cards in a mixed pool.
-5. `git status` clean of PNGs (gitignore covers `packs/*/art/`).
+5. `git status` clean of PNGs (gitignore covers `DC.*/art/`).

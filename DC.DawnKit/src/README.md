@@ -35,18 +35,19 @@ No game files are modified; everything is runtime injection via Harmony.
 ## Build
 
 ```powershell
-dotnet build "D:\src\mods\dawncaster-mods\src\Dawncaster.Sandbox\Dawncaster.Sandbox.csproj" -c Release
+dotnet build "D:\src\mods\dawncaster-mods\DC.DawnKit\src\Dawncaster.Sandbox\Dawncaster.Sandbox.csproj" -c Release
 ```
 
-Output: `src\Dawncaster.Sandbox\bin\Release\Dawncaster.Sandbox.dll` (references to
+Output: `DC.DawnKit\src\Dawncaster.Sandbox\bin\Release\Dawncaster.Sandbox.dll` (references to
 BepInEx/Harmony/Assembly-CSharp/UnityEngine/Newtonsoft.Json are `Private=false`, so only
-this one DLL ships; `reference\effect-commands.txt` and `reference\talent-commands.txt`
-are embedded into it for runtime codeLine validation).
+this one DLL ships; `docs\research\reference\effect-commands.txt` and
+`docs\research\reference\talent-commands.txt` are embedded into it for runtime codeLine
+validation).
 
 ## Install
 
 ```powershell
-Copy-Item "D:\src\mods\dawncaster-mods\src\Dawncaster.Sandbox\bin\Release\Dawncaster.Sandbox.dll" `
+Copy-Item "D:\src\mods\dawncaster-mods\DC.DawnKit\src\Dawncaster.Sandbox\bin\Release\Dawncaster.Sandbox.dll" `
           "E:\Games\Steam\steamapps\common\Dawncaster\BepInEx\plugins\" -Force
 ```
 
@@ -58,7 +59,7 @@ Launch the game normally (Steam must be running).
 
 | Section.Key | Default | Meaning |
 |---|---|---|
-| `Packs.PacksPath` | `<plugin dir>\DawncasterPacks` | Directory scanned for `<Pack>/pack.json` manifests. **Dev setup**: point it at the repo — `D:\src\mods\dawncaster-mods\packs` — so the checked-in manifests are the live source. **Non-dev deployment**: copy each `packs\<Pack>\` folder (with its `pack.json` + optional `art\`) into `BepInEx\plugins\DawncasterPacks\`. |
+| `Packs.PacksPath` | `<plugin dir>\DawncasterPacks` | Directory whose subdirs are scanned for `pack.json` manifests (subdirs without one are skipped). **Dev setup**: point it at the repo root — `D:\src\mods\dawncaster-mods` — so the checked-in `DC.<Pack>` packages are the live source. **Non-dev deployment**: copy each `DC.<Pack>\` folder (with its `pack.json` + optional `art\`) into `BepInEx\plugins\DawncasterPacks\`. |
 | `Packs.ExpansionOverride` | *(empty)* | **Emergency override.** When non-empty, every loaded card's expansion is forced to this `AssetManager.CardExpansions` member and per-pack synthetic sets are disabled (no set rows). Default empty = each pack becomes its own card set (see below). *(v0.2.0 defaulted this to `Core`; if your cfg predates 0.3.0, blank the line or delete the cfg.)* |
 | `Packs.AutoDiscoverModCards` | `true` | Add all loaded mod card IDs to the in-memory Codex list so they render as discovered. In-memory only — the plugin never writes `Codex.dtt` itself (the game persists the list on its own saves; stale mod IDs are harmless, see save-compatibility below). |
 | `Sandbox.InjectSandboxCard` | `false` | Inject the SandboxStrike test card (id 900001). |
@@ -90,7 +91,7 @@ Launch the game normally (Steam must be running).
 - **Re-injection**: `ForceReloadAssets()` (game version change) clears all collections;
   the hooks re-fire on the next load pass, wiped cards are detected (tracked instance no
   longer in `allCards`) and rebuilt from the manifests.
-- **Art**: if `packs\<Pack>\art\<CardName>.png` exists it is loaded via
+- **Art**: if `<PacksPath>\<Pack>\art\<CardName>.png` exists it is loaded via
   `Texture2D.LoadImage` (512×512 RGBA per `ART-PIPELINE.md`); otherwise a generated
   512×512 placeholder is used — flat color from the card's cost-color identity
   (`Card.GetColor()`: green DEX, blue INT, red STR, gold HOLY, aqua/orange/purple hybrids,
@@ -115,7 +116,7 @@ Both arrays ride the same phase-1 hooks (after `AllClasses()` has populated
   `requiredProfessions` empty (class gating is purely `Profession.talents`
   membership). Registered in `AssetManager.allTalents` + `RefreshCaches()`;
   talentID/name collision vs `allTalents` ⇒ skip with error. `powerImage` uses
-  `packs\<Pack>\art\<Name>.png` when present, else the two-band placeholder
+  `<PacksPath>\<Pack>\art\<Name>.png` when present, else the two-band placeholder
   (white). `audioClip` stays null (only usage site null-checks,
   PlayerUIHandler.cs:1631).
 - **codeLine validation**: talent effects check against the embedded
@@ -205,7 +206,7 @@ four repo packs, authored against WEAPON-SPEC §2); `BepInEx\LogOutput.log`:
 
 ```
 [Info   :   BepInEx] Loading [Dawncaster Sandbox 0.4.0]
-[Info   :PackLoader] [PackLoader] Configured. PacksPath=D:\src\mods\dawncaster-mods\packs, ExpansionOverride=(none — per-pack synthetic sets), AutoDiscoverModCards=True, command vocabulary: 565 effect / 660 talent-union.
+[Info   :PackLoader] [PackLoader] Configured. PacksPath=D:\src\mods\dawncaster-mods, ExpansionOverride=(none — per-pack synthetic sets), AutoDiscoverModCards=True, command vocabulary: 565 effect / 660 talent-union.
 [Info   :PackLoader] [PackLoader] Clockwork Cadence: 12 cards injected, 0 skipped (hook: SetPlayerAssetsLoaded)
 [Info   :PackLoader] [PackLoader] Clockwork Cadence: 1 weapons, 3 weapon powers injected (classes: Arcanist, Seeker)
 [Info   :PackLoader] [PackLoader] CrimsonLedger: 1 weapons, 3 weapon powers injected (classes: Knight, Warrior)

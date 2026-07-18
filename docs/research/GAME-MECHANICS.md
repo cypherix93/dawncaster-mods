@@ -3,7 +3,7 @@
 Compiled 2026-07-17 from `decompiled/` (562 C# files, ilspycmd 10.1.1, byte-accurate mirror of
 `Assembly-CSharp.dll`); updated 2026-07-18 with the extracted ScriptableObject dumps in
 `tools/out/data/` (2525 Cards, 49 StatusEffects, 383 Talents, 170 Battles, ... — see
-`reference/asset-extraction-notes.md` for enum decoding). Purpose: make card/event/talent
+`asset-extraction-notes.md` for enum decoding). Purpose: make card/event/talent
 designers experts in the strategic system. **Every mechanical claim cites the decompiled file
 (and method for load-bearing claims) or the specific asset JSON.** Enum ints in asset JSONs are
 decoded against the decompiled enums (e.g. `Status.effectTrigger`/`clearAt` against

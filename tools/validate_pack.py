@@ -6,12 +6,12 @@ and the extracted pool in tools/out/data/):
   - manifest + per-card JSON shape (required fields, list fields non-null)
   - enum spellings: type/category/suffix/rarity/expansion/keywords/flags,
     effect triggers, condition values + operators (exact, incl. canonical typos)
-  - every codeLine command exists in reference/effect-commands.txt
+  - every codeLine command exists in docs/research/reference/effect-commands.txt
   - referenceStatus resolves to one of the 49 shipped StatusEffect assets;
     referenceCards resolve to pool cards or cards in this pack
   - cardID inside the declared idBlock, block inside the mod range
     700,000,000-799,999,999, collision-free vs the 2,525 extracted cards AND
-    vs every other packs/*/pack.json
+    vs every other DC.*/pack.json content package
   - name collision-free (case-insensitive) vs pool and other packs
   - player-pool legality (expansion, rarity, suffix — ProcessCard filter)
   - meta.nearestExisting references a real extracted card
@@ -24,7 +24,7 @@ v1.1 (WEAPON-SPEC.md §7.1):
   - weaponPowers: talentID in-block + collision-free vs the 383 extracted talents
     and sibling packs' weaponPowers (separate namespace from cardIDs), name
     collision-free vs shipped talents, effect codeLines validated against
-    reference/effect-commands.txt UNION reference/talent-commands.txt
+    effect-commands.txt UNION talent-commands.txt (docs/research/reference/)
   - hard degeneracy error: a weapon-cooldown-reducing command
     (resetweaponcooldown / lowercooldown / reducecooldown / setcooldown) inside an
     ActivateWeapon-triggered effect = infinite-activation loop
@@ -32,7 +32,7 @@ v1.1 (WEAPON-SPEC.md §7.1):
 Exit code 1 on any ERROR (warnings alone exit 0; --strict makes warnings fatal).
 
 Usage:
-    python tools/validate_pack.py packs/<Pack>/pack.json
+    python tools/validate_pack.py DC.<Pack>/pack.json
     python tools/validate_pack.py --all
 """
 
@@ -92,7 +92,7 @@ WEAPON_COOLDOWN_DEGENERATE = frozenset(
 
 
 def _validate_effect(eff, where: str, pack_names_lower: set[str], err, warn,
-                     commands=None, vocab_label="reference/effect-commands.txt") -> None:
+                     commands=None, vocab_label="effect-commands.txt") -> None:
     commands = commands if commands is not None else gd.effect_commands()
     statuses = gd.status_names()
     if not isinstance(eff, dict):
@@ -600,15 +600,16 @@ def run_file(pack_path: Path, strict: bool) -> int:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("pack", nargs="?", help="path to packs/<Pack>/pack.json")
-    ap.add_argument("--all", action="store_true", help="validate every packs/*/pack.json")
+    ap.add_argument("pack", nargs="?", help="path to DC.<Pack>/pack.json")
+    ap.add_argument("--all", action="store_true",
+                    help="validate every top-level */pack.json content package")
     ap.add_argument("--strict", action="store_true", help="warnings are fatal")
     args = ap.parse_args(argv)
 
     if args.all:
         paths = sorted(gd.PACKS_DIR.glob("*/pack.json"))
         if not paths:
-            print("no packs/*/pack.json found")
+            print("no */pack.json content packages found")
             return 0
     elif args.pack:
         paths = [Path(args.pack)]

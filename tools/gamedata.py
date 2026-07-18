@@ -5,7 +5,8 @@ EventHandler.cs, ConditionChecker.cs, AssetManager.cs) — they are stable API s
 including the canonical typos (`CardRariry`, `Phyisical`). Do not "fix" spellings.
 
 Pool loaders read `tools/out/data/**` (produced by tools/extract_data.py) and
-`reference/effect-commands.txt`. Everything is read-only and cached per process.
+`docs/research/reference/effect-commands.txt`. Everything is read-only and cached
+per process.
 """
 
 from __future__ import annotations
@@ -18,9 +19,12 @@ TOOLS_DIR = Path(__file__).resolve().parent
 REPO_DIR = TOOLS_DIR.parent
 DATA_DIR = TOOLS_DIR / "out" / "data"
 DATA_INDEX = TOOLS_DIR / "out" / "data-index.json"
-EFFECT_COMMANDS_FILE = REPO_DIR / "reference" / "effect-commands.txt"
-TALENT_COMMANDS_FILE = REPO_DIR / "reference" / "talent-commands.txt"
-PACKS_DIR = REPO_DIR / "packs"
+REFERENCE_DIR = REPO_DIR / "docs" / "research" / "reference"
+EFFECT_COMMANDS_FILE = REFERENCE_DIR / "effect-commands.txt"
+TALENT_COMMANDS_FILE = REFERENCE_DIR / "talent-commands.txt"
+# Content packages live at the repo root as DC.<Name>/ dirs; a dir is a content
+# pack iff it contains pack.json (DC.DawnKit has none — engine, not content).
+PACKS_DIR = REPO_DIR
 
 # --------------------------------------------------------------------------- enums
 
@@ -126,14 +130,16 @@ MOD_ID_RANGE = (700_000_000, 799_999_999)
 
 @lru_cache(maxsize=1)
 def effect_commands() -> frozenset[str]:
-    """All 565 command spellings from reference/effect-commands.txt (case-sensitive)."""
+    """All 565 command spellings from docs/research/reference/effect-commands.txt
+    (case-sensitive)."""
     lines = EFFECT_COMMANDS_FILE.read_text(encoding="utf-8").splitlines()
     return frozenset(ln.strip() for ln in lines if ln.strip())
 
 
 @lru_cache(maxsize=1)
 def talent_commands() -> frozenset[str]:
-    """The TalentHandler.RunTalentEffect switch labels (reference/talent-commands.txt).
+    """The TalentHandler.RunTalentEffect switch labels
+    (docs/research/reference/talent-commands.txt).
 
     Talent codeLines fall through to the SpellEffects DSL for anything else
     (TalentHandler.cs:510-516), so validate talent effects against
@@ -281,7 +287,7 @@ def profession_names() -> frozenset[str]:
 
 
 def other_pack_manifests(exclude: Path | None = None) -> list[tuple[Path, dict]]:
-    """(path, manifest) for every packs/*/pack.json except `exclude`."""
+    """(path, manifest) for every sibling <PACKS_DIR>/*/pack.json except `exclude`."""
     out = []
     if not PACKS_DIR.is_dir():
         return out

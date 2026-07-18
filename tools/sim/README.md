@@ -3,13 +3,13 @@
 Balance evaluation for card packs BEFORE in-game testing. Two commands:
 
 ```
-python tools/validate_pack.py packs/<Pack>/pack.json [--all] [--strict]   # gate 1
-python tools/sim/report.py    packs/<Pack>/pack.json [--all]              # gate 3
+python tools/validate_pack.py DC.<Pack>/pack.json [--all] [--strict]      # gate 1
+python tools/sim/report.py    DC.<Pack>/pack.json [--all]                 # gate 3
 python tools/sim/report.py    --self-check [--rebuild-envelopes]          # calibration
 python -m pytest tools/tests                                              # 68 tests
 ```
 
-`report.py` writes `packs/<Pack>/BALANCE-REPORT.md` and exits non-zero if any card
+`report.py` writes `DC.<Pack>/BALANCE-REPORT.md` and exits non-zero if any card
 is OVER or DEGENERATE-RISK. Envelopes are cached in `tools/sim/out/envelopes.json`
 (`--rebuild-envelopes` after changing the engine or the extraction).
 

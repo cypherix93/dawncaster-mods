@@ -164,7 +164,7 @@ Injection extends the existing phase-1 hook (after `AllClasses()` has populated
    `BasicAttack`; talentID collision vs extracted talents + sibling packs; `classes`
    entries must match extracted Profession asset names; talent effect codeLines against
    the same 565-command vocabulary **plus** the talent-specific command list (extract the
-   `RunTalentEffect` switch labels into `reference/talent-commands.txt` as part of the
+   `RunTalentEffect` switch labels into `../docs/research/reference/talent-commands.txt` as part of the
    tooling change).
 2. Sim harness: weapon cards simulate like any card; weapon powers are exploration-time →
    mostly `INSUFFICIENT-SIM` by design; static degeneracy checks still apply (e.g.

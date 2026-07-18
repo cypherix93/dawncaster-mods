@@ -1,60 +1,56 @@
-# dawncaster-mods
+# Dawncaster Mods
 
-Modding sandbox for **Dawncaster: The RPG Cardventure** (Steam app 3966890).
-Goal: custom content — cards first, then opportunity events and talents/passives.
+Multi-mod monorepo for **Dawncaster: The RPG Cardventure** (Steam app 3966890; Unity Mono,
+BepInEx 5 + HarmonyX). One directory per shippable package (`DC.*`), shared docs and Python
+toolchain at the root. Direction doc: [MOD-TOOLKIT.md](MOD-TOOLKIT.md).
 
-## Layout
+## Packages
 
-- `GROUND-TRUTH.md` — verified architecture findings from the decompiled game code. Start here.
-- `GAME-MECHANICS.md` — canonical game mechanics + synergy web (decompile-verified, claim-grounded).
-  Required reading before designing any card/event/talent.
-- `ART-PIPELINE.md` — card art specs (512×512 full-bleed) + authoring/runtime pipeline.
-- `decompiled/` — full ilspycmd decompilation of `Assembly-CSharp.dll` (562 files). Read-only
-  reference; regenerate after game updates with:
-  `ilspycmd -p -o decompiled --nested-directories -r "<game>\Dawncaster_Data\Managed" "<game>\Dawncaster_Data\Managed\Assembly-CSharp.dll"`
-- `reference/effect-commands.txt` — all 565 card-effect DSL commands (from `SpellEffects.cs`).
-- `reference/dialogue-action-commands.txt` — all 99 Ink event action commands
-  (from `DialogueActionHandler.cs`).
-- `reference/asset-extraction-notes.md` — how to re-run extractors; asset counts; card-art
-  location/naming/dimensions.
-- `tools/` — offline extraction tooling (UnityPy; game dir is READ-ONLY):
-  - `extract_data.py` — all content ScriptableObjects → `tools/out/data/<Class>/*.json`
-    (2525 cards with codeLines, 383 talents, 49 statuses, 148 events, 192 Ink stories...)
-  - `extract_sprites.py` — sprites → `tools/out/sprites/` + `sprite-index.json` (3,774 images)
-  - `tools/out/`, `tools/bin/` — machine artifacts, gitignore when repo-ified
-- `src/Dawncaster.Sandbox/` — BepInEx 5 plugin (working): injects test card `SandboxStrike`
-  at asset-load time. See `src/README.md` for build/install.
+| Package | What it is | Status |
+|---|---|---|
+| [DC.DawnKit](DC.DawnKit/SPEC.md) | The engine: BepInEx plugin + data-driven pack loader (cards, weapons, weapon powers, synthetic card sets, Codex integration). Owns the data contracts ([CARD-PACK-SPEC](DC.DawnKit/CARD-PACK-SPEC.md), [WEAPON-SPEC](DC.DawnKit/WEAPON-SPEC.md), [ART-PIPELINE](DC.DawnKit/ART-PIPELINE.md), [ART-MUTATION-SPEC](DC.DawnKit/ART-MUTATION-SPEC.md)) | Working monolith (`Dawncaster.Sandbox` 0.4.0); M1 = split into DawnKit + DawnKit.Packs |
+| [DC.VenomousLegacy](DC.VenomousLegacy/DESIGN-NOTES.md) | Content pack: poison/bleed/Infected attrition (12 cards + weapons/powers) | Injects in-game; art built |
+| [DC.EmberweaveGrove](DC.EmberweaveGrove/DESIGN-NOTES.md) | Content pack: burn/graveyard (12 cards + weapons/powers) | Injects in-game; art built |
+| [DC.ClockworkCadence](DC.ClockworkCadence/DESIGN-NOTES.md) | Content pack: chain/echo/conjure tempo (12 cards + weapons/powers) | Injects in-game; art built |
+| [DC.CrimsonLedger](DC.CrimsonLedger/DESIGN-NOTES.md) | Content pack: blood/souls/artifice (11 cards + weapons/powers) | Injects in-game; art built |
+
+A top-level `DC.*/` dir with a `pack.json` is a content package (tools and the loader
+discover packs by that convention); each pack ships `pack.json` + `DESIGN-NOTES.md` +
+`BALANCE-REPORT.md` + `art-recipes.json` (art PNGs are gitignored derivative works,
+rebuilt locally).
+
+## Docs
+
+- [docs/CONVENTIONS.md](docs/CONVENTIONS.md) — per-package rules + SPEC template
+- [docs/ID-REGISTRY.md](docs/ID-REGISTRY.md) — cardID/talentID block allocations (mods own 700,000,000+)
+- [docs/research/GROUND-TRUTH.md](docs/research/GROUND-TRUTH.md) — verified architecture findings from the decompiled game. Start here.
+- [docs/research/GAME-MECHANICS.md](docs/research/GAME-MECHANICS.md) — canonical mechanics + synergy web (decompile-verified). Required reading before designing content.
+- [docs/research/asset-extraction-notes.md](docs/research/asset-extraction-notes.md) — extractor how-to, asset counts, card-art location/naming
+- `docs/research/reference/` — extracted command vocabularies: `effect-commands.txt` (565 card-effect DSL commands), `talent-commands.txt` (115 talent commands), `dialogue-action-commands.txt` (99 Ink event actions)
+
+## Tools (`tools/`, Python; game dir is READ-ONLY)
+
+- `extract_data.py` — content ScriptableObjects → `tools/out/data/` (2525 cards, 383 talents, 49 statuses, ...)
+- `extract_sprites.py` — sprites → `tools/out/sprites/` + `sprite-index.json` (3,774 images)
+- `validate_pack.py --all` — gate 1: schema/enums/vocabulary/collisions (exit 1 on errors)
+- `sim/report.py --all` — gate 3: balance sim vs pool-derived envelopes → `DC.<Pack>/BALANCE-REPORT.md`
+- Art build ([ART-MUTATION-SPEC](DC.DawnKit/ART-MUTATION-SPEC.md) — outputs gitignored, local use only):
+  - `python tools/artmutate.py build --all` — recipes → `DC.<Pack>/art/*.png` (512×512 RGBA, incremental)
+  - `python tools/validate_art.py --all --distinctness` — shipping + perceptual-hash gate
+  - `python tools/contact_sheet.py --all` — per-pack review sheets + root `contact-sheets.html` index
+- `python -m pytest tools/tests` — full suite (sim, validators, art tooling)
+- `decompiled/` — gitignored local ilspycmd decompile of `Assembly-CSharp.dll`; regenerate after game updates
 
 ## Environment
 
 - Game: `E:\Games\Steam\steamapps\common\Dawncaster` (Unity 2022.3.62f2, **Mono** backend)
 - Loader: BepInEx 5.4.23.2 (installed in game dir) + HarmonyX
 - Extraction: Python 3.14, UnityPy 1.25.2, TypeTreeGeneratorAPI 0.0.10
-- Plugin build: `dotnet build -c Release` (net472)
-
-## Card packs (design wave 1)
-
-- `CARD-PACK-SPEC.md` — pack manifest schema, ID policy (mods own 700,000,000+),
-  pool-derived power budgets, uniqueness bar, validation gates.
-- `packs/` — four designed packs (47 cards): `VenomousLegacy` (poison/bleed/Infected),
-  `EmberweaveGrove` (burn/graveyard), `Clockwork Cadence` (chain/echo/conjure),
-  `CrimsonLedger` (blood/souls/artifice). Each: `pack.json` + `DESIGN-NOTES.md` +
-  `BALANCE-REPORT.md`. `packs/ID-REGISTRY.md` allocates ID blocks.
-- `tools/validate_pack.py` — static gate (schema/enums/vocabulary/collisions/art).
-- **Art build** (`ART-MUTATION-SPEC.md` — recipe-driven mutation of extracted sprites;
-  outputs are gitignored derivative works, local use only):
-  - `python tools/artmutate.py build --all` — recipes → `packs/<Pack>/art/*.png` (512×512 RGBA)
-  - `python tools/validate_art.py --all --distinctness` — shipping + perceptual-hash gate
-  - `python tools/contact_sheet.py --all` — source→result review sheets (gitignored)
-- `tools/sim/` — balance harness: DSL-subset combat sim with verified status timings,
-  envelopes calibrated on the shipped pool (self-check 17/20 shipped commons ON-CURVE).
-  68 pytest tests in `tools/tests/`.
+- Plugin build: `dotnet build -c Release` (net472) — see [DC.DawnKit/src/README.md](DC.DawnKit/src/README.md) for install/config
+- Dev config: `BepInEx\config\com.dawncastermods.sandbox.cfg` sets `PacksPath = D:\src\mods\dawncaster-mods` (loader scans `<PacksPath>\*\pack.json`)
 
 ## Status (2026-07-18)
 
-- ✅ Grounding: architecture + mechanics docs, full data/sprite extraction
-- ✅ BepInEx bootstrap + hello-card verified live in-game (`SandboxStrike`, `damage:6`)
-- ✅ Wave-1 pack designs + balance reports (3 cards flagged, see BALANCE-REPORTs)
-- ✅ Art tooling: artmutate/validate_art/contact_sheet (recipe → mutated sprite art)
-- Next: fix flagged cards; author `packs/*/art-recipes.json` (47 cards); in-game QA
-  pass (gate 4); hello-event (Ink) spike
+- Live in-game: 4 packs load as their own card sets — 47 cards + 5 weapons + 11 weapon powers, all references resolved
+- Full pipeline proven: extraction → design gates (validate/sim) → recipe-driven art → runtime injection
+- Next: M1 engine extraction (`DC.DawnKit/SPEC.md`), hello-event (Ink) spike
