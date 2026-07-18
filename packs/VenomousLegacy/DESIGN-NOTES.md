@@ -236,3 +236,14 @@ Salt the Wound.
   `Bloodlust`, `DamageType`) are exact enum member spellings from decompiled
   EventHandler.cs / ConditionChecker.cs.
 - Art files not yet produced (ART-PIPELINE step); paths reserved as `art/<Name>.png`.
+
+## Art direction
+
+Treatment: sickly and wet. Toxin green stays the dominant light source (most sources are
+already green-lit poison art), but every card gets bruise-purple shadow washes and bone
+highlights (#4a2b52 / #d8d2b4 family) so the bleed cards and poison cards share one
+infected-flesh palette; the bleed pieces keep their red but dirtied toward wine. Blades for
+the bleed suite (Toxicity's weeping dagger, Plague Strike), disease-cloud and skull pieces
+for the Infected angle (Cloudkill, Toxic Bloom, Withering Touch). Composites mark the body-
+horror payoffs: Rupture (Lacerate gashes noise-blended into Grievous Injury's bite) and
+Symbiotic Carapace (Bone Ritual's ribcage inside Aura of Venom's aura).

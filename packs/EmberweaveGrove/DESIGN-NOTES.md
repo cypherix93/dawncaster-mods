@@ -206,3 +206,15 @@ for bridges, matching the Halo bury cycle.
   Grave_Pact-style steals — no dependency, pure gravy.
 - Cinder Archive returns feed Clockwork Cadence's CardsPlayedThisTurn payoffs.
 - Nothing in this pack requires another pack.
+
+## Art direction
+
+Treatment: heat over dead ground. Every source is pulled toward ember orange focal light
+with ash-grey mids and charcoal darks (shared gradient stops around #1a1210 / #c2571f /
+#f5c469); cool navy backdrops from the core set are allowed to survive only as charcoal.
+Sources are fire and graveyard art exclusively — flame-consumption pieces (Combust, Fan the
+Flames, Aura of Fire) for the burn cards, grave/bone pieces (Gravesite, Recycle, Reaper's
+Approach) hue-shifted from teal/green into ember for the graveyard half, so the pack's two
+archetypes read as one scorched world. Composites mark the two archetype-welding cards:
+Cinder Archive (grimoire + flame breath) and Emberweave Communion (ritual pillar + winged
+ascension, noise-woven for the "weave").

@@ -198,3 +198,14 @@ Structural idioms copied from shipped cards (all read end-to-end):
   (2) passive equipment container without activate line (Censer); (3) durability consumption
   on failed use-condition (Dynamo); (4) auto-despawn of 0-durability equipment (Censer —
   guarded by explicit cleanup). All flagged for sim harness / in-game QA gates 3–4.
+
+## Art direction
+
+Treatment: a blood-lit ledger room. Blacks are crushed, reds pushed arterial, and every
+card carries a candle-gold accent (#e8b54a) via wash, gradient stop, or glow — the gold is
+the "ledger" thread tying blood cards to soul cards. Blood sources keep their red but get
+gold rim-light (Blood Levy, Blood Ritual, Bloodletting); soul sources keep the game's
+signature teal soul-glow as the one permitted cold accent (Soul Dynamo, Debt Collector), so
+Souls stay instantly readable against the red room. Composites mark the two conversion
+engines: Soul Dynamo (Damnation's radiating figure noise-blended with Soulbolt's comet) and
+Exsanguine Engine (Vampirism's hungry face over Bloodcast's blood-working hands).

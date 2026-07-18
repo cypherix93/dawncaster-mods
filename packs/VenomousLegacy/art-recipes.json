@@ -1,0 +1,168 @@
+{
+  "pack": "VenomousLegacy",
+  "finisher": [ { "op": "vignette", "strength": 0.25 } ],
+  "cards": {
+    "Weeping Blade": {
+      "source": "MASKS_OF_MISERY_17",
+      "sourceCard": "Toxicity",
+      "seed": 700000100,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.18, "gravity": "center" },
+        { "op": "gradient_map", "palette": ["#16101c", "#5a3260", "#d8d2b4"], "strength": 0.45 },
+        { "op": "color_wash", "color": "#6a1430", "opacity": 0.18, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.45, 0.6], "radius": 0.3, "color": "#c92f4c", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Open Old Wounds": {
+      "source": "MOM_HEARTACHE",
+      "sourceCard": "Heartache",
+      "seed": 700000101,
+      "ops": [
+        { "op": "rotate_crop", "degrees": -6 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -40 },
+        { "op": "sat_value", "sat": 0.9, "value": 0.88 },
+        { "op": "color_wash", "color": "#3c7a2c", "opacity": 0.15, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.35, "color": "#c92f4c", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Gutter Toxin": {
+      "source": "CARDART_3_62",
+      "sourceCard": "Plague_Strike",
+      "seed": 700000102,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 5 },
+        { "op": "sat_value", "sat": 1.1, "value": 0.85 },
+        { "op": "gradient_map", "palette": ["#0f1408", "#54701e", "#cdd3a8"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.5, 0.55], "radius": 0.3, "color": "#9fd12e", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Septic Bloom": {
+      "source": "TOXIC_BLOOM_ECLYPSE",
+      "sourceCard": "Toxic_Bloom",
+      "seed": 700000103,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "top" },
+        { "op": "hue_rotate", "degrees": 18 },
+        { "op": "color_wash", "color": "#4a2b52", "opacity": 0.2, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.5, 0.3], "radius": 0.35, "color": "#aef04a", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Rupture": {
+      "source": ["CARDART_2_22", "MASKS_OF_MISERY_49"],
+      "sourceCard": "Lacerate + Grievous_Injury",
+      "seed": 700000104,
+      "ops": [
+        { "op": "composite", "mask": "noise" },
+        { "op": "rotate_crop", "degrees": -4 },
+        { "op": "gradient_map", "palette": ["#140b10", "#7a1f36", "#d8d2b4"], "strength": 0.4 },
+        { "op": "sat_value", "sat": 1.1, "value": 0.9 },
+        { "op": "grain", "opacity": 0.08 }
+      ]
+    },
+    "Quarantine": {
+      "source": "CARD_UNLOCKS_25",
+      "sourceCard": "Cloudkill",
+      "seed": 700000105,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 12 },
+        { "op": "sat_value", "sat": 0.85, "value": 0.9 },
+        { "op": "color_wash", "color": "#2c1e33", "opacity": 0.25, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.45, 0.4], "radius": 0.35, "color": "#86c832", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Ague Fever": {
+      "source": "CARDART_1_26",
+      "sourceCard": "Withering_Touch",
+      "seed": 700000106,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 4 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -25 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.85 },
+        { "op": "color_wash", "color": "#4a2b52", "opacity": 0.15, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.4], "radius": 0.3, "color": "#e3ecc2", "opacity": 0.2 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Salt the Wound": {
+      "source": "CARDART_4_11",
+      "sourceCard": "Festering_Wounds",
+      "seed": 700000107,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.22, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -15 },
+        { "op": "sat_value", "sat": 0.95, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#180d12", "#6b283f", "#cfc9a8"], "strength": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Symbiotic Carapace": {
+      "source": ["BONE-ARMOR", "CARDART_5_25"],
+      "sourceCard": "Bone_Ritual + Aura_of_Venom",
+      "seed": 700000108,
+      "ops": [
+        { "op": "composite", "mask": "radial" },
+        { "op": "mirror" },
+        { "op": "sat_value", "sat": 1.0, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#0e1410", "#3f6b2a", "#d8d2b4"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.5, 0.5], "radius": 0.35, "color": "#9fd12e", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.08 }
+      ]
+    },
+    "Pyrrhic Remedy": {
+      "source": "SLEEPING_POISON",
+      "sourceCard": "Sleeping_Poison",
+      "seed": 700000109,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -3 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "top" },
+        { "op": "sat_value", "sat": 0.95, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#101208", "#4f6a22", "#e0d9b8"], "strength": 0.3 },
+        { "op": "glow_spot", "center": [0.55, 0.25], "radius": 0.3, "color": "#c4e86a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Spiteful Ground": {
+      "source": "BONE-SKEWER",
+      "sourceCard": "Boneskewer",
+      "seed": 700000110,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "bottom" },
+        { "op": "hue_rotate", "degrees": 10 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.85 },
+        { "op": "color_wash", "color": "#4a2b52", "opacity": 0.2, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.5, 0.7], "radius": 0.35, "color": "#7ee06a", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Metastasis": {
+      "source": "CARDART_1_13",
+      "sourceCard": "Contaminate",
+      "seed": 700000111,
+      "ops": [
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "top" },
+        { "op": "rotate_crop", "degrees": 3 },
+        { "op": "hue_rotate", "degrees": 15 },
+        { "op": "sat_value", "sat": 1.15, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#0d1208", "#5d7a1e", "#c9a8d6"], "strength": 0.3 },
+        { "op": "glow_spot", "center": [0.5, 0.3], "radius": 0.4, "color": "#b6e34a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    }
+  }
+}

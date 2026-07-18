@@ -1,0 +1,163 @@
+{
+  "pack": "EmberweaveGrove",
+  "finisher": [ { "op": "vignette", "strength": 0.25 } ],
+  "cards": {
+    "Emberseed": {
+      "source": "CARDART_2_8",
+      "sourceCard": "Singe",
+      "seed": 700000000,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "bottom" },
+        { "op": "hue_rotate", "degrees": -10 },
+        { "op": "gradient_map", "palette": ["#171310", "#6b5a4c", "#f0a13c"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.45, 0.35], "radius": 0.3, "color": "#ffb347", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Ashfeast": {
+      "source": "CARDART_5_54",
+      "sourceCard": "Combust",
+      "seed": 700000001,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 4 },
+        { "op": "sat_value", "sat": 1.1, "value": 0.92 },
+        { "op": "gradient_map", "palette": ["#1a1210", "#c2571f", "#f5c469"], "strength": 0.4 },
+        { "op": "glow_spot", "center": [0.42, 0.55], "radius": 0.32, "color": "#ff9c3d", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Gravemoss": {
+      "source": "GRAVESITE_ECLYPSE-MINISET",
+      "sourceCard": "Gravesite",
+      "seed": 700000002,
+      "ops": [
+        { "op": "zoom_crop", "factor": 1.25, "gravity": "bottom" },
+        { "op": "hue_rotate", "degrees": -60 },
+        { "op": "sat_value", "sat": 0.85, "value": 0.9 },
+        { "op": "color_wash", "color": "#8a8578", "opacity": 0.18, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.28], "radius": 0.3, "color": "#cfe6a0", "opacity": 0.2 },
+        { "op": "grain", "opacity": 0.05 }
+      ]
+    },
+    "Everburning Censer": {
+      "source": "CARDART_4_15",
+      "sourceCard": "Fireball",
+      "seed": 700000003,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -6 },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "center" },
+        { "op": "gradient_map", "palette": ["#1a1210", "#c2571f", "#f5c469"], "strength": 0.45 },
+        { "op": "glow_spot", "center": [0.5, 0.55], "radius": 0.4, "color": "#ff9c3d", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Flameletting": {
+      "source": "CARDART_4_38",
+      "sourceCard": "Aura_of_Fire",
+      "seed": 700000004,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -8 },
+        { "op": "sat_value", "sat": 1.15, "value": 0.9 },
+        { "op": "color_wash", "color": "#7a1f1f", "opacity": 0.15, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.5, 0.4], "radius": 0.35, "color": "#ff6a2a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Chosen for the Pyre": {
+      "source": "CARDS_METAMORPHOSIS_2_43",
+      "sourceCard": "Ashes_to_Ashes",
+      "seed": 700000005,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 3 },
+        { "op": "gradient_map", "palette": ["#241a14", "#b8501e", "#ffd27a"], "strength": 0.4 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.95 },
+        { "op": "glow_spot", "center": [0.5, 0.3], "radius": 0.35, "color": "#ffce6b", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Emberdredge": {
+      "source": "RECYCLE",
+      "sourceCard": "Recycle",
+      "seed": 700000006,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.12, "gravity": "center" },
+        { "op": "gradient_map", "palette": ["#171008", "#b3541e", "#ffcf6e"], "strength": 0.6 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.92 },
+        { "op": "color_wash", "color": "#2a201a", "opacity": 0.15, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.35, "color": "#ff9440", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Ashen Harvest": {
+      "source": "SIEGEOFSHADOWS-REAPERS-APPROACH",
+      "sourceCard": "Reapers_Mark",
+      "seed": 700000007,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -5 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 25 },
+        { "op": "sat_value", "sat": 0.9, "value": 0.95 },
+        { "op": "gradient_map", "palette": ["#15100d", "#6e5f52", "#e0842f"], "strength": 0.4 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Cinder Archive": {
+      "source": ["GRIMOIRE_OF_THUNDER_ECLYPSE", "CARDART_4_14"],
+      "sourceCard": "Grimoire_of_Storms + Fan_the_Flames",
+      "seed": 700000008,
+      "ops": [
+        { "op": "composite", "mask": "radial" },
+        { "op": "mirror" },
+        { "op": "gradient_map", "palette": ["#191008", "#a34a1a", "#ffc95e"], "strength": 0.78 },
+        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.35, "color": "#ffb347", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.08 }
+      ]
+    },
+    "Cinder Cycle": {
+      "source": "CARDART_2_48",
+      "sourceCard": "Searing_Ray",
+      "seed": 700000009,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 8 },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "center" },
+        { "op": "gradient_map", "palette": ["#141110", "#4a423c", "#e07b28"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.5, 0.5], "radius": 0.4, "color": "#ffb066", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Buried Sun": {
+      "source": "MASKS_OF_MISERY_20",
+      "sourceCard": "Pyroclasm",
+      "seed": 700000010,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "bottom" },
+        { "op": "sat_value", "sat": 1.0, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#160d0a", "#b3541e", "#ffdf8a"], "strength": 0.3 },
+        { "op": "glow_spot", "center": [0.5, 0.6], "radius": 0.4, "color": "#ffd27a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Emberweave Communion": {
+      "source": ["CARDART_3_9", "CARDS_METAMORPHOSIS_55"],
+      "sourceCard": "Inferno + Deification",
+      "seed": 700000011,
+      "ops": [
+        { "op": "composite", "mask": "noise" },
+        { "op": "mirror" },
+        { "op": "gradient_map", "palette": ["#1a0f0a", "#cf6a1f", "#ffd98c"], "strength": 0.5 },
+        { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.4, "color": "#ffce6b", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.08 }
+      ]
+    }
+  }
+}

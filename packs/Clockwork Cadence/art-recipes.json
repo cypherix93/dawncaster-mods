@@ -1,0 +1,164 @@
+{
+  "pack": "Clockwork Cadence",
+  "finisher": [ { "op": "vignette", "strength": 0.25 } ],
+  "cards": {
+    "Cogspark": {
+      "source": "CARDART_1_25",
+      "sourceCard": "Zap",
+      "seed": 700000200,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "top" },
+        { "op": "hue_rotate", "degrees": 8 },
+        { "op": "color_wash", "color": "#c9973f", "opacity": 0.12, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.3], "radius": 0.3, "color": "#7fd4ff", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Gearbite": {
+      "source": "CARDS_METAMORPHOSIS_2_52",
+      "sourceCard": "Shocking_Grasp",
+      "seed": 700000201,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 6 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -15 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.9 },
+        { "op": "color_wash", "color": "#b07d2e", "opacity": 0.18, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.5], "radius": 0.3, "color": "#9fe0ff", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Sprocket Volley": {
+      "source": "CARDART_3_26",
+      "sourceCard": "Lightning_Bolt",
+      "seed": 700000202,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -7 },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "center" },
+        { "op": "gradient_map", "palette": ["#0d1420", "#4a5a6e", "#7fd4ff"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.35, 0.45], "radius": 0.3, "color": "#bfe9ff", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Winding Key": {
+      "source": "RECAST",
+      "sourceCard": "Recast",
+      "seed": 700000203,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 5 },
+        { "op": "zoom_crop", "factor": 1.12, "gravity": "center" },
+        { "op": "sat_value", "sat": 0.95, "value": 0.95 },
+        { "op": "color_wash", "color": "#2f6ea8", "opacity": 0.2, "blend": "soft_light" },
+        { "op": "glow_spot", "center": [0.45, 0.4], "radius": 0.35, "color": "#ffd27a", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Mainspring Coil": {
+      "source": "CARDART_5_38",
+      "sourceCard": "Chain_Lightning",
+      "seed": 700000204,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -8 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "sat_value", "sat": 1.1, "value": 0.95 },
+        { "op": "color_wash", "color": "#c9973f", "opacity": 0.1, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.4, 0.35], "radius": 0.35, "color": "#bfe9ff", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Stutterbolt": {
+      "source": "DEATH_OF_DIVINITY_8",
+      "sourceCard": "Energize",
+      "seed": 700000205,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.18, "gravity": "top" },
+        { "op": "hue_rotate", "degrees": 20 },
+        { "op": "posterize_soft", "levels": 10 },
+        { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.35, "color": "#8fd8ff", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.07 }
+      ]
+    },
+    "Fractal Bolt": {
+      "source": "CARDART_1_50",
+      "sourceCard": "Twincasting",
+      "seed": 700000206,
+      "ops": [
+        { "op": "rotate_crop", "degrees": 4 },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "left" },
+        { "op": "sat_value", "sat": 1.1, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#0a1018", "#3f5a86", "#9fe0ff"], "strength": 0.3 },
+        { "op": "glow_spot", "center": [0.4, 0.5], "radius": 0.35, "color": "#bfe9ff", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Tickwork Aura": {
+      "source": "AURA_OF_MIND",
+      "sourceCard": "Aura_of_Mind",
+      "seed": 700000207,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "top" },
+        { "op": "hue_rotate", "degrees": 40 },
+        { "op": "color_wash", "color": "#c9973f", "opacity": 0.15, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.3], "radius": 0.35, "color": "#7fd4ff", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Unbroken Cadence": {
+      "source": "CARDS_METAMORPHOSIS_2_5",
+      "sourceCard": "Thunderclap",
+      "seed": 700000208,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "center" },
+        { "op": "sat_value", "sat": 1.1, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#0d1220", "#5a6a7a", "#a8d8ff"], "strength": 0.3 },
+        { "op": "glow_spot", "center": [0.5, 0.75], "radius": 0.3, "color": "#cfeaff", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Assembly Line": {
+      "source": ["INVOKE-THE-ELEMENTS", "MASKS_OF_MISERY_26"],
+      "sourceCard": "Evocation + Stormcast",
+      "seed": 700000209,
+      "ops": [
+        { "op": "composite", "mask": "linear" },
+        { "op": "mirror" },
+        { "op": "gradient_map", "palette": ["#101420", "#7a6a4a", "#8fd8ff"], "strength": 0.35 },
+        { "op": "sat_value", "sat": 1.0, "value": 0.92 },
+        { "op": "grain", "opacity": 0.08 }
+      ]
+    },
+    "Resonance Chamber": {
+      "source": "CARDART_1_49",
+      "sourceCard": "Twinlightning",
+      "seed": 700000210,
+      "ops": [
+        { "op": "rotate_crop", "degrees": -5 },
+        { "op": "zoom_crop", "factor": 1.25, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 15 },
+        { "op": "color_wash", "color": "#5a6a7a", "opacity": 0.15, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.5, 0.5], "radius": 0.35, "color": "#bfe9ff", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Overclock": {
+      "source": ["TIME-STOP", "INNERVATION"],
+      "sourceCard": "Timestop + Innervation",
+      "seed": 700000211,
+      "ops": [
+        { "op": "composite", "mask": "radial" },
+        { "op": "mirror" },
+        { "op": "gradient_map", "palette": ["#0a0f1c", "#6b5a35", "#9fe0ff"], "strength": 0.4 },
+        { "op": "glow_spot", "center": [0.45, 0.4], "radius": 0.35, "color": "#ffd27a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.08 }
+      ]
+    }
+  }
+}

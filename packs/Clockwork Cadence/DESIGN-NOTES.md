@@ -142,3 +142,15 @@ Art files are not yet produced (ART-PIPELINE step); `art/` paths reserved in the
 3. **Sprocket Volley** — CategoryPlayedThisTurn has zero shipped users; semantics read from decompile.
 4. **Assembly Line** — most degenerate-loop-prone card; bounded but sim harness should fuzz Assembly Line × Tickwork Aura × Overclock turns.
 5. Enchantment `type` fields set to `"blessing"` (dispellable, matching Twincasting theType 0); if review prefers undispellable engines, switch to `"other"` (Dynamo pattern) — flagged as a reviewer decision, not silently chosen.
+
+## Art direction
+
+Treatment: crackling machinery. The core set's lightning art is already electric blue on
+storm grey, so distinctness comes from composition (every card is mirrored, tilted, or
+reframed) plus a brass overlay wash (#c9973f) that reads as clockwork metal — the pack's
+signature is blue voltage glinting off brass. Token/spark cards zoom tight on small focal
+sparks (Zap, Shocking Grasp); engine cards keep wide ritual framing (Evocation, Stormcast).
+Composites mark the two payoff engines: Assembly Line (Evocation's forging hands under
+Stormcast's vortex, linear blend) and Overclock (Timestop's clock-rune rings ringed by
+Innervation's lightning, radial blend). Stutterbolt alone gets a soft posterize for a
+deliberate stutter/glitch texture.

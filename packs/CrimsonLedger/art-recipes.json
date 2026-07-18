@@ -1,0 +1,155 @@
+{
+  "pack": "CrimsonLedger",
+  "finisher": [ { "op": "vignette", "strength": 0.25 } ],
+  "cards": {
+    "Paper Cut": {
+      "source": "BLOODLEVY_INFERNAL",
+      "sourceCard": "Blood_Levy",
+      "seed": 700000300,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "bottom" },
+        { "op": "sat_value", "sat": 0.95, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#0a0507", "#8c1220", "#e8b54a"], "strength": 0.3 },
+        { "op": "glow_spot", "center": [0.5, 0.6], "radius": 0.3, "color": "#ff4a4a", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Blood Retainer": {
+      "source": "MOM_GHASTLYCONVERSION",
+      "sourceCard": "Levy_Pain",
+      "seed": 700000301,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "top" },
+        { "op": "gradient_map", "palette": ["#0c0608", "#7a1522", "#e8b54a"], "strength": 0.55 },
+        { "op": "sat_value", "sat": 1.0, "value": 1.08 },
+        { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.35, "color": "#ffd27a", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Flesh Installment": {
+      "source": "MOM_BLOODLETTING",
+      "sourceCard": "Bloodletting",
+      "seed": 700000302,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -5 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "sat_value", "sat": 1.05, "value": 0.9 },
+        { "op": "color_wash", "color": "#e8b54a", "opacity": 0.1, "blend": "soft_light" },
+        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.35, "color": "#ff6a5a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Debt Collector": {
+      "source": "DRAIN_SOUL_ECLYPSE-MINISET",
+      "sourceCard": "Drain_Soul",
+      "seed": 700000303,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -35 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.85 },
+        { "op": "gradient_map", "palette": ["#0a0507", "#8c1220", "#f0c060"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.35, 0.35], "radius": 0.3, "color": "#ff8f6a", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Sanguine Tally": {
+      "source": "BLOOD-RITUAL",
+      "sourceCard": "Blood_Ritual",
+      "seed": 700000304,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 4 },
+        { "op": "zoom_crop", "factor": 1.12, "gravity": "center" },
+        { "op": "sat_value", "sat": 0.95, "value": 0.92 },
+        { "op": "color_wash", "color": "#e8b54a", "opacity": 0.12, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.4], "radius": 0.3, "color": "#ff5a4a", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Tithe Censer": {
+      "source": "MASKS_OF_MISERY_56",
+      "sourceCard": "Chalice_of_Blood",
+      "seed": 700000305,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 6 },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 10 },
+        { "op": "color_wash", "color": "#e8b54a", "opacity": 0.15, "blend": "soft_light" },
+        { "op": "glow_spot", "center": [0.55, 0.35], "radius": 0.3, "color": "#e8b54a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Usurer's Bargain": {
+      "source": "OVERDRAFT",
+      "sourceCard": "Overdraft",
+      "seed": 700000306,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "top" },
+        { "op": "sat_value", "sat": 0.9, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#0c0709", "#7a1522", "#e8b54a"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.5, 0.4], "radius": 0.35, "color": "#ffd98c", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Ledger of Vitae": {
+      "source": "GRIMOIRE_OF_THUNDER_ECLYPSE",
+      "sourceCard": "Grimoire_of_Storms",
+      "seed": 700000307,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -4 },
+        { "op": "hue_rotate", "degrees": 90 },
+        { "op": "gradient_map", "palette": ["#0a0507", "#8c1220", "#e8b54a"], "strength": 0.45 },
+        { "op": "glow_spot", "center": [0.5, 0.42], "radius": 0.3, "color": "#ff705a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Soul Dynamo": {
+      "source": ["CARDS_METAMORPHOSIS_39", "CARDS_METAMORPHOSIS_2_26"],
+      "sourceCard": "Damnation + Soulbolt",
+      "seed": 700000308,
+      "ops": [
+        { "op": "composite", "mask": "radial" },
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "sat_value", "sat": 1.15, "value": 0.95 },
+        { "op": "color_wash", "color": "#8c1220", "opacity": 0.25, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.3, "color": "#7fe8d0", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.08 }
+      ]
+    },
+    "Vengeful Mainspring": {
+      "source": "FIELD_REPAIR",
+      "sourceCard": "Field_Repairs",
+      "seed": 700000309,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 7 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 15 },
+        { "op": "gradient_map", "palette": ["#0b0608", "#6e1220", "#f0c060"], "strength": 0.4 },
+        { "op": "glow_spot", "center": [0.4, 0.5], "radius": 0.35, "color": "#ffd27a", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Exsanguine Engine": {
+      "source": ["CARDART_1_45", "CARDS_METAMORPHOSIS_5"],
+      "sourceCard": "Vampirism + Bloodcast",
+      "seed": 700000310,
+      "ops": [
+        { "op": "composite", "mask": "linear" },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "center" },
+        { "op": "sat_value", "sat": 1.0, "value": 0.85 },
+        { "op": "gradient_map", "palette": ["#080405", "#8c1220", "#e8b54a"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.5, 0.6], "radius": 0.35, "color": "#ff4a3a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.08 }
+      ]
+    }
+  }
+}
