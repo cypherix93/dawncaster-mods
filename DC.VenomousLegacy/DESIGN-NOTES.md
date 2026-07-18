@@ -257,6 +257,16 @@ purple. Festering hue-shifts Repulsive Blight's pustules to toxin green; Hemorrh
 reframes Mortal Wound's plunging blade and spray — card art only, no tier-0 powerImage
 sheets.
 
+Starting cards (same-menu adjacency, ART-MUTATION-SPEC §2): Twin Fangs sits in the Rogue
+starting-card menu (44 excluded menu sprites incl. default Sneak Attack — also its
+meta.nearestExisting, doubly barred) and First Blood in the Hunter/Warrior menus (50
+excluded sprites incl. defaults Feral Strikes/Backswing). Sources chosen outside those
+sets: Twin Fangs ← Snake Dance (SNAKE_DANCE_ECLYPSE) — serpent poised at the shoulder,
+zoomed to the head, gold shifted to toxin green: the fangs themselves. First Blood ←
+Draw Blood (DRAW_BLOOD) — the spectral predator drawing the hunt's first blood; kept
+green-on-bone (pack palette), blood held red, bite-point glow. Neither source backs
+another card in any pack (2-use budget clear).
+
 ---
 
 ## Weapons & powers (manifest v1.1)

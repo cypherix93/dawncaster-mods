@@ -9,6 +9,7 @@ Shipping checks (always):
                     KNUCKLES, WARMACE, GREATSWORD — square art letterboxes in
                     the char-creation weapon card face)
       weaponPowers  512×512  (tier-0 talent powerImage sprites are square)
+      startingCards 512×512  (regular cards — the third loadout slot)
     file < 600 KB × (pixel area / 512²), i.e. ~1023 KB for weapons
   - no stray files in art/ that don't match a card name
   - §2 source budget from DC.*/art-recipes.json: a sprite key backing more
@@ -66,7 +67,7 @@ ART_SIZE = (512, 512)          # cards + weapon powers (measured from extraction
 WEAPON_ART_SIZE = (512, 873)   # starting weapons — portrait (measured from extraction)
 # expected art size per manifest array an item sits in
 GROUP_ART_SIZE = {"cards": ART_SIZE, "weapons": WEAPON_ART_SIZE,
-                  "weaponPowers": ART_SIZE}
+                  "weaponPowers": ART_SIZE, "startingCards": ART_SIZE}
 MAX_BYTES = 600 * 1024         # budget at 512×512; scales with pixel area
 HASH_SIZE = 16
 
@@ -147,7 +148,7 @@ def _load_json(path: Path):
 
 def _art_entries(pack_json: dict) -> list[tuple[str, str, str]]:
     """(art-file stem, display name, manifest group) for cards + weapons +
-    weaponPowers.
+    weaponPowers + startingCards.
 
     The stem comes from the manifest `art` path basename — the runtime source
     of truth (the DawnKit loader uses that path verbatim, e.g.
@@ -157,7 +158,7 @@ def _art_entries(pack_json: dict) -> list[tuple[str, str, str]]:
     expected art size (GROUP_ART_SIZE)."""
     entries: list[tuple[str, str, str]] = []
     items = []
-    for group in ("cards", "weapons", "weaponPowers"):
+    for group in ("cards", "weapons", "weaponPowers", "startingCards"):
         group_items = pack_json.get(group)
         if isinstance(group_items, list):
             items.extend((i, group) for i in group_items if isinstance(i, dict))

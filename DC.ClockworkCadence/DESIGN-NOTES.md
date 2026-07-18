@@ -164,6 +164,14 @@ Ratchetwind takes Tinkerer's Toolbox pushed to storm-grey steel; Escapement hue-
 Chainlash's chain lattice from toxin green to voltage blue; Flywheel zooms Rewind's clock
 mandala — none of the three touch a tier-0 powerImage sheet.
 
+Starting card (same-menu adjacency, ART-MUTATION-SPEC §2): Calibrated Strike appears in
+the Arcanist and Seeker starting-card menus (phase 5), so the ENTIRE art set of those
+menus — the class defaults (Shocking Grasp, Mindstrike) plus every KeystoneType.
+StartingCard keystone card visible to either class, 47 distinct sprites — is excluded as
+source material. Source chosen: Electrosurge (CARDART_4_4, a normal pool card in no
+starting menu) — a lightning-wrapped striking fist matching "Make a Basic Attack + Chain";
+mirrored, reframed, pulled to storm blue over brass with a voltage glow.
+
 ---
 
 ## Weapons & powers (manifest v1.1)

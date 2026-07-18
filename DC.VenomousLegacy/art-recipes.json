@@ -222,6 +222,34 @@
         { "op": "glow_spot", "center": [0.5, 0.62], "radius": 0.32, "color": "#c92f4c", "opacity": 0.3 },
         { "op": "grain", "opacity": 0.06 }
       ]
+    },
+    "Twin Fangs": {
+      "source": "SNAKE_DANCE_ECLYPSE",
+      "sourceCard": "Snake Dance",
+      "seed": 700000195,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.3, "gravity": "top" },
+        { "op": "hue_rotate", "degrees": 45 },
+        { "op": "sat_value", "sat": 1.1, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#101408", "#5a7d2a", "#cfe6a0"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.5, 0.3], "radius": 0.28, "color": "#a8e063", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "First Blood": {
+      "source": "DRAW_BLOOD",
+      "sourceCard": "Draw Blood",
+      "seed": 700000194,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -4 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "sat_value", "sat": 0.9, "value": 0.92 },
+        { "op": "gradient_map", "palette": ["#140b0b", "#7d2a2a", "#e0cfa8"], "strength": 0.28 },
+        { "op": "glow_spot", "center": [0.35, 0.62], "radius": 0.28, "color": "#ff5a4a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
     }
   }
 }

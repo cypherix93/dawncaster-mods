@@ -228,6 +228,15 @@ from Cinder Archive's Grimoire of Storms); Pyregraft hue-shifts Rootlimb Strike'
 root-claw from olive to ember; Hearthguard reframes Fiery Shield's burning hearth-stone.
 No tier-0 powerImage sheets anywhere in the four.
 
+Starting card (same-menu adjacency, ART-MUTATION-SPEC §2): Stoke the Coals appears in the
+Arcanist and Knight starting-card menus, so all 47 sprites backing those menus (defaults
+Shocking Grasp/Bolstered Strike + every keystone starting card either class can see) are
+excluded — notably Fiery Barrage, the single best theme fit, sits in EVERY class's
+starting-card menu (its keystone declares no profession filter) and was therefore never a
+legal source. Source chosen instead: Eldritch Flame (CARDS_METAMORPHOSIS_8, normal pool
+card, no starting menu) — a hand cradling a flame, hue-rotated from witch-purple to ember
+orange with the pack gradient: the coal being stoked.
+
 ---
 
 ## Weapons & powers (manifest v1.1)

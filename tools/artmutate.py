@@ -147,7 +147,8 @@ def load_art_stems(pack_json_path: Path) -> dict[str, str]:
     The manifest `art` path is the runtime source of truth (the DawnKit loader
     uses it verbatim), so output PNGs must be named after its basename — e.g.
     card "Everburning Censer" with art "art/EverburningCenser.png" builds to
-    EverburningCenser.png. Cards, weapons and weaponPowers are all mapped; both
+    EverburningCenser.png. Cards, weapons, weaponPowers and startingCards are
+    all mapped; both
     the display name and the stem itself are accepted as recipe keys. Items
     without a usable `art` field fall back to their name (legacy behavior).
     """
@@ -161,7 +162,7 @@ def load_art_stems(pack_json_path: Path) -> dict[str, str]:
     if not isinstance(data, dict):
         return stems
     items = []
-    for group in ("cards", "weapons", "weaponPowers"):
+    for group in ("cards", "weapons", "weaponPowers", "startingCards"):
         entries = data.get(group)
         if isinstance(entries, list):
             items.extend(e for e in entries if isinstance(e, dict))

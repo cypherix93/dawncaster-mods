@@ -219,6 +219,19 @@
         { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.35, "color": "#bfe9ff", "opacity": 0.3 },
         { "op": "grain", "opacity": 0.06 }
       ]
+    },
+    "Calibrated Strike": {
+      "source": "CARDART_4_4",
+      "sourceCard": "Electrosurge",
+      "seed": 700000295,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.12, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 14 },
+        { "op": "gradient_map", "palette": ["#10141c", "#3f6fb8", "#c9a04a"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.45, 0.4], "radius": 0.32, "color": "#7fb2ff", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
     }
   }
 }

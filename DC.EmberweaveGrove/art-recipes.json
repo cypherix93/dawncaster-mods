@@ -216,6 +216,19 @@
         { "op": "glow_spot", "center": [0.5, 0.5], "radius": 0.35, "color": "#ffb347", "opacity": 0.3 },
         { "op": "grain", "opacity": 0.06 }
       ]
+    },
+    "Stoke the Coals": {
+      "source": "CARDS_METAMORPHOSIS_8",
+      "sourceCard": "Eldritch Flame",
+      "seed": 700000095,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "bottom" },
+        { "op": "hue_rotate", "degrees": 105 },
+        { "op": "gradient_map", "palette": ["#171310", "#c2571f", "#f5c469"], "strength": 0.5 },
+        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.3, "color": "#ff9c3d", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
     }
   }
 }

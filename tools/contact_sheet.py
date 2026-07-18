@@ -88,12 +88,13 @@ def _source_cell(rec, sprite_index: dict, sprites_base: Path) -> str:
 
 
 def _art_items(pack_json: dict) -> list[tuple[str, dict]]:
-    """(art-file stem, manifest entry) for cards + weapons + weaponPowers.
+    """(art-file stem, manifest entry) for cards + weapons + weaponPowers +
+    startingCards.
     Every item type resolves through its manifest 'art' path basename — the
     runtime source of truth (the loader takes that path verbatim) — falling
     back to the item name only when no usable 'art' field exists."""
     items: list[tuple[str, dict]] = []
-    for group in ("cards", "weapons", "weaponPowers"):
+    for group in ("cards", "weapons", "weaponPowers", "startingCards"):
         for entry in pack_json.get(group) or []:
             if not isinstance(entry, dict):
                 continue

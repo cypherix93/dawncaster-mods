@@ -219,6 +219,13 @@ the theme); Soulscribe dirties Red Ink's thorn quill into arterial black; Pawnbr
 warms Treasure for Trash's hand-off with candle gold — three card arts, zero tier-0
 powerImage sheets.
 
+Starting card (same-menu adjacency, ART-MUTATION-SPEC §2): Repossession appears in the
+Warrior and Knight starting-card menus — 48 distinct menu sprites (defaults Backswing/
+Bolstered Strike + both classes' visible keystone starting cards) excluded as sources.
+Source chosen: Blood Taxes (CARDART_1_14, normal pool card, no starting menu) — a bleeding
+hand surrendering coins under candle-gold rays, the ledger's repossession made literal;
+mirrored, tilted, reframed, mapped to arterial red/black/candle gold.
+
 ---
 
 ## Weapons & powers (manifest v1.1)
