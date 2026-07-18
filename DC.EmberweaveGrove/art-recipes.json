@@ -158,6 +158,63 @@
         { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.4, "color": "#ffce6b", "opacity": 0.35 },
         { "op": "grain", "opacity": 0.08 }
       ]
+    },
+    "CinderboughWand": {
+      "source": ["GLOWINGBRANCH", "ORB-OF-FIRE"],
+      "sourceCard": "Suntree_Twig (mid-run weapon card, no class menu) + Orb of Fire",
+      "seed": 700000099,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 6 },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "center" },
+        { "op": "composite", "mask": "radial", "center": [0.3, 0.28], "radius": 0.42, "softness": 0.55, "opacity": 0.45 },
+        { "op": "gradient_map", "palette": ["#1a1210", "#c2571f", "#f5c469"], "strength": 0.4 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.95 },
+        { "op": "glow_spot", "center": [0.35, 0.32], "radius": 0.35, "color": "#ff9c3d", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "CindersongWeapon": {
+      "source": "GRIMOIRE_OF_FLAMES_ECLYPSE",
+      "sourceCard": "Grimoire_of_Fire",
+      "seed": 700000098,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -5 },
+        { "op": "zoom_crop", "factor": 1.12, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -6 },
+        { "op": "gradient_map", "palette": ["#1a1210", "#c2571f", "#f5c469"], "strength": 0.3 },
+        { "op": "glow_spot", "center": [0.5, 0.4], "radius": 0.35, "color": "#ffb347", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "PyregraftWeapon": {
+      "source": "ROOTLIMB_STRIKE_INFERNAL",
+      "sourceCard": "Rootlimb_Strike",
+      "seed": 700000097,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -45 },
+        { "op": "sat_value", "sat": 1.1, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#1a1210", "#c2571f", "#f5c469"], "strength": 0.45 },
+        { "op": "glow_spot", "center": [0.55, 0.5], "radius": 0.32, "color": "#ff6a2a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "HearthguardWeapon": {
+      "source": "MOM_FIREARMOR",
+      "sourceCard": "Fiery_Shield",
+      "seed": 700000096,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 6 },
+        { "op": "zoom_crop", "factor": 1.12, "gravity": "bottom" },
+        { "op": "gradient_map", "palette": ["#1a1210", "#c2571f", "#f5c469"], "strength": 0.3 },
+        { "op": "color_wash", "color": "#6b5a4c", "opacity": 0.12, "blend": "soft_light" },
+        { "op": "glow_spot", "center": [0.5, 0.5], "radius": 0.35, "color": "#ffb347", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
     }
   }
 }

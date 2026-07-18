@@ -87,6 +87,25 @@ def _source_cell(rec, sprite_index: dict, sprites_base: Path) -> str:
     return "\n".join(parts)
 
 
+def _art_items(pack_json: dict) -> list[tuple[str, dict]]:
+    """(art-file stem, manifest entry) for cards + weapons + weaponPowers.
+    Every item type resolves through its manifest 'art' path basename — the
+    runtime source of truth (the loader takes that path verbatim) — falling
+    back to the item name only when no usable 'art' field exists."""
+    items: list[tuple[str, dict]] = []
+    for group in ("cards", "weapons", "weaponPowers"):
+        for entry in pack_json.get(group) or []:
+            if not isinstance(entry, dict):
+                continue
+            art = entry.get("art")
+            if isinstance(art, str) and art.lower().endswith(".png"):
+                stem = art.replace("\\", "/").rsplit("/", 1)[-1][:-4]
+            else:
+                stem = entry.get("name", "?")
+            items.append((stem, entry))
+    return items
+
+
 def build_sheet(pack_dir: Path, sprite_index: dict,
                 sprites_base: Path = SPRITES_BASE) -> str:
     pack_json = json.loads((pack_dir / "pack.json").read_text(encoding="utf-8"))
@@ -97,13 +116,13 @@ def build_sheet(pack_dir: Path, sprite_index: dict,
     recipe_cards = recipes.get("cards") or {}
 
     pack_name = pack_json.get("pack", pack_dir.name)
-    cards = [c for c in pack_json.get("cards", []) if isinstance(c, dict)]
+    cards = _art_items(pack_json)
     have_art = 0
 
     rows = []
-    for card in cards:
+    for stem, card in cards:
         name = card.get("name", "?")
-        art_path = pack_dir / "art" / f"{name}.png"
+        art_path = pack_dir / "art" / f"{stem}.png"
         if art_path.is_file():
             result_cell = _b64_img(art_path)
             have_art += 1
@@ -118,7 +137,7 @@ def build_sheet(pack_dir: Path, sprite_index: dict,
         )
         rows.append(
             "<tr>"
-            f"<td>{_source_cell(recipe_cards.get(name), sprite_index, sprites_base)}</td>"
+            f"<td>{_source_cell(recipe_cards.get(stem) or recipe_cards.get(name), sprite_index, sprites_base)}</td>"
             '<td class="arrow">→</td>'
             f"<td>{result_cell}</td>"
             f"<td>{info}</td>"
@@ -142,9 +161,9 @@ def build_index(pack_dirs: list[Path]) -> str:
     items = []
     for pd in pack_dirs:
         pack_json = json.loads((pd / "pack.json").read_text(encoding="utf-8"))
-        cards = [c for c in pack_json.get("cards", []) if isinstance(c, dict)]
-        n_art = sum(1 for c in cards
-                    if (pd / "art" / f"{c.get('name', '?')}.png").is_file())
+        cards = _art_items(pack_json)
+        n_art = sum(1 for stem, _ in cards
+                    if (pd / "art" / f"{stem}.png").is_file())
         href = urllib.parse.quote(pd.name) + "/contact-sheet.html"
         items.append(f'<li><a href="{href}">{html.escape(pack_json.get("pack", pd.name))}'
                      f"</a> — {n_art}/{len(cards)} arts</li>")

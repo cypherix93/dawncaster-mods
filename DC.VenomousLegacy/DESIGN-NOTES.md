@@ -248,6 +248,15 @@ for the Infected angle (Cloudkill, Toxic Bloom, Withering Touch). Composites mar
 horror payoffs: Rupture (Lacerate gashes noise-blended into Grievous Injury's bite) and
 Symbiotic Carapace (Bone Ritual's ribcage inside Aura of Venom's aura).
 
+Weapons & powers (same-menu adjacency, ART-MUTATION-SPEC §2): Rogue's menu holds Daggers,
+Hunter's holds Hatchet, plus all 66 tier-0 talent sheets — all excluded. Blightpin
+Stiletto composites Rapier's needle blade (a mid-run weapon card, no class menu) with
+Poison Damage's skull-droplet ghosted beside the point; Flaying Hook composites Grappler's
+winch-hook (likewise mid-run) under Sanguinaria's blood-moon rays, dirtied to bruise
+purple. Festering hue-shifts Repulsive Blight's pustules to toxin green; Hemorrhaging
+reframes Mortal Wound's plunging blade and spray — card art only, no tier-0 powerImage
+sheets.
+
 ---
 
 ## Weapons & powers (manifest v1.1)

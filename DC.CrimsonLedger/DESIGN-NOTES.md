@@ -210,6 +210,15 @@ Souls stay instantly readable against the red room. Composites mark the two conv
 engines: Soul Dynamo (Damnation's radiating figure noise-blended with Soulbolt's comet) and
 Exsanguine Engine (Vampirism's hungry face over Bloodcast's blood-working hands).
 
+Weapon & powers (same-menu adjacency, ART-MUTATION-SPEC §2): the Warrior/Knight menus hold
+Warmace + Longsword and all 66 tier-0 talent sheets — all excluded. Bloodprice Falchion
+composites Shamshir (a mid-run weapon card, no class menu) over Blood and Iron's bloody
+grip rising from the bottom edge, so the blades stay the read and the life-cost shows in
+the hilt. Bloodtithe keeps Bloodmoney's coins-in-a-blood-pool nearly literal (the card IS
+the theme); Soulscribe dirties Red Ink's thorn quill into arterial black; Pawnbroker's
+warms Treasure for Trash's hand-off with candle gold — three card arts, zero tier-0
+powerImage sheets.
+
 ---
 
 ## Weapons & powers (manifest v1.1)

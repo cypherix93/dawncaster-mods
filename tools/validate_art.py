@@ -129,9 +129,39 @@ def _load_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _card_names(pack_json: dict) -> list[str]:
-    return [c["name"] for c in pack_json.get("cards", [])
-            if isinstance(c, dict) and isinstance(c.get("name"), str)]
+def _art_entries(pack_json: dict) -> list[tuple[str, str]]:
+    """(art-file stem, display name) for cards + weapons + weaponPowers.
+
+    The stem comes from the manifest `art` path basename — the runtime source
+    of truth (the DawnKit loader uses that path verbatim, e.g.
+    art/EverburningCenser.png) — for ALL item types, falling back to the item
+    name only when an entry has no usable `art` field. Recipes may be keyed by
+    either the stem or the display name."""
+    entries: list[tuple[str, str]] = []
+    items = []
+    for group in ("cards", "weapons", "weaponPowers"):
+        group_items = pack_json.get(group)
+        if isinstance(group_items, list):
+            items.extend(i for i in group_items if isinstance(i, dict))
+    for item in items:
+        name = item.get("name")
+        name = name if isinstance(name, str) else "?"
+        art = item.get("art")
+        if isinstance(art, str) and art.lower().endswith(".png"):
+            stem = art.replace("\\", "/").rsplit("/", 1)[-1][:-4]
+        else:
+            stem = name
+        entries.append((stem, name))
+    return entries
+
+
+def _recipe_for(recipes: dict | None, stem: str, name: str):
+    """Recipe entry for an item — keyed by art stem (new style) or name."""
+    cards = (recipes or {}).get("cards") or {}
+    rec = cards.get(stem)
+    if rec is None:
+        rec = cards.get(name)
+    return rec
 
 
 def _open_image(path: Path) -> Image.Image:
@@ -144,9 +174,9 @@ def check_pack_files(pack_dir: Path, pack_json: dict, findings: list[dict]) -> N
     """Dimensions/format/size/missing/stray checks for one pack."""
     pack = pack_dir.name
     art_dir = pack_dir / "art"
-    names = _card_names(pack_json)
+    entries = _art_entries(pack_json)
 
-    for name in names:
+    for name, _display in entries:
         p = art_dir / f"{name}.png"
         if not p.is_file():
             findings.append(_finding("ERROR", pack, name, "art_missing",
@@ -173,11 +203,13 @@ def check_pack_files(pack_dir: Path, pack_json: dict, findings: list[dict]) -> N
                                      f"mode is {img.mode}, must be RGBA"))
 
     if art_dir.is_dir():
-        expected = {f"{n}.png" for n in names}
+        expected = {f"{stem}.png" for stem, _ in entries}
         for f in sorted(art_dir.iterdir()):
             if f.name not in expected:
                 findings.append(_finding("ERROR", pack, f.name, "art_stray",
-                                         f"file in {pack}/art/ matches no card name"))
+                                         f"file in {pack}/art/ matches no manifest "
+                                         "art path (stale pre-canonicalization "
+                                         "output?)"))
 
 
 def check_source_budget(recipes_by_pack: dict[str, dict],
@@ -227,26 +259,26 @@ def check_distinctness(scope_packs: list[Path], packs_dir: Path,
     scope_names = {p.name for p in scope_packs}
 
     # gather every existing mod-card output for the sibling sweep
-    outputs: list[tuple[str, str, Path]] = []
+    outputs: list[tuple[str, str, str, Path]] = []
     for pack_dir in sorted(p for p in packs_dir.iterdir() if p.is_dir()):
         pj = pack_dir / "pack.json"
         if not pj.is_file():
             continue
         try:
-            names = _card_names(_load_json(pj))
+            entries = _art_entries(_load_json(pj))
         except (OSError, json.JSONDecodeError):
             continue
-        for name in names:
-            p = pack_dir / "art" / f"{name}.png"
+        for stem, display in entries:
+            p = pack_dir / "art" / f"{stem}.png"
             if p.is_file():
-                outputs.append((pack_dir.name, name, p))
+                outputs.append((pack_dir.name, stem, display, p))
 
     # (a) output vs its recipe source(s)
-    for pack, name, path in outputs:
+    for pack, name, display, path in outputs:
         if pack not in scope_names:
             continue
         recipes = recipes_by_pack.get(pack)
-        rec = (recipes or {}).get("cards", {}).get(name)
+        rec = _recipe_for(recipes, name, display)
         if not isinstance(rec, dict):
             if recipes is not None:
                 findings.append(_finding("WARN", pack, name, "no_recipe",
@@ -282,8 +314,8 @@ def check_distinctness(scope_packs: list[Path], packs_dir: Path,
     # (b) pairwise siblings — report a pair once, when either side is in scope
     for i in range(len(outputs)):
         for j in range(i + 1, len(outputs)):
-            pa, ca, fa = outputs[i]
-            pb, cb, fb = outputs[j]
+            pa, ca, _da, fa = outputs[i]
+            pb, cb, _db, fb = outputs[j]
             if pa not in scope_names and pb not in scope_names:
                 continue
             ha, hb = hashes_of(fa), hashes_of(fb)

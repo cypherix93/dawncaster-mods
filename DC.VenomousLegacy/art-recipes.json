@@ -163,6 +163,65 @@
         { "op": "glow_spot", "center": [0.5, 0.3], "radius": 0.4, "color": "#b6e34a", "opacity": 0.3 },
         { "op": "grain", "opacity": 0.06 }
       ]
+    },
+    "BlightpinStiletto": {
+      "source": ["RAPIER", "MOM_POISON"],
+      "sourceCard": "Rapier (mid-run weapon card, no class menu) + Poison_Damage",
+      "seed": 700000199,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -8 },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "top" },
+        { "op": "composite", "mask": "radial", "center": [0.68, 0.68], "radius": 0.42, "softness": 0.5, "opacity": 0.55 },
+        { "op": "gradient_map", "palette": ["#0f1408", "#54701e", "#cdd3a8"], "strength": 0.35 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.9 },
+        { "op": "glow_spot", "center": [0.68, 0.66], "radius": 0.28, "color": "#9fd12e", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "FlayingHook": {
+      "source": ["GRAPPLE", "SANGUINARIA"],
+      "sourceCard": "Grappler (mid-run weapon card, no class menu) + Sanguinaria",
+      "seed": 700000198,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 7 },
+        { "op": "zoom_crop", "factor": 1.12, "gravity": "center" },
+        { "op": "composite", "mask": "radial", "center": [0.5, 0.12], "radius": 0.6, "softness": 0.6, "opacity": 0.6 },
+        { "op": "gradient_map", "palette": ["#16101c", "#5a3260", "#d8d2b4"], "strength": 0.4 },
+        { "op": "color_wash", "color": "#6a1430", "opacity": 0.15, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.3, "color": "#c92f4c", "opacity": 0.28 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "FesteringWeapon": {
+      "source": "REPULSIVE_BLIGHT_INFERNAL",
+      "sourceCard": "Repulsive_Blight",
+      "seed": 700000197,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -6 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 40 },
+        { "op": "sat_value", "sat": 0.95, "value": 0.88 },
+        { "op": "gradient_map", "palette": ["#0f1408", "#54701e", "#cdd3a8"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.45, 0.4], "radius": 0.32, "color": "#9fd12e", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "HemorrhagingWeapon": {
+      "source": "SIEGEOFSHADOWS-MORTAL-WOUND",
+      "sourceCard": "Mortal Wound (Siege of Shadows sheet)",
+      "seed": 700000196,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 5 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "bottom" },
+        { "op": "gradient_map", "palette": ["#16101c", "#5a3260", "#d8d2b4"], "strength": 0.3 },
+        { "op": "color_wash", "color": "#6a1430", "opacity": 0.18, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.62], "radius": 0.32, "color": "#c92f4c", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
     }
   }
 }

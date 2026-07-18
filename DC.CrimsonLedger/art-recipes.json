@@ -150,6 +150,64 @@
         { "op": "glow_spot", "center": [0.5, 0.6], "radius": 0.35, "color": "#ff4a3a", "opacity": 0.3 },
         { "op": "grain", "opacity": 0.08 }
       ]
+    },
+    "BloodpriceFalchion": {
+      "source": ["SHAMSHIR", "BLOOD_AND_IRON_ECLYPSE"],
+      "sourceCard": "Shamshir (mid-run weapon card, no class menu) + Blood and Iron",
+      "seed": 700000399,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -6 },
+        { "op": "zoom_crop", "factor": 1.06, "gravity": "top" },
+        { "op": "composite", "mask": "linear", "angle": 90, "start": 0.58, "end": 0.98, "opacity": 0.75 },
+        { "op": "gradient_map", "palette": ["#0a0507", "#8c1220", "#e8b54a"], "strength": 0.4 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.92 },
+        { "op": "glow_spot", "center": [0.5, 0.72], "radius": 0.3, "color": "#ff4a4a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "BloodtitheWeapon": {
+      "source": "BLOODMONEY",
+      "sourceCard": "Bloodmoney",
+      "seed": 700000398,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 4 },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": [0.55, 0.55] },
+        { "op": "sat_value", "sat": 1.05, "value": 0.95 },
+        { "op": "gradient_map", "palette": ["#0a0507", "#8c1220", "#e8b54a"], "strength": 0.25 },
+        { "op": "glow_spot", "center": [0.6, 0.6], "radius": 0.3, "color": "#ffd27a", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "SoulscribeWeapon": {
+      "source": "MOM_REDINK",
+      "sourceCard": "Red_Ink",
+      "seed": 700000397,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "sat_value", "sat": 0.9, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#0a0507", "#8c1220", "#e8b54a"], "strength": 0.5 },
+        { "op": "color_wash", "color": "#7a1522", "opacity": 0.18, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.45, 0.4], "radius": 0.3, "color": "#e8b54a", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "PawnbrokersWeapon": {
+      "source": "TRASH_FOR_TREASURE",
+      "sourceCard": "Treasure_for_Trash",
+      "seed": 700000396,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -5 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "sat_value", "sat": 0.95, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#0a0507", "#8c1220", "#e8b54a"], "strength": 0.35 },
+        { "op": "color_wash", "color": "#7a1522", "opacity": 0.15, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.5, 0.4], "radius": 0.32, "color": "#ffd27a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
     }
   }
 }

@@ -32,6 +32,14 @@ runtime loading, `validate_art` gate, contact sheets) is unchanged — see `ART-
     (mirror + composite), not just recolor.
   - A source sprite may back at most **2** mod cards across all packs, and never 2 in
     the same pack.
+- **Same-menu adjacency rule (weapons & weapon powers)**: mod content that appears in a
+  *selection menu alongside shipped content* must never source art from items in that
+  same menu. Concretely: a mod weapon offered to class X must not source from any weapon
+  offered to class X (shipped or mod) — source from *other classes'* weapons or from
+  non-weapon art with weapon-like composition, then mutate. Same for weapon powers: a
+  power offered to class X must not source from tier-0 talent art available to class X.
+  Rationale: char-creation renders source and mutant side by side; recolors read as
+  duplicates there even when they pass the hash gate.
 
 ## 3. Mutation vocabulary (Pillow, deterministic)
 

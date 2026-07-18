@@ -114,6 +114,45 @@ def load_recipes(path: Path) -> dict:
     return data
 
 
+def load_art_stems(pack_json_path: Path) -> dict[str, str]:
+    """Recipe key -> output filename stem, from the pack manifest's `art` fields.
+
+    The manifest `art` path is the runtime source of truth (the DawnKit loader
+    uses it verbatim), so output PNGs must be named after its basename — e.g.
+    card "Everburning Censer" with art "art/EverburningCenser.png" builds to
+    EverburningCenser.png. Cards, weapons and weaponPowers are all mapped; both
+    the display name and the stem itself are accepted as recipe keys. Items
+    without a usable `art` field fall back to their name (legacy behavior).
+    """
+    stems: dict[str, str] = {}
+    if not pack_json_path.is_file():
+        return stems
+    try:
+        data = json.loads(pack_json_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return stems
+    if not isinstance(data, dict):
+        return stems
+    items = []
+    for group in ("cards", "weapons", "weaponPowers"):
+        entries = data.get(group)
+        if isinstance(entries, list):
+            items.extend(e for e in entries if isinstance(e, dict))
+    for item in items:
+        name = item.get("name")
+        art = item.get("art")
+        stem = None
+        if isinstance(art, str) and art.lower().endswith(".png"):
+            stem = art.replace("\\", "/").rsplit("/", 1)[-1][:-4]
+        if stem:
+            stems[stem] = stem
+            if isinstance(name, str):
+                stems[name] = stem
+        elif isinstance(name, str):
+            stems.setdefault(name, name)
+    return stems
+
+
 def card_fingerprint(card_recipe: dict, finisher: list, source_bytes: list[bytes]) -> str:
     h = hashlib.sha256()
     h.update(f"artmutate-v{ENGINE_VERSION}".encode())
@@ -157,13 +196,22 @@ def _load_state(path: Path) -> dict:
 
 def build_pack(recipe_path: Path, out_dir: Path, sprite_index: dict,
                sprites_base: Path = SPRITES_BASE, force: bool = False,
-               only_card: str | None = None) -> tuple[int, int, list[str]]:
-    """Build one pack's art. Returns (built, skipped, errors)."""
+               only_card: str | None = None,
+               art_stems: dict[str, str] | None = None) -> tuple[int, int, list[str]]:
+    """Build one pack's art. Returns (built, skipped, errors).
+
+    `art_stems` (see load_art_stems) canonicalizes output filenames to the
+    manifest `art` field; recipe keys absent from the map keep their key as
+    the filename. Build state stays keyed by recipe key, so filename
+    canonicalization never invalidates fingerprints — a rename just triggers
+    one rebuild because the canonical output file does not exist yet."""
     errors: list[str] = []
     try:
         recipes = load_recipes(recipe_path)
     except BuildError as e:
         return 0, 0, [str(e)]
+    if art_stems is None:
+        art_stems = load_art_stems(recipe_path.parent / "pack.json")
     finisher = recipes.get("finisher") or []
     pack_label = recipes.get("pack", recipe_path.parent.name)
 
@@ -179,7 +227,7 @@ def build_pack(recipe_path: Path, out_dir: Path, sprite_index: dict,
 
     for name in names:
         card_recipe = cards[name]
-        out_path = out_dir / f"{name}.png"
+        out_path = out_dir / f"{art_stems.get(name, name)}.png"
         try:
             if not isinstance(card_recipe, dict):
                 raise BuildError("recipe entry must be an object")

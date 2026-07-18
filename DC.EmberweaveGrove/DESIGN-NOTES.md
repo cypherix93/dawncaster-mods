@@ -219,6 +219,15 @@ archetypes read as one scorched world. Composites mark the two archetype-welding
 Cinder Archive (grimoire + flame breath) and Emberweave Communion (ritual pillar + winged
 ascension, noise-woven for the "weave").
 
+Weapon & powers (same-menu adjacency, ART-MUTATION-SPEC §2): the Arcanist/Knight menus
+hold Forcewand + Longsword and all 66 tier-0 talent sheets — all excluded. Cinderbough
+Wand composites Suntree Twig's flame-wrapped branch (a mid-run weapon card, no class menu)
+with Orb of Fire's fireball relighting the tip — already a cinder-bough, it only needed
+the pack gradient. Cindersong takes Grimoire of Fire's flaming songbook (distinct sheet
+from Cinder Archive's Grimoire of Storms); Pyregraft hue-shifts Rootlimb Strike's grafted
+root-claw from olive to ember; Hearthguard reframes Fiery Shield's burning hearth-stone.
+No tier-0 powerImage sheets anywhere in the four.
+
 ---
 
 ## Weapons & powers (manifest v1.1)

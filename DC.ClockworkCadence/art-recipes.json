@@ -159,6 +159,66 @@
         { "op": "glow_spot", "center": [0.45, 0.4], "radius": 0.35, "color": "#ffd27a", "opacity": 0.3 },
         { "op": "grain", "opacity": 0.08 }
       ]
+    },
+    "TickwrightsBaton": {
+      "source": ["STAFFOFTHUNDER", "ORB-OF-LIGHTNING"],
+      "sourceCard": "Staff of Thunder (mid-run weapon card, no class menu) + Orb of Thunder",
+      "seed": 700000299,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 8 },
+        { "op": "zoom_crop", "factor": 1.12, "gravity": "top" },
+        { "op": "composite", "mask": "radial", "center": [0.5, 0.32], "radius": 0.55, "softness": 0.55, "opacity": 0.5 },
+        { "op": "gradient_map", "palette": ["#0d1420", "#4a5a6e", "#7fd4ff"], "strength": 0.3 },
+        { "op": "color_wash", "color": "#b07d2e", "opacity": 0.14, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.3], "radius": 0.32, "color": "#9fe0ff", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "RatchetwindWeapon": {
+      "source": "TINKERER_S_TOOLBOX",
+      "sourceCard": "Tinkerer's Toolbox",
+      "seed": 700000298,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -6 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -60 },
+        { "op": "sat_value", "sat": 0.7, "value": 0.95 },
+        { "op": "gradient_map", "palette": ["#0d1420", "#4a5a6e", "#7fd4ff"], "strength": 0.65 },
+        { "op": "color_wash", "color": "#c9973f", "opacity": 0.22, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.42], "radius": 0.32, "color": "#7fd4ff", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "EscapementWeapon": {
+      "source": "MOM_BINDINGCHAINS",
+      "sourceCard": "Chainlash",
+      "seed": 700000297,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 85 },
+        { "op": "sat_value", "sat": 0.8, "value": 0.95 },
+        { "op": "gradient_map", "palette": ["#0d1420", "#4a5a6e", "#7fd4ff"], "strength": 0.4 },
+        { "op": "color_wash", "color": "#b07d2e", "opacity": 0.12, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.35, "color": "#9fe0ff", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "FlywheelWeapon": {
+      "source": "REWIND",
+      "sourceCard": "Rewind",
+      "seed": 700000296,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 5 },
+        { "op": "zoom_crop", "factor": 1.25, "gravity": "top" },
+        { "op": "gradient_map", "palette": ["#0d1420", "#4a5a6e", "#7fd4ff"], "strength": 0.3 },
+        { "op": "color_wash", "color": "#c9973f", "opacity": 0.12, "blend": "overlay" },
+        { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.35, "color": "#bfe9ff", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
     }
   }
 }

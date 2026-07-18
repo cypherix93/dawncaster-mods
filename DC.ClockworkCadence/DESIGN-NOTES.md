@@ -155,6 +155,15 @@ Stormcast's vortex, linear blend) and Overclock (Timestop's clock-rune rings rin
 Innervation's lightning, radial blend). Stutterbolt alone gets a soft posterize for a
 deliberate stutter/glitch texture.
 
+Weapon & powers (same-menu adjacency, ART-MUTATION-SPEC §2): the Arcanist/Seeker
+char-creation menus hold Forcewand + Knuckles and all 66 tier-0 talent sheets, so all four
+items source outside that set. Tickwright's Baton composites Staff of Thunder — a mid-run
+weapon card, in no class's starting menu — under Orb of Thunder's storm orb (tilted,
+brass-washed) so the baton reads as an object without echoing either menu weapon.
+Ratchetwind takes Tinkerer's Toolbox pushed to storm-grey steel; Escapement hue-shifts
+Chainlash's chain lattice from toxin green to voltage blue; Flywheel zooms Rewind's clock
+mandala — none of the three touch a tier-0 powerImage sheet.
+
 ---
 
 ## Weapons & powers (manifest v1.1)
