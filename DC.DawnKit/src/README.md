@@ -16,6 +16,43 @@ Source layout (namespaces per SPEC §3.2): `DawnKit/` (engine — `Api/`,
 `Content/` = Factories/Vocabulary/Art, `Integration/` = Sets/Codex/Classes),
 `DawnKit.Packs/`, `Dawncaster.Sandbox/`. `DawnKit.slnx` builds all three.
 
+## VERSIONING
+
+All three plugins version **in lockstep** (one solution, one release unit;
+currently 0.7.0 — the consts in `DawnKitPlugin.cs`, `PacksPlugin.cs`,
+`SandboxPlugin.cs`). Semver, applied to the engine like this:
+
+- **The API surface is the public builders and registries** —
+  `DawnKit.Cards` / `Sets` / `Weapons` / `WeaponPowers` / `Mods`, their
+  builder methods and spec types, `RegisterResult` / `RegistrationInfo`, the
+  clean-spelled enum mirrors, and the documented config keys
+  (everything in `../API.md`). Internals (patch targets, factories,
+  lifecycle plumbing) are NOT surface; they may change in any release.
+- **Patch** (0.7.x): fixes only — no API additions, no behavior contract
+  changes. Safe drop-in for both C# mods and packs.
+- **Minor** (0.x+1.0): additive API — new builders/methods/knobs/content
+  types; existing calls and manifests keep working unchanged. (Pre-1.0 we
+  use the minor slot for this; post-1.0 it keeps the same meaning.)
+- **Major** (breaking): removed/renamed public API, changed validation
+  semantics that can refuse previously-valid content, or a raised minimum
+  pack schemaVersion.
+
+**Manifest compatibility maps to `DawnKit.Packs`' supported schemaVersion**,
+not to the plugin version: `pack.json` may declare `"schemaVersion": N`
+(absent = 1), and the loader (`SchemaGate.SupportedSchemaVersion`, currently
+**1**) refuses any pack declaring a higher version, entirely, with the remedy
+in the log (update DawnKit.Packs). Additive, backwards-compatible manifest
+fields do NOT bump the schemaVersion (old loaders ignore unknown members);
+the schemaVersion bumps only when a manifest can no longer be safely loaded
+by older loaders — and raising the loader's *supported* version is at least
+a minor engine release, raising the *minimum* accepted one a major.
+
+**Compatibility promise for content packs**: a pack that loads cleanly today
+(schemaVersion ≤ supported, passes validation) keeps loading on every later
+0.x and 1.x engine release without edits, unless a major release says
+otherwise in its release notes — and degradation on engine removal stays
+save-safe per `../SPEC.md` §9.
+
 ## Prerequisites
 
 - BepInEx **5.4.23.2** (win_x64) extracted into the game root

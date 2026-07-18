@@ -1,4 +1,4 @@
-# DawnKit public API reference (engine 0.6.0)
+# DawnKit public API reference (engine 0.7.0)
 
 Terse reference for the C# surface of `DawnKit.dll`. Tutorials live in the
 examples ([examples/MyFirstMod](examples/MyFirstMod/README.md) — C#,
@@ -324,7 +324,7 @@ boot sequence a healthy install prints:
 | `Command vocabulary: 565 effect / 660 talent-union.` | Embedded DSL vocabularies loaded. |
 | `AutoId self-check: 5/5 reference vectors OK.` | AutoId determinism verified (§7). |
 | `Target found: <Class.Method>` ×16 + `Target found: <member> (member)` ×4 | Every Harmony patch target / private member resolved. **After a game update, count these first**: a missing one logs `Target MISSING: <label> — that integration is disabled.` and only that integration is off (skip-don't-crash) — the log names exactly what broke. |
-| `DawnKit 0.6.0 loaded — 16/16 patch targets applied.` | Boot summary. |
+| `DawnKit 0.7.0 loaded — 16/16 patch targets applied.` | Boot summary. |
 | `<owner>: N cards injected, M skipped (hook: <hook>)` | Phase-1 injection per mod. |
 | `<owner>: N weapons, M weapon powers injected (classes: …)` | Weapon/power injection + class attachment. |
 | `Class weapon/talent counts: Arcanist=3w/6t, …` | Post-attachment per-class totals. |
