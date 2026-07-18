@@ -71,8 +71,9 @@ Rules of thumb:
   name comes from `pack.json`'s `pack` field, which may contain spaces
   ("Clockwork Cadence").
 - Content IDs: numeric blocks per pack from the mod range 700,000,000–799,999,999,
-  allocated permanently in `docs/ID-REGISTRY.md` (cardIDs bottom-up, weapon cardIDs
-  top-down, talentIDs their own namespace — WEAPON-SPEC §3).
+  allocated permanently in `docs/ID-REGISTRY.md` (cardIDs bottom-up; weapon and
+  starting-card cardIDs share one top-down counter; talentIDs their own namespace —
+  WEAPON-SPEC §3).
 - Art files: `art/<CardName>.png`, exactly matching the card's manifest name.
 
 ## Technical baseline

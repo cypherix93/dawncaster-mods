@@ -31,8 +31,8 @@ free top-down number per block is one below the lowest listed.
 
 Starting cards are plain cards in the pack's cardID block; they **continue the same
 top-down counter** below the weapons/powers allocations above (WEAPON-SPEC §3). Engine
-attachment (`Profession.startingCards`) is pending — IDs are reserved now so the design
-and engine tasks cannot race.
+attachment (`Profession.startingCards`) landed in DawnKit 0.8.0 (`startingCards`
+manifest array / `DawnKit.StartingCards` builder).
 
 | Block | Pack | Starting-card cardIDs (top-down) | Next free (top-down) |
 |---|---|---|---|

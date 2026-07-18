@@ -150,10 +150,11 @@ Three new optional top-level arrays in the existing pack manifest (`weapons` and
 }
 ```
 
-**Engine status:** the `startingCards` loader (Profession.startingCards attachment, §5
-step 3 analogue) is **pending — a separate engine task implements it**. This section is
-the design contract that task builds against; `validate_pack.py` does not yet know the
-array either (§7).
+**Engine status:** the `startingCards` loader **landed in DawnKit 0.8.0** —
+`StartingCardManifest` → `DawnKit.StartingCards.Build(...).ForClasses(...)` →
+`Profession.startingCards` attachment (§5 step 3), ledger kind `startingCard`,
+boot-report/class-count coverage. `validate_pack.py` and `schemas/pack.schema.json`
+know the array too (§7.0 closed).
 
 ## 3. Identity policy
 
@@ -226,7 +227,7 @@ Injection extends the existing phase-1 hook (after `AllClasses()` has populated
    (idempotent: check membership first). The character-creation UI reads these lists
    live (`LoadWeapons` reads `activeProfession.weapons`) — **no UI patching required**,
    unlike card sets.
-   **Starting cards (v1.2, engine task pending)**: identical pattern — build the `Card`
+   **Starting cards (v1.2, implemented in 0.8.0)**: identical pattern — build the `Card`
    via the existing card factory (registered as a *normal* acquirable card, NOT
    reward-excluded — §1 corpus rule), then append to `profession.startingCards`.
    `LoadStartingCards` reads that list live (CharacterBuilder.cs:1240) and re-resolves
@@ -252,14 +253,14 @@ Injection extends the existing phase-1 hook (after `AllClasses()` has populated
 
 ## 7. Validation gates
 
-0. **v1.2 gap (current state)**: `validate_pack.py` v1.1 does not yet know the
-   `startingCards` array — it validates `cards`/`weapons`/`weaponPowers` and ignores
-   unknown top-level keys, so packs carrying `startingCards` pass today without any
-   checks on that array. The pending engine task extends the validator: full card-schema
-   checks + `classes` name validation + top-down ID placement + the §4 starting-card
-   budget lint (cost-1/Common-Uncommon defaults), and adds the array to
-   `schemas/pack.schema.json` (whose root `additionalProperties: false` would otherwise
-   flag it in schema-aware editors).
+0. **v1.2 (closed with DawnKit 0.8.0)**: `validate_pack.py` validates the
+   `startingCards` array — full card-schema checks + `classes` name validation +
+   the §3 top-down ID placement advisory (above the pack's bottom-up cards AND
+   below the weapon/power allocations) + the §4 starting-card budget lint as
+   warnings (non-1-cost, rarity above Uncommon, excludeFromRewards set) — and
+   `schemas/pack.schema.json` carries the array (startingCard definition = card
+   definition + required `classes`, no category pinning; root
+   `additionalProperties: false` intact).
 1. `validate_pack.py` v1.1: schema for the two new arrays; weapon category forced
    `BasicAttack`; talentID collision vs extracted talents + sibling packs; `classes`
    entries must match extracted Profession asset names; talent effect codeLines against

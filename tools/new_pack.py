@@ -108,9 +108,9 @@ def starter_card(name: str, card_id: int) -> dict:
 DESIGN_NOTES_TEMPLATE = """# {pack} — design notes
 
 **Cluster:** <archetype cluster — see GAME-MECHANICS Part VI for the synergy web>.
-**ID block:** {low}–{high} (AutoId; cards bottom-up from {low}, weapons top-down
-from {high}, weapon-power talentIDs reuse the top-down numbers in the separate
-Talent namespace). **Colors:** <cost pools = frame colors; keep the archetype's
+**ID block:** {low}–{high} (AutoId; cards bottom-up from {low}; weapons and
+starting cards share one top-down counter from {high}; weapon-power talentIDs
+reuse the top-down numbers in the separate Talent namespace). **Colors:** <cost pools = frame colors; keep the archetype's
 color identity coherent (DEX green, INT blue, STR red, HOLY gold, hybrids)>.
 
 **Pack thesis.** <2-3 paragraphs: which verified mechanics (GAME-MECHANICS
@@ -134,10 +134,11 @@ low (pool is 72% cost 0-1) — CARD-PACK-SPEC §4.
 - **DSL:** <commands/triggers/conditions used, each verified against a shipped
   card that does the same>.
 
-## Weapons & weapon powers (optional — WEAPON-SPEC.md)
+## Weapons, weapon powers & starting cards (optional — WEAPON-SPEC.md)
 
-<Starting weapons (BasicAttack cards, IDs top-down) and weapon powers (tier-0
-talents) if the pack ships any. Same per-item structure as above.>
+<Starting weapons (BasicAttack cards, IDs top-down), weapon powers (tier-0
+talents) and starting cards (normal cards + classes, IDs continuing the
+top-down counter) if the pack ships any. Same per-item structure as above.>
 
 ## Open questions
 
@@ -239,7 +240,8 @@ def main(argv=None) -> int:
                   "derived from that pair), or allocate an explicit block in "
                   "docs/ID-REGISTRY.md and edit pack.json by hand.")
             return 1
-        for c in (list(sib.get("cards") or []) + list(sib.get("weapons") or [])):
+        for c in (list(sib.get("cards") or []) + list(sib.get("weapons") or [])
+                  + list(sib.get("startingCards") or [])):
             if isinstance(c, dict) and isinstance(c.get("name"), str):
                 taken_names.add(c["name"].lower())
 

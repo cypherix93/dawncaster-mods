@@ -1,4 +1,4 @@
-# DawnKit v0.7.0 — release notes
+# DawnKit v0.8.0 — release notes
 
 > **DRAFT — NOT FOR PUBLICATION.** Internal draft for the M2 "first
 > public-ready cut". Do not publish, upload, or link this release anywhere
@@ -17,6 +17,26 @@ as data (pack folders). All the hard-won engine knowledge from building four
 real content packs — load phases, two-phase reference resolution,
 re-injection after asset wipes, set-screen integration, Codex discovery — is
 encoded once, in the engine, instead of living in any single mod.
+
+## What's new in 0.8.0 — starting cards (manifest v1.2)
+
+The third character-creation loadout slot lands: packs (and C# mods) can now
+ship **starting cards** alongside weapons and weapon powers.
+
+- **Manifest**: optional top-level `startingCards` array — full card schema
+  (any legal card shape, no category pinning) plus `classes`
+  (WEAPON-SPEC.md §2). JSON schema + `validate_pack.py` cover it (budget
+  lints, top-down ID advisory, shared collision namespaces).
+- **API**: `DawnKit.StartingCards.Build(name)...ForClasses(...).Register()`
+  mirrors `Weapons`; ledger kind `"startingCard"`.
+- **Behavior**: the card registers in the normal pools (playercards-eligible,
+  NOT reward-excluded — 62/63 shipped starting cards are ordinary reward-pool
+  cards) and is appended to the live `Profession.startingCards` list, which
+  the character-creation UI (phase 5) reads directly; the pick enters the
+  starting deck ×1 and round-trips in the save like any other deck card — no
+  fallback plumbing needed.
+- **AutoId**: starting cards share the block's top-down loadout cursor with
+  weapons (WEAPON-SPEC.md §3).
 
 ## What's in 0.7.0 — first public-ready cut
 

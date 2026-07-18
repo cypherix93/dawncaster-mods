@@ -257,8 +257,9 @@ checkout IS the install, no copying. That's how this repo's four packs run.)
   power budgets and the uniqueness bar your cards will be reviewed against.
   Write your rationale into `DESIGN-NOTES.md` as you go (the scaffold has the
   skeleton).
-- **Weapons and weapon powers** — same manifest, two more arrays:
-  [WEAPON-SPEC](../DC.DawnKit/WEAPON-SPEC.md).
+- **Weapons, weapon powers and starting cards** — same manifest, three more
+  arrays (`weapons`, `weaponPowers`, `startingCards` — the full character-
+  creation loadout): [WEAPON-SPEC](../DC.DawnKit/WEAPON-SPEC.md).
 - **Real card art** — recipes that mutate the game's own art into new,
   clearly-derived pieces, built locally and never redistributed:
   [ART-MUTATION-SPEC](../DC.DawnKit/ART-MUTATION-SPEC.md), then `dmk art`,

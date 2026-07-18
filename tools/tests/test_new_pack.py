@@ -80,7 +80,7 @@ def test_design_notes_skeleton(scaffold):
     notes = (pack_dir / "DESIGN-NOTES.md").read_text(encoding="utf-8")
     block = gd.autoid_block(AUTHOR, NAME)
     for fragment in (NAME, str(block), "Pack thesis", "Card-by-card",
-                  "Weapons & weapon powers", "Open questions"):
+                  "Weapons, weapon powers & starting cards", "Open questions"):
         assert fragment in notes, fragment
 
 
