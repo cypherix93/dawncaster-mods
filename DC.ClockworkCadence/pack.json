@@ -1,4 +1,5 @@
 {
+  "$schema": "../schemas/pack.schema.json",
   "pack": "Clockwork Cadence",
   "idBlock": [700000200, 700000299],
   "cards": [

@@ -1,4 +1,5 @@
 {
+  "$schema": "../schemas/pack.schema.json",
   "pack": "CrimsonLedger",
   "idBlock": [700000300, 700000399],
   "cards": [

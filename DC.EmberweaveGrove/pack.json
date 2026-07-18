@@ -1,4 +1,5 @@
 {
+  "$schema": "../schemas/pack.schema.json",
   "pack": "EmberweaveGrove",
   "idBlock": [700000000, 700000099],
   "cards": [

@@ -1,0 +1,9 @@
+# Python toolchain deps (Python 3.14). Install: pip install --user -r tools/requirements.txt
+# Core (validate/sim/schema/scaffold/tests):
+jsonschema>=4.21
+pytest>=8
+# Art pipeline (artmutate/validate_art/contact_sheet):
+Pillow>=10
+# Extraction only (extract_data/extract_sprites; needs the game installed):
+UnityPy==1.25.2
+TypeTreeGeneratorAPI==0.0.10

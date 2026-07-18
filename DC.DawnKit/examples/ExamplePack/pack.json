@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../schemas/pack.schema.json",
   "pack": "My First Mod",
   "idBlock": [737673400, 737673499],
   "cards": [

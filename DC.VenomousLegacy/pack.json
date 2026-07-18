@@ -1,4 +1,5 @@
 {
+  "$schema": "../schemas/pack.schema.json",
   "pack": "VenomousLegacy",
   "idBlock": [700000100, 700000199],
   "cards": [
