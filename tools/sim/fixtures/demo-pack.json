@@ -1,0 +1,100 @@
+{
+  "pack": "SimDemo",
+  "idBlock": [700099900, 700099999],
+  "cards": [
+    {
+      "name": "Zz Demo Ember Jab",
+      "cardID": 700099901,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "Fire",
+      "rarity": "Common",
+      "cost": { "STR": 1 },
+      "description": "Deal 3 damage. Inflict 1 Burning.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        { "trigger": "PlayAction", "codeLine": "damage:3", "forecast": true,
+          "referenceStatus": null, "referenceCards": [], "conditions": [] },
+        { "trigger": "PlayAction", "codeLine": "inflict:1", "forecast": true,
+          "referenceStatus": "Burning", "referenceCards": [], "conditions": [] }
+      ],
+      "enchantment": null,
+      "art": "art/ZzDemoEmberJab.png",
+      "meta": {
+        "archetype": "demo-on-curve",
+        "nearestExisting": "Burning Arrow",
+        "whyDifferent": "fixture: deliberately on-curve common (3 dmg + 1 burn for 1)",
+        "intendedDeck": "n/a — sim fixture",
+        "powerNotes": "slightly under the 4 dmg/energy vanilla rate, small burn rider"
+      }
+    },
+    {
+      "name": "Zz Demo Sun Cannon",
+      "cardID": 700099902,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "Fire",
+      "rarity": "Common",
+      "cost": { "INT": 1 },
+      "description": "Deal 12 damage. Inflict 6 Burning. Draw 2 cards.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        { "trigger": "PlayAction", "codeLine": "damage:12; draw:2", "forecast": true,
+          "referenceStatus": null, "referenceCards": [], "conditions": [] },
+        { "trigger": "PlayAction", "codeLine": "inflict:6", "forecast": true,
+          "referenceStatus": "Burning", "referenceCards": [], "conditions": [] }
+      ],
+      "enchantment": null,
+      "art": "art/ZzDemoSunCannon.png",
+      "meta": {
+        "archetype": "demo-overpowered",
+        "nearestExisting": "Fireball",
+        "whyDifferent": "fixture: deliberately ~3x over the 1-cost common budget",
+        "intendedDeck": "n/a — sim fixture",
+        "powerNotes": "12 dmg + 6 burn + 2 cards for 1 energy — must flag OVER"
+      }
+    },
+    {
+      "name": "Zz Demo Ouroboros Engine",
+      "cardID": 700099903,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "Neutral": 0 },
+      "description": "Whenever you draw a card, draw a card and conjure a copy of this card.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        { "trigger": "Draw", "codeLine": "draw:1; conjure:self:1:1", "forecast": false,
+          "referenceStatus": null, "referenceCards": [], "conditions": [] }
+      ],
+      "enchantment": null,
+      "art": "art/ZzDemoOuroborosEngine.png",
+      "meta": {
+        "archetype": "demo-degenerate",
+        "nearestExisting": "Echo Chamber",
+        "whyDifferent": "fixture: unbounded Draw->draw+conjure feedback loop",
+        "intendedDeck": "n/a — sim fixture",
+        "powerNotes": "must flag DEGENERATE-RISK (self-feeding trigger, no bound)"
+      }
+    }
+  ]
+}
