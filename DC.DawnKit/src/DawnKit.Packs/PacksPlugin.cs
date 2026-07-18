@@ -20,7 +20,7 @@ namespace DawnKit.Packs
     {
         public const string Guid = "dcmods.dawnkit.packs";
         public const string PluginName = "DawnKit.Packs";
-        public const string Version = "0.5.0";
+        public const string Version = "0.6.0";
 
         /// <summary>Legacy pre-split monolith config, migrated on first run (SPEC.md §5).</summary>
         private const string LegacyConfigFile = "com.dawncastermods.sandbox.cfg";

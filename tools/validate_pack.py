@@ -100,7 +100,12 @@ def _validate_effect(eff, where: str, pack_names_lower: set[str], err, warn,
         return
     trig = eff.get("trigger")
     if trig not in gd.GAME_TRIGGERS:
-        err("bad_trigger", f"{where}: unknown GameTriggers member {trig!r}")
+        hint = ""
+        if isinstance(trig, str):
+            close = gd.did_you_mean(trig, gd.GAME_TRIGGERS)
+            if close:
+                hint = f" (did you mean {', '.join(map(repr, close))}?)"
+        err("bad_trigger", f"{where}: unknown GameTriggers member {trig!r}{hint}")
     code = eff.get("codeLine")
     if not isinstance(code, str) or not code.strip():
         err("empty_codeline", f"{where}: codeLine missing or empty")
@@ -118,6 +123,10 @@ def _validate_effect(eff, where: str, pack_names_lower: set[str], err, warn,
             lower_hits = [c for c in commands if c.lower() == cmd.lower()]
             if lower_hits:
                 hint = f" (did you mean {lower_hits[0]!r}? commands are case-sensitive)"
+            else:
+                close = gd.did_you_mean(cmd, commands)
+                if close:
+                    hint = f" (did you mean {', '.join(map(repr, close))}?)"
             err("unknown_command",
                 f"{where}: command {cmd!r} not in {vocab_label}{hint}")
     ref_status = eff.get("referenceStatus")

@@ -31,6 +31,12 @@ namespace DawnKit.Integration.Sets
 
         internal static void NameSelector_SetSettings_Postfix(NameSelectorDisplay __instance)
         {
+            AddSetRows(__instance);
+            AddStatusRow(__instance);
+        }
+
+        private static void AddSetRows(NameSelectorDisplay __instance)
+        {
             try
             {
                 if (ModSets.PackSets.Count == 0)
@@ -77,6 +83,50 @@ namespace DawnKit.Integration.Sets
             catch (Exception ex)
             {
                 DawnKitPlugin.Log.LogError($"[DawnKit] Failed to add run-settings set rows: {ex}");
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // Player-facing load status (SPEC.md §2, P19): one non-interactive row
+        // appended after the set rows — "DawnKit: N mods, M items loaded", plus
+        // the error count when nonzero. Visually humble: same cloned row prefab,
+        // buttons disabled, no toggle state. Fail-safe: any problem logs and
+        // skips the row, never the screen.
+        // ------------------------------------------------------------------
+
+        private static void AddStatusRow(NameSelectorDisplay __instance)
+        {
+            try
+            {
+                if (Core.Ownership.RegistrationLedger.All.Count == 0)
+                {
+                    return; // no mods registered anything — nothing changes (SPEC.md §2)
+                }
+                string status = Core.Status.BootReport.StatusText();
+                GameObject row = UnityEngine.Object.Instantiate(__instance.setSelectionSetting, __instance.setOverview);
+                var sfb = row.GetComponent<SunforgeSettingButton>();
+                if (sfb == null)
+                {
+                    UnityEngine.Object.Destroy(row);
+                    DawnKitPlugin.Log.LogError("[DawnKit] Row prefab has no SunforgeSettingButton — status row skipped.");
+                    return;
+                }
+                sfb.mainText.text = status;
+                sfb.bonus.text = "";
+                if (sfb.main != null)
+                {
+                    sfb.main.interactable = false;
+                }
+                if (sfb.preview != null)
+                {
+                    sfb.preview.gameObject.SetActive(false); // no eye icon — not a set
+                }
+                sfb.SetEnabled();
+                DawnKitPlugin.Log.LogInfo($"[DawnKit] Status row added: {status}");
+            }
+            catch (Exception ex)
+            {
+                DawnKitPlugin.Log.LogError($"[DawnKit] Failed to add the status row (skipped): {ex}");
             }
         }
 

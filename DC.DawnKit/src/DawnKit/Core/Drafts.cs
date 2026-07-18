@@ -8,6 +8,7 @@ namespace DawnKit.Core.Lifecycle
         internal string Owner;
         internal string Name;
         internal int CardId;
+        internal bool AutoIdRequested;
         internal SetHandle Set;
         internal string ExpansionRaw;
         internal bool ExpansionSet;
@@ -40,6 +41,7 @@ namespace DawnKit.Core.Lifecycle
         internal string Owner;
         internal string Name;
         internal int TalentId;
+        internal bool AutoIdRequested;
         internal SetHandle Set;
         internal string ExpansionRaw;
         internal bool ExpansionSet;

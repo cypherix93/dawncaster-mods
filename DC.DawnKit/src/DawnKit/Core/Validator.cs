@@ -253,7 +253,7 @@ namespace DawnKit.Core.Lifecycle
                 string command = s.Split(':')[0].Trim();
                 if (command.Length > 0 && !vocabulary.Contains(command))
                 {
-                    throw new ManifestError($"unknown effect command '{command}' in codeLine '{codeLine}'");
+                    throw new ManifestError($"unknown effect command '{command}' in codeLine '{codeLine}'{DidYouMean.Suggest(command, vocabulary)}");
                 }
             }
         }
@@ -325,7 +325,7 @@ namespace DawnKit.Core.Lifecycle
                 DawnKitPlugin.Log.LogWarning($"[DawnKit] {cardName}: {field} '{raw}' only matched {typeof(T).Name}.{value} case-insensitively — fix the manifest spelling.");
                 return value;
             }
-            throw new ManifestError($"unknown {typeof(T).Name} member '{raw}' for {field}");
+            throw new ManifestError($"unknown {typeof(T).Name} member '{raw}' for {field}{DidYouMean.Suggest(raw, Enum.GetNames(typeof(T)))}");
         }
     }
 }

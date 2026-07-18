@@ -67,8 +67,17 @@ namespace DawnKit
         /// <summary>Owning mod/pack display name — used for log lines, set grouping and (M1b) the ownership registry.</summary>
         public TSelf Owner(string owner) { Draft.Owner = owner; return Self; }
 
-        /// <summary>Numeric cardID from your registered ID block (docs/ID-REGISTRY.md). M1b adds .AutoId().</summary>
+        /// <summary>Numeric cardID from your registered ID block (docs/ID-REGISTRY.md). Or use .AutoId().</summary>
         public TSelf Id(int cardId) { Draft.CardId = cardId; return Self; }
+
+        /// <summary>
+        /// Automatic ID from your mod's deterministic 100-ID block (SPEC.md §4.3):
+        /// the set's block when combined with .InSet(...), else the block hashed
+        /// (FNV-1a 32) from the owner string. Cards allocate bottom-up in
+        /// registration order, weapons top-down from the block end. A block owned
+        /// by a different mod is a hard refusal at Register() — no probing.
+        /// </summary>
+        public TSelf AutoId() { Draft.AutoIdRequested = true; return Self; }
 
         /// <summary>Place the card in a registered mod set (its synthetic expansion).</summary>
         public TSelf InSet(SetHandle set) { Draft.Set = set; return Self; }
@@ -247,8 +256,15 @@ namespace DawnKit
 
         public WeaponPowerBuilder Owner(string owner) { Draft.Owner = owner; return this; }
 
-        /// <summary>Numeric talentID (its own ID namespace — WEAPON-SPEC.md §3).</summary>
+        /// <summary>Numeric talentID (its own ID namespace — WEAPON-SPEC.md §3). Or use .AutoId().</summary>
         public WeaponPowerBuilder Id(int talentId) { Draft.TalentId = talentId; return this; }
+
+        /// <summary>
+        /// Automatic talentID from the mod's block (SPEC.md §4.3): top-down from
+        /// the block end in the talent ID space (talent IDs reuse the block's
+        /// numbers — separate space from cardIDs).
+        /// </summary>
+        public WeaponPowerBuilder AutoId() { Draft.AutoIdRequested = true; return this; }
 
         public WeaponPowerBuilder InSet(SetHandle set) { Draft.Set = set; return this; }
 

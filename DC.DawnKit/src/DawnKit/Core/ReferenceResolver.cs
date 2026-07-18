@@ -17,6 +17,9 @@ namespace DawnKit.Core.RefResolver
     /// </summary>
     internal static class ReferenceResolver
     {
+        /// <summary>Unresolved refs from the most recent authoritative (final) pass — feeds the diagnostics dump.</summary>
+        internal static readonly List<string> LastUnresolved = new List<string>();
+
         internal static void Resolve(string source, bool finalPass)
         {
             try
@@ -102,6 +105,14 @@ namespace DawnKit.Core.RefResolver
             foreach (string u in unresolved)
             {
                 DawnKitPlugin.Log.LogError($"[DawnKit] Unresolved reference: {u}");
+            }
+            if (finalPass)
+            {
+                LastUnresolved.Clear();
+                LastUnresolved.AddRange(unresolved);
+                // Refresh the boot report/diagnostics with the authoritative
+                // resolution result (the log block only re-emits when it changed).
+                Status.BootReport.Emit(source);
             }
         }
     }

@@ -21,13 +21,15 @@ namespace DawnKit
     {
         public const string Guid = "dcmods.dawnkit";
         public const string PluginName = "DawnKit";
-        public const string Version = "0.5.0";
+        public const string Version = "0.6.0";
 
         internal static ManualLogSource Log;
         internal static bool Verbose;
+        internal static bool DiagnosticsDump;
 
         private ConfigEntry<bool> engineEnabled;
         private ConfigEntry<bool> verboseLogging;
+        private ConfigEntry<bool> diagnosticsDump;
 
         private void Awake()
         {
@@ -38,7 +40,12 @@ namespace DawnKit
                 "is injected — completely vanilla behavior, regardless of installed content mods.");
             verboseLogging = Config.Bind("Engine", "VerboseLogging", false,
                 "Decision-level Debug logs (per-item routing, reference-resolution detail, class counts).");
+            diagnosticsDump = Config.Bind("Engine", "DiagnosticsDump", false,
+                "Write BepInEx/DawnKit-diagnostics.txt at boot completion: per-mod registered content " +
+                "with IDs/names/sets/classes, the ownership table, the conflict report and unresolved " +
+                "references. Overwritten each boot. The bug-report channel — attach it to issue reports.");
             Verbose = verboseLogging.Value;
+            DiagnosticsDump = diagnosticsDump.Value;
 
             if (!engineEnabled.Value)
             {
@@ -47,6 +54,13 @@ namespace DawnKit
             }
 
             CommandVocabulary.Initialize();
+
+            // AutoId determinism gate (SPEC.md §4.3/§8): the C# formula must match
+            // the Python twin (tools/gamedata.py) on the shared reference vectors.
+            if (Core.Ownership.AutoIdAllocator.SelfCheck())
+            {
+                Logger.LogInfo("[DawnKit] AutoId self-check: 5/5 reference vectors OK.");
+            }
 
             var harmony = new Harmony(Guid);
             PatchManager.ApplyAll(harmony);

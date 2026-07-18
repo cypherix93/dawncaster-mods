@@ -137,6 +137,11 @@ namespace DawnKit.Core.Lifecycle
             ModSets.Rebuild();
             CodexIntegration.MarkModCardsDiscovered(source);
 
+            // Consolidated boot conflict report (SPEC.md §3.5) + optional
+            // diagnostics dump — emitted after every injection pass, printed
+            // only when its content changed.
+            Core.Status.BootReport.Emit(source);
+
             // Opportunistic ref resolution: shipped cards and same-batch mod cards
             // are all registered by now, and if statuses happen to be loaded too
             // (re-inject passes; the async boot path sets both flags after all
@@ -156,15 +161,11 @@ namespace DawnKit.Core.Lifecycle
                     alreadyPresent++;
                     return;
                 }
-                if (CardIdCollides(spec.CardId))
+                string conflict = FindPoolConflict(spec, "card");
+                if (conflict != null)
                 {
-                    DawnKitPlugin.Log.LogError($"[DawnKit] {spec.Owner}/{spec.Name}: cardID {spec.CardId} collides with an existing card — skipped.");
-                    skipped++;
-                    return;
-                }
-                if (CardNameCollides(spec.Name))
-                {
-                    DawnKitPlugin.Log.LogError($"[DawnKit] {spec.Owner}/{spec.Name}: card name collides with an existing card — skipped.");
+                    DawnKitPlugin.Log.LogError($"[DawnKit] {conflict} — card skipped.");
+                    RegistrationLedger.RecordConflict(spec.Owner, conflict);
                     skipped++;
                     return;
                 }
@@ -188,14 +189,11 @@ namespace DawnKit.Core.Lifecycle
                 {
                     return; // already injected this process and still registered
                 }
-                if (CardIdCollides(spec.CardId))
+                string conflict = FindPoolConflict(spec, "weapon");
+                if (conflict != null)
                 {
-                    DawnKitPlugin.Log.LogError($"[DawnKit] {spec.Owner}/{spec.Name}: weapon cardID {spec.CardId} collides with an existing card — skipped.");
-                    return;
-                }
-                if (CardNameCollides(spec.Name))
-                {
-                    DawnKitPlugin.Log.LogError($"[DawnKit] {spec.Owner}/{spec.Name}: weapon name collides with an existing card — skipped.");
+                    DawnKitPlugin.Log.LogError($"[DawnKit] {conflict} — weapon skipped.");
+                    RegistrationLedger.RecordConflict(spec.Owner, conflict);
                     return;
                 }
                 CardFactory.Build(r);
@@ -217,14 +215,16 @@ namespace DawnKit.Core.Lifecycle
                 {
                     return; // already injected this process and still registered
                 }
-                if (AssetManager.allTalents.Any(t => t != null && t.ID == spec.TalentId))
+                Talent existingTalent = AssetManager.allTalents.FirstOrDefault(t => t != null &&
+                    (t.ID == spec.TalentId || string.Equals(t.name, spec.Name, StringComparison.OrdinalIgnoreCase)));
+                if (existingTalent != null)
                 {
-                    DawnKitPlugin.Log.LogError($"[DawnKit] {spec.Owner}/{spec.Name}: talentID {spec.TalentId} collides with an existing talent — skipped.");
-                    return;
-                }
-                if (AssetManager.allTalents.Any(t => t != null && string.Equals(t.name, spec.Name, StringComparison.OrdinalIgnoreCase)))
-                {
-                    DawnKitPlugin.Log.LogError($"[DawnKit] {spec.Owner}/{spec.Name}: talent name collides with an existing talent — skipped.");
+                    string claimant = ClaimantOfTalent(existingTalent);
+                    string conflict = existingTalent.ID == spec.TalentId
+                        ? $"{spec.Owner}/{spec.Name}: talentID {spec.TalentId} already owned by {claimant} (talent \"{existingTalent.name}\")"
+                        : $"{spec.Owner}/{spec.Name}: talent name already owned by {claimant} (talentID {existingTalent.ID})";
+                    DawnKitPlugin.Log.LogError($"[DawnKit] {conflict} — weapon power skipped.");
+                    RegistrationLedger.RecordConflict(spec.Owner, conflict);
                     return;
                 }
                 TalentFactory.Build(r);
@@ -237,16 +237,39 @@ namespace DawnKit.Core.Lifecycle
             }
         }
 
-        private static bool CardIdCollides(int cardId)
+        /// <summary>
+        /// Live-pool collision check at injection time — the backstop behind the
+        /// Register()-time ledger check, and the only place shipped-pool
+        /// collisions can be seen on the boot path (pools are empty during
+        /// Awake). The conflict message names BOTH claimants (SPEC.md §3.5).
+        /// </summary>
+        private static string FindPoolConflict(ParsedCard spec, string kind)
         {
-            return AssetManager.allCards.Any(c => c != null && c.cardID == cardId) ||
-                   AssetManager.metacards.Any(c => c != null && c.cardID == cardId);
+            Card existing = AssetManager.allCards.FirstOrDefault(c => c != null &&
+                                (c.cardID == spec.CardId || string.Equals(c.name, spec.Name, StringComparison.OrdinalIgnoreCase)))
+                            ?? AssetManager.metacards.FirstOrDefault(c => c != null &&
+                                (c.cardID == spec.CardId || string.Equals(c.name, spec.Name, StringComparison.OrdinalIgnoreCase)));
+            if (existing == null)
+            {
+                return null;
+            }
+            string claimant = ClaimantOfCard(existing);
+            return existing.cardID == spec.CardId
+                ? $"{spec.Owner}/{spec.Name}: cardID {spec.CardId} already owned by {claimant} (card \"{existing.name}\")"
+                : $"{spec.Owner}/{spec.Name}: {kind} name already owned by {claimant} (cardID {existing.cardID})";
         }
 
-        private static bool CardNameCollides(string name)
+        /// <summary>The owner of a live pool card: a registered mod, or the shipped pool.</summary>
+        private static string ClaimantOfCard(Card card)
         {
-            return AssetManager.allCards.Any(c => c != null && string.Equals(c.name, name, StringComparison.OrdinalIgnoreCase)) ||
-                   AssetManager.metacards.Any(c => c != null && string.Equals(c.name, name, StringComparison.OrdinalIgnoreCase));
+            CardRegistration ours = Registry.Cards.FirstOrDefault(r => r.Card == card);
+            return ours != null ? ours.Spec.Owner : "the shipped card pool";
+        }
+
+        private static string ClaimantOfTalent(Talent talent)
+        {
+            TalentRegistration ours = Registry.Talents.FirstOrDefault(r => r.Talent == talent);
+            return ours != null ? ours.Spec.Owner : "the shipped talent pool";
         }
     }
 }

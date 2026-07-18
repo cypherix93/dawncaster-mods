@@ -275,6 +275,12 @@ is the game's own, and removal degrades safely:
 - **M1b — the NEW parts**: ownership registry + boot conflict report (§3.5), AutoId
   (§4.3), player-facing status row + `DiagnosticsDump` (§2, §5), `Enabled`/
   `VerboseLogging` knobs, "Target found" logging, Register() result objects.
+  **Status: DONE (2026-07-18, DawnKit 0.6.0).** Ownership ledger refuses cross-mod
+  ID/name collisions at Register() with both claimants named; AutoId blocks
+  (FNV-1a, hard refusal, C#/Python twins pinned on 5 shared vectors); one
+  deduplicated boot-report block; set-screen status row; did-you-mean hints;
+  `DiagnosticsDump` → `BepInEx/DawnKit-diagnostics.txt`. Live-verified clean +
+  intentional-conflict boots (`src/README.md`); pytest 155 green.
 - **M1c — examples + docs**: `examples/` (§7), public API reference doc, pytest AutoId
   vectors. Exit = MOD-TOOLKIT M1 success test (20-line example mod registers a card).
 

@@ -1,11 +1,11 @@
-# DawnKit — engine + data client + dev sandbox (M1a layout)
+# DawnKit — engine + data client + dev sandbox (M1b)
 
 BepInEx plugins for Dawncaster (Steam, Unity 2022.3.62f2, Mono). The former
 `Dawncaster.Sandbox` 0.4.0 monolith is split per `../SPEC.md` §3 into:
 
 | Assembly | Plugin GUID | Role |
 |---|---|---|
-| `DawnKit.dll` | `dcmods.dawnkit` | **Engine.** Owns ALL Harmony patches (SPEC §6, 16 targets + 4 private members, each logged "Target found: X" at boot). Lifecycle (two-phase load, re-injection after `ForceReloadAssets`), ref resolver, SO factories, embedded command vocabularies, art loading/placeholders, set-screen/Codex/class integration. Public API: `DawnKit.Cards` / `Sets` / `Weapons` / `WeaponPowers` builders validating at `Register()`, clean-spelled enum mirrors (`Rarity`, `Suffix.Physical`, …) mapped to the game's typo'd enums. Ships zero content. |
+| `DawnKit.dll` | `dcmods.dawnkit` | **Engine.** Owns ALL Harmony patches (SPEC §6, 16 targets + 4 private members, each logged "Target found: X" at boot). Lifecycle (two-phase load, re-injection after `ForceReloadAssets`), ref resolver, SO factories, embedded command vocabularies, art loading/placeholders, set-screen/Codex/class integration. Public API: `DawnKit.Cards` / `Sets` / `Weapons` / `WeaponPowers` builders validating at `Register()` (with did-you-mean hints), clean-spelled enum mirrors (`Rarity`, `Suffix.Physical`, …) mapped to the game's typo'd enums. M1b: ownership registry with cross-mod collision refusal at `Register()`, `.AutoId()` / `Sets.Register(name, author)` deterministic ID blocks (SPEC §4.3), consolidated boot conflict report, in-game status row, `DiagnosticsDump`. Ships zero content. |
 | `DawnKit.Packs.dll` | `dcmods.dawnkit.packs` | **Data client.** `[BepInDependency("dcmods.dawnkit")]`. Scans `<PacksPath>/<Pack>/pack.json` (manifest v1.1: cards + weapons + weaponPowers), registers everything through the public API. Runs zero patches; its csproj references **no Assembly-CSharp and no Harmony** — the compiler enforces the "public API only" acceptance guard. |
 | `Dawncaster.Sandbox.dll` | `com.dawncastermods.sandbox` | **Thin dev sandbox** (never shipped): the SandboxStrike hello-card behind `[Sandbox] InjectSandboxCard` (default off), registered via the typed clean-enum builder API. |
 
@@ -56,6 +56,7 @@ DawnKit would double-inject). Same filename, so the copy above overwrites it.
 |---|---|---|
 | `Engine.Enabled` | `true` | Master switch (fail-safe rule). `false` = no patches applied, no injection — completely vanilla. |
 | `Engine.VerboseLogging` | `false` | Decision-level debug logging. |
+| `Engine.DiagnosticsDump` | `false` | Write `BepInEx\DawnKit-diagnostics.txt` at boot completion (overwritten each boot): per-mod items with IDs/names/sets/classes and applied/FAILED status, the conflict list, unresolved references. The bug-report channel (P19). |
 
 `BepInEx\config\dcmods.dawnkit.packs.cfg` (data client):
 
@@ -97,8 +98,69 @@ The injection/lifecycle/set/Codex behavior is unchanged from the monolith
   individually by the engine's PatchManager with per-target
   `Target found:` / `Target MISSING:` boot logging; a missing target disables
   only that integration.
+- **Ownership & conflicts (M1b, SPEC §3.5)**: every `Register()` records
+  `(owner, kind, id, name)` in the registration ledger (owner = explicit
+  `.Owner(...)`, else the calling plugin's BepInEx GUID). Duplicate IDs or
+  (case-insensitive) names across registered mods are refused at `Register()`
+  with BOTH claimants named; shipped-pool collisions are refused at injection
+  the same way. After each injection pass the engine logs one consolidated
+  **boot report** (per-mod registered/applied/failed + every conflict), e.g.:
+
+  ```
+  [DawnKit] ── Boot report ──────────────────────────────
+  [DawnKit] 5 mods · 65 items registered, 63 applied, 2 failed · 2 conflicts
+  [DawnKit]   VenomousLegacy: 16 registered, 16 applied, 0 failed
+  [DawnKit]   ConflictTest: 2 registered, 0 applied, 2 failed
+  [DawnKit] Conflicts (both claimants named):
+  [DawnKit]   ✗ ConflictTest/Glacial Lance: cardID 700000100 already owned by VenomousLegacy (card "Weeping Blade")
+  [DawnKit] ── end boot report ──────────────────────────
+  ```
+
+- **AutoId (M1b, SPEC §4.3)**: `Sets.Register(name, author)` derives the mod's
+  100-ID block as `700,000,000 + (FNV1a32(lower(author + "/" + name)) %
+  1,000,000) * 100`; builders use `.InSet(set).AutoId()` — cards allocate
+  bottom-up, weapons top-down from the block end, talent IDs top-down in their
+  own space. A block owned by a different mod is a **hard refusal** (both owners
+  named, remedy = explicit block) — never probing to adjacent blocks. The
+  Python twin (`tools/gamedata.py`) and the engine pin the same 5 reference
+  vectors (`tools/tests/test_autoid.py`; boot logs `AutoId self-check: 5/5`).
+- **Status row (M1b)**: with any mod content registered, the run-settings
+  set screen shows one non-interactive appended row —
+  `DawnKit: 4 mods, 63 items loaded`, plus
+  `— K errors, see BepInEx/LogOutput.log` when anything failed. Fail-safe:
+  if the row can't render it logs and skips.
+- **Validation hints (M1b)**: unknown codeLine commands and enum members get
+  did-you-mean suggestions (case fix > prefix > Levenshtein ≤ 2, top 3),
+  mirrored in `tools/validate_pack.py`.
 
 ## Verification results
+
+### M1b ownership/AutoId/status (2026-07-18, DawnKit 0.6.0)
+
+Three live boots against the four repo packs:
+
+1. **Clean boot (DiagnosticsDump=true)** — baseline unchanged vs M1a: 4 packs /
+   47 cards / 5 weapons / 11 powers / 0 skipped, sets 1000–1003 [13/14/13/12],
+   class counts byte-for-byte equal, 56 refs resolved / 0 unresolved,
+   `grep -ciE "error|exception"` = 0. New lines:
+   `AutoId self-check: 5/5 reference vectors OK.`, one boot-report block
+   (`4 mods · 63 items registered, 63 applied, 0 failed · 0 conflicts`,
+   `Conflicts: none`), and
+   `Diagnostics dump written: …\BepInEx\DawnKit-diagnostics.txt` (full per-mod
+   ledger with IDs/names/sets/classes, `Status: DawnKit: 4 mods, 63 items loaded`).
+2. **Intentional conflict** — throwaway `ZZ.ConflictTest` pack (deleted after)
+   colliding with VenomousLegacy by ID and by name. Both refused at Register()
+   with both claimants named (log lines quoted in the boot-report example
+   above); boot report showed `5 mods · 65 items registered, 63 applied,
+   2 failed · 2 conflicts`; diagnostics `Status:` line appended
+   `— 2 errors, see BepInEx/LogOutput.log`; the four real packs loaded
+   untouched.
+3. **Steady state (DiagnosticsDump back to false)** — single boot-report block,
+   0 conflicts, 0 errors, no diagnostics file.
+
+The status row itself renders inside `NameSelectorDisplay.SetSettings`
+(run-settings set screen) — log line `Status row added: DawnKit: …` appears
+when that screen opens; the visual check is part of the manual test script.
 
 ### M1a extraction (2026-07-18, DawnKit 0.5.0 — behavior-identical vs 0.4.0)
 

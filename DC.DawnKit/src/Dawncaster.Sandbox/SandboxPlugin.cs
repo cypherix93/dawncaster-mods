@@ -15,7 +15,7 @@ namespace Dawncaster.Sandbox
     {
         public const string PluginGuid = "com.dawncastermods.sandbox";
         public const string PluginName = "Dawncaster Sandbox";
-        public const string PluginVersion = "0.5.0";
+        public const string PluginVersion = "0.6.0";
 
         private ConfigEntry<bool> injectSandboxCard;
 

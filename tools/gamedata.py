@@ -308,3 +308,97 @@ def parse_statements(code_line: str) -> list[str]:
 
 def statement_command(statement: str) -> str:
     return statement.split(":", 1)[0].strip()
+
+
+# ------------------------------------------------------------------- autoid
+# AutoId block formula (DC.DawnKit/SPEC.md §4.3) — the Python twin of the C#
+# implementation in DC.DawnKit/src/DawnKit/Core/AutoId.cs. Both sides pin the
+# AUTOID_TEST_VECTORS below (tools/tests/test_autoid.py; C# boot self-check):
+# the same owner string MUST map to the same block on every machine, forever —
+# synthetic set values and save data depend on it.
+
+FNV1A32_OFFSET = 2166136261
+FNV1A32_PRIME = 16777619
+AUTOID_MOD_RANGE_START = 700_000_000
+AUTOID_BLOCK_SIZE = 100
+
+
+def fnv1a32(text: str) -> int:
+    """FNV-1a 32-bit over the UTF-8 bytes of `text`."""
+    h = FNV1A32_OFFSET
+    for byte in text.encode("utf-8"):
+        h ^= byte
+        h = (h * FNV1A32_PRIME) & 0xFFFFFFFF
+    return h
+
+
+def autoid_owner_string(author: str, mod_name: str) -> str:
+    """Canonical owner string: lower(author + "/" + modName)."""
+    return f"{author}/{mod_name}".lower()
+
+
+def autoid_block(author: str, mod_name: str) -> int:
+    """First cardID of the mod's deterministic 100-ID block:
+    700,000,000 + (FNV1a32(owner) % 1,000,000) * 100."""
+    owner = autoid_owner_string(author, mod_name)
+    return AUTOID_MOD_RANGE_START + (fnv1a32(owner) % 1_000_000) * AUTOID_BLOCK_SIZE
+
+
+def autoid_set_value(block: int) -> int:
+    """Synthetic CardExpansions value for a block: 1000 + (block − 700M) / 100."""
+    return 1000 + (block - AUTOID_MOD_RANGE_START) // AUTOID_BLOCK_SIZE
+
+
+# (author, modName, expected fnv1a32(owner), expected block) — shared with the
+# C# boot self-check. NEVER change these without changing both sides.
+AUTOID_TEST_VECTORS = [
+    ("DCMods", "Example", 3497143552, 714355200),
+    ("alice", "frostpack", 1346137019, 713701900),
+    ("Bob", "VenomWorks", 4193822216, 782221600),
+    ("dcmods.example", "My First Mod", 2376734, 737673400),
+    ("Zoë", "Æther Deck", 718123484, 712348400),
+]
+
+
+# -------------------------------------------------------------- did-you-mean
+# Nearest-match suggestions for validation errors, mirrored by the engine's
+# DawnKit.Core.Lifecycle.DidYouMean (same rule: case-insensitive equality,
+# then prefix ≥3 chars, then Levenshtein distance ≤2; top 3).
+
+def _bounded_levenshtein(a: str, b: str, max_distance: int = 2) -> int:
+    """Levenshtein distance if ≤ max_distance, else -1."""
+    if abs(len(a) - len(b)) > max_distance:
+        return -1
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        curr = [i]
+        for j, cb in enumerate(b, 1):
+            curr.append(min(curr[j - 1] + 1, prev[j] + 1, prev[j - 1] + (ca != cb)))
+        if min(curr) > max_distance:
+            return -1
+        prev = curr
+    return prev[-1] if prev[-1] <= max_distance else -1
+
+
+def did_you_mean(word: str, candidates, limit: int = 3) -> list[str]:
+    """The closest candidates to `word` (case fix > prefix > Levenshtein ≤2)."""
+    if not word:
+        return []
+    scored = []
+    lower = word.lower()
+    for cand in candidates:
+        if not cand:
+            continue
+        cl = cand.lower()
+        if cl == lower:
+            score = 0
+        elif (len(lower) >= 3 and cl.startswith(lower)) or (len(cl) >= 3 and lower.startswith(cl)):
+            score = 1
+        else:
+            dist = _bounded_levenshtein(lower, cl)
+            if dist < 0:
+                continue
+            score = 1 + dist
+        scored.append((score, cand.lower(), cand))
+    scored.sort()
+    return [cand for _, _, cand in scored[:limit]]
