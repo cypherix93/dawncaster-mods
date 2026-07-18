@@ -39,6 +39,15 @@
       <HintPath>$(GameDir)\Dawncaster_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(GameDir)\Dawncaster_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Effect-DSL command vocabulary, embedded for runtime codeLine validation. -->
+    <EmbeddedResource Include="..\..\reference\effect-commands.txt" LogicalName="Dawncaster.Sandbox.effect-commands.txt" />
   </ItemGroup>
 
 </Project>

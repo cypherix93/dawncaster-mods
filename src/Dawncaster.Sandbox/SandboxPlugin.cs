@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using BepInEx;
+using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 
@@ -12,16 +14,36 @@ namespace Dawncaster.Sandbox
     {
         public const string PluginGuid = "com.dawncastermods.sandbox";
         public const string PluginName = "Dawncaster Sandbox";
-        public const string PluginVersion = "0.1.0";
+        public const string PluginVersion = "0.2.0";
 
         private const string CardName = "SandboxStrike";
         private const int CardId = 900001;
 
         internal static SandboxPlugin Instance;
 
+        private ConfigEntry<string> packsPath;
+        private ConfigEntry<string> expansionOverride;
+        private ConfigEntry<bool> injectSandboxCard;
+
         private void Awake()
         {
             Instance = this;
+
+            packsPath = Config.Bind("Packs", "PacksPath",
+                Path.Combine(Paths.PluginPath, "DawncasterPacks"),
+                "Directory scanned for <Pack>/pack.json card-pack manifests (CARD-PACK-SPEC.md schema).");
+            expansionOverride = Config.Bind("Packs", "ExpansionOverride",
+                "Core",
+                "When non-empty, every loaded card's manifest expansion is overridden with this " +
+                "AssetManager.CardExpansions member. Default 'Core' keeps mod cards in the run pool " +
+                "even when all non-core sets are disabled in-game (CreateRunLists filters by " +
+                "excludedsets, which would drop the manifests' 'Extended'). Empty = use manifest values.");
+            injectSandboxCard = Config.Bind("Sandbox", "InjectSandboxCard",
+                false,
+                "Inject the SandboxStrike hello-world test card (id 900001).");
+
+            PackLoader.Configure(packsPath.Value, expansionOverride.Value);
+
             var harmony = new Harmony(PluginGuid);
             harmony.PatchAll(typeof(AssetLoadHooks));
             Logger.LogInfo($"[Sandbox] {PluginName} {PluginVersion} loaded, hooks installed.");
@@ -30,13 +52,15 @@ namespace Dawncaster.Sandbox
         [HarmonyPatch]
         internal static class AssetLoadHooks
         {
+            // ---- Phase 1 (cards): player-asset load ----
+
             // Primary hook: GameLoader's async boot path calls
             // AssetManager.SetPlayerAssetsLoaded() after CreateCardCollectionsAsync.
             [HarmonyPostfix]
             [HarmonyPatch(typeof(AssetManager), nameof(AssetManager.SetPlayerAssetsLoaded))]
             private static void SetPlayerAssetsLoaded_Postfix()
             {
-                Instance?.InjectCards("SetPlayerAssetsLoaded");
+                Instance?.OnPlayerAssetsLoaded("SetPlayerAssetsLoaded");
             }
 
             // Safety net: the synchronous path (LoadAllAssets -> LoadPlayerAssets)
@@ -46,7 +70,37 @@ namespace Dawncaster.Sandbox
             [HarmonyPatch(typeof(AssetManager), nameof(AssetManager.LoadPlayerAssets))]
             private static void LoadPlayerAssets_Postfix()
             {
-                Instance?.InjectCards("LoadPlayerAssets");
+                Instance?.OnPlayerAssetsLoaded("LoadPlayerAssets");
+            }
+
+            // ---- Phase 2 (references): world-asset load ----
+            // referenceStatus targets only exist after CreateStatusCollections()
+            // runs in the world phase, which is always after the player phase
+            // (LoadAllAssets: LoadPlayerAssets then LoadWorldAssets).
+
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(AssetManager), nameof(AssetManager.SetWorldAssetsLoaded))]
+            private static void SetWorldAssetsLoaded_Postfix()
+            {
+                PackLoader.ResolveReferences("SetWorldAssetsLoaded", finalPass: true);
+            }
+
+            // Safety net, same reasoning as LoadPlayerAssets. Resolution is
+            // idempotent (already-resolved refs are non-null and skipped).
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(AssetManager), nameof(AssetManager.LoadWorldAssets))]
+            private static void LoadWorldAssets_Postfix()
+            {
+                PackLoader.ResolveReferences("LoadWorldAssets", finalPass: true);
+            }
+        }
+
+        private void OnPlayerAssetsLoaded(string source)
+        {
+            PackLoader.InjectPacks(source);
+            if (injectSandboxCard.Value)
+            {
+                InjectCards(source);
             }
         }
 
