@@ -39,8 +39,8 @@ table { border-collapse: collapse; width: 100%; }
 td, th { padding: 10px 12px; border-bottom: 1px solid #2b2638; vertical-align: top;
          text-align: left; }
 th { color: #8d86a3; font-weight: 600; font-size: 12px; text-transform: uppercase; }
-img.art { width: 192px; height: 192px; display: block; border-radius: 6px;
-          background: #000; }
+img.art { width: 192px; height: auto; display: block; border-radius: 6px;
+          background: #000; }  /* height:auto — weapons are portrait 512×873 */
 .tile { width: 192px; height: 192px; display: flex; align-items: center;
         justify-content: center; border-radius: 6px; font-size: 12px;
         text-align: center; }

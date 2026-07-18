@@ -41,6 +41,14 @@ def test_rotate_crop_zero_is_identity(src):
     assert run(src, {"op": "rotate_crop", "degrees": 0}).tobytes() == src.tobytes()
 
 
+def test_rotate_crop_preserves_nonsquare_canvas():
+    # portrait canvas (weapon art is 512×873): the re-crop must keep the
+    # original aspect, not collapse to the inscribed square
+    tall = synth_sprite(512, variant=1).resize((256, 436))
+    out = run(tall, {"op": "rotate_crop", "degrees": 6})
+    assert out.size == (256, 436) and out.mode == "RGBA"
+
+
 def test_zoom_crop_top_left_magnifies_that_corner(src):
     out = run(src, {"op": "zoom_crop", "factor": 2.0, "gravity": "top_left"})
     assert out.size == src.size

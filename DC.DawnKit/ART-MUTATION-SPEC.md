@@ -5,8 +5,10 @@ in-game sprites** — no AI generation. Goal: art that keeps Dawncaster's painte
 reads as native, while being *visibly distinct* from its source card at a glance (source
 and mutant can appear in the same run pool / Codex page).
 
-This spec covers **sourcing + mutation**. The shipping contract (512×512 RGBA full-bleed,
-runtime loading, `validate_art` gate, contact sheets) is unchanged — see `ART-PIPELINE.md`.
+This spec covers **sourcing + mutation**. The shipping contract (RGBA full-bleed at the
+item type's size — cards & weapon powers 512×512, starting weapons **512×873 portrait**,
+both measured from extraction; runtime loading, `validate_art` gate, contact sheets) is
+defined in `ART-PIPELINE.md`.
 
 ## 1. Legal/repo policy (non-negotiable)
 
@@ -90,6 +92,12 @@ Mutations pull toward the pack's identity so each pack also gains internal cohes
       "source": "CARDART_4_15",              // sprite-index key; list of 2 for composite
       "sourceCard": "Fireball",              // human note: which shipped card this art belongs to
       "seed": 700000001,                     // = cardID; feeds all seeded ops
+      "size": [512, 512],                    // optional output size, default 512×512;
+                                             // starting weapons use [512, 873] (portrait,
+                                             // measured from extraction — square art
+                                             // letterboxes in the weapon card face).
+                                             // Sources are cover-cropped (centered,
+                                             // aspect-preserving) to this before ops run.
       "ops": [
         { "op": "mirror" },
         { "op": "hue_rotate", "degrees": -18 },
@@ -119,7 +127,8 @@ tools/out/sprites/  (local, extracted)          DC.<Pack>/art-recipes.json  (com
                 tools/artmutate.py build [--pack X | --all]
                        │   deterministic Pillow ops
                        ▼
-        DC.<Pack>/art/<CardName>.png   (gitignored, 512×512 RGBA)
+        DC.<Pack>/art/<CardName>.png   (gitignored, RGBA at the item type's size:
+                                        cards/powers 512×512, weapons 512×873)
                        ▼
         tools/validate_art.py --all --distinctness      (gate)
                        ▼

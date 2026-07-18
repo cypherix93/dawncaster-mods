@@ -135,6 +135,42 @@ def test_wrong_dimensions_and_mode(tmp_path):
     assert errors_of(findings, "art_not_rgba")[0]["card"] == "NoAlpha"
 
 
+def test_per_type_art_sizes(tmp_path):
+    """Dimensions are driven by the manifest array an item sits in:
+    cards/weaponPowers 512×512, weapons 512×873 portrait (measured)."""
+    packs = tmp_path / "packs"
+    pd = packs / "PackW"
+    (pd / "art").mkdir(parents=True)
+    manifest = {"pack": "PackW",
+                "cards": [{"name": "Spell"}],
+                "weapons": [{"name": "Blade", "art": "art/Blade.png"}],
+                "weaponPowers": [{"name": "Buff", "art": "art/Buff.png"}]}
+    (pd / "pack.json").write_text(json.dumps(manifest), encoding="utf-8")
+    (pd / "art" / "Spell.png").write_bytes(png_bytes(synth_sprite(512, 0)))
+    (pd / "art" / "Buff.png").write_bytes(png_bytes(synth_sprite(512, 3)))
+    # square art in the weapons array is the letterbox bug -> ERROR
+    (pd / "art" / "Blade.png").write_bytes(png_bytes(synth_sprite(512, 1)))
+    findings = va.validate([pd], packs_dir=packs,
+                           sprite_index_path=tmp_path / "no-index.json",
+                           sprites_base=tmp_path)
+    errs = errors_of(findings, "art_dimensions")
+    assert len(errs) == 1 and errs[0]["card"] == "Blade"
+    assert "512x873" in errs[0]["msg"] and "weapons" in errs[0]["msg"]
+    # portrait weapon art passes
+    portrait = synth_sprite(512, 1).resize((512, 873))
+    (pd / "art" / "Blade.png").write_bytes(png_bytes(portrait))
+    findings = va.validate([pd], packs_dir=packs,
+                           sprite_index_path=tmp_path / "no-index.json",
+                           sprites_base=tmp_path)
+    assert errors_of(findings, "art_dimensions") == []
+    assert errors_of(findings, "art_missing") == []
+
+
+def test_weapon_byte_budget_scales_with_area():
+    assert va.max_bytes_for((512, 512)) == va.MAX_BYTES
+    assert va.max_bytes_for((512, 873)) == va.MAX_BYTES * 873 // 512
+
+
 def test_oversized_art_reported(tmp_path):
     rng = random.Random(1)
     noisy = Image.frombytes("RGBA", (512, 512), rng.randbytes(512 * 512 * 4))

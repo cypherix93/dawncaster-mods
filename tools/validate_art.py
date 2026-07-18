@@ -2,7 +2,14 @@
 
 Shipping checks (always):
   - every card in DC.<Pack>/pack.json has DC.<Pack>/art/<CardName>.png
-    (missing-art report), exactly 512×512 RGBA, file < 600 KB
+    (missing-art report), RGBA, at the item TYPE's exact size (driven by which
+    manifest array the item sits in — all sizes measured from extraction):
+      cards         512×512  (e.g. CARDART_4_15/Fireball, CARDART_5_41/Cleave)
+      weapons       512×873  portrait (LONGSWORD, DAGGERS, FORCEWAND, HATCHETS,
+                    KNUCKLES, WARMACE, GREATSWORD — square art letterboxes in
+                    the char-creation weapon card face)
+      weaponPowers  512×512  (tier-0 talent powerImage sprites are square)
+    file < 600 KB × (pixel area / 512²), i.e. ~1023 KB for weapons
   - no stray files in art/ that don't match a card name
   - §2 source budget from DC.*/art-recipes.json: a sprite key backing more
     than 2 mod cards across all packs, or 2 in one pack, is an ERROR
@@ -55,9 +62,18 @@ PACKS_DIR = REPO_DIR
 SPRITE_INDEX = TOOLS_DIR / "out" / "sprite-index.json"
 SPRITES_BASE = TOOLS_DIR / "out"
 
-ART_SIZE = (512, 512)
-MAX_BYTES = 600 * 1024
+ART_SIZE = (512, 512)          # cards + weapon powers (measured from extraction)
+WEAPON_ART_SIZE = (512, 873)   # starting weapons — portrait (measured from extraction)
+# expected art size per manifest array an item sits in
+GROUP_ART_SIZE = {"cards": ART_SIZE, "weapons": WEAPON_ART_SIZE,
+                  "weaponPowers": ART_SIZE}
+MAX_BYTES = 600 * 1024         # budget at 512×512; scales with pixel area
 HASH_SIZE = 16
+
+
+def max_bytes_for(size: tuple[int, int]) -> int:
+    """File-size budget scaled by pixel area (600 KB at 512×512)."""
+    return MAX_BYTES * (size[0] * size[1]) // (512 * 512)
 
 # calibrated thresholds — see module docstring before changing
 SOURCE_MIN_DHASH = 16
@@ -129,21 +145,23 @@ def _load_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _art_entries(pack_json: dict) -> list[tuple[str, str]]:
-    """(art-file stem, display name) for cards + weapons + weaponPowers.
+def _art_entries(pack_json: dict) -> list[tuple[str, str, str]]:
+    """(art-file stem, display name, manifest group) for cards + weapons +
+    weaponPowers.
 
     The stem comes from the manifest `art` path basename — the runtime source
     of truth (the DawnKit loader uses that path verbatim, e.g.
     art/EverburningCenser.png) — for ALL item types, falling back to the item
     name only when an entry has no usable `art` field. Recipes may be keyed by
-    either the stem or the display name."""
-    entries: list[tuple[str, str]] = []
+    either the stem or the display name. The group drives the per-type
+    expected art size (GROUP_ART_SIZE)."""
+    entries: list[tuple[str, str, str]] = []
     items = []
     for group in ("cards", "weapons", "weaponPowers"):
         group_items = pack_json.get(group)
         if isinstance(group_items, list):
-            items.extend(i for i in group_items if isinstance(i, dict))
-    for item in items:
+            items.extend((i, group) for i in group_items if isinstance(i, dict))
+    for item, group in items:
         name = item.get("name")
         name = name if isinstance(name, str) else "?"
         art = item.get("art")
@@ -151,7 +169,7 @@ def _art_entries(pack_json: dict) -> list[tuple[str, str]]:
             stem = art.replace("\\", "/").rsplit("/", 1)[-1][:-4]
         else:
             stem = name
-        entries.append((stem, name))
+        entries.append((stem, name, group))
     return entries
 
 
@@ -176,16 +194,18 @@ def check_pack_files(pack_dir: Path, pack_json: dict, findings: list[dict]) -> N
     art_dir = pack_dir / "art"
     entries = _art_entries(pack_json)
 
-    for name, _display in entries:
+    for name, _display, group in entries:
+        expected_size = GROUP_ART_SIZE.get(group, ART_SIZE)
+        byte_limit = max_bytes_for(expected_size)
         p = art_dir / f"{name}.png"
         if not p.is_file():
             findings.append(_finding("ERROR", pack, name, "art_missing",
                                      f"no art file {p.name} in {pack}/art/"))
             continue
         size = p.stat().st_size
-        if size >= MAX_BYTES:
+        if size >= byte_limit:
             findings.append(_finding("ERROR", pack, name, "art_too_big",
-                                     f"{size} bytes ≥ {MAX_BYTES} limit"))
+                                     f"{size} bytes ≥ {byte_limit} limit"))
         try:
             img = _open_image(p)
         except OSError as e:
@@ -195,15 +215,18 @@ def check_pack_files(pack_dir: Path, pack_json: dict, findings: list[dict]) -> N
         if img.format != "PNG":
             findings.append(_finding("ERROR", pack, name, "art_not_png",
                                      f"format is {img.format}, must be PNG"))
-        if img.size != ART_SIZE:
-            findings.append(_finding("ERROR", pack, name, "art_dimensions",
-                                     f"{img.size[0]}x{img.size[1]}, must be 512x512"))
+        if img.size != expected_size:
+            findings.append(_finding(
+                "ERROR", pack, name, "art_dimensions",
+                f"{img.size[0]}x{img.size[1]}, must be "
+                f"{expected_size[0]}x{expected_size[1]} for {group} "
+                "(measured from extraction)"))
         if img.mode != "RGBA":
             findings.append(_finding("ERROR", pack, name, "art_not_rgba",
                                      f"mode is {img.mode}, must be RGBA"))
 
     if art_dir.is_dir():
-        expected = {f"{stem}.png" for stem, _ in entries}
+        expected = {f"{stem}.png" for stem, _, _ in entries}
         for f in sorted(art_dir.iterdir()):
             if f.name not in expected:
                 findings.append(_finding("ERROR", pack, f.name, "art_stray",
@@ -268,7 +291,7 @@ def check_distinctness(scope_packs: list[Path], packs_dir: Path,
             entries = _art_entries(_load_json(pj))
         except (OSError, json.JSONDecodeError):
             continue
-        for stem, display in entries:
+        for stem, display, _group in entries:
             p = pack_dir / "art" / f"{stem}.png"
             if p.is_file():
                 outputs.append((pack_dir.name, stem, display, p))

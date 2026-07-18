@@ -114,10 +114,15 @@ def op_rotate_crop(img, params, ctx):
     w, h = img.size
     rot = img.rotate(deg, resample=BICUBIC, expand=False)
     rad = abs(math.radians(deg))
-    inner = int(math.floor(min(w, h) / (math.cos(rad) + math.sin(rad))))
-    left = (w - inner) // 2
-    top = (h - inner) // 2
-    return rot.crop((left, top, left + inner, top + inner)).resize((w, h), LANCZOS)
+    sin, cos = math.sin(rad), math.cos(rad)
+    # largest centered rect of the ORIGINAL aspect inside the rotated canvas:
+    # s*w*cos + s*h*sin <= w and s*w*sin + s*h*cos <= h (square: 1/(cos+sin))
+    s = min(w / (w * cos + h * sin), h / (w * sin + h * cos))
+    inner_w = max(1, int(math.floor(w * s)))
+    inner_h = max(1, int(math.floor(h * s)))
+    left = (w - inner_w) // 2
+    top = (h - inner_h) // 2
+    return rot.crop((left, top, left + inner_w, top + inner_h)).resize((w, h), LANCZOS)
 
 
 _GRAVITY = {

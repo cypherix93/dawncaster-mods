@@ -136,6 +136,52 @@ def test_non_512_source_is_normalized(corpus):
     assert img.size == (512, 512)
 
 
+def test_recipe_size_builds_portrait_output(corpus):
+    """Weapon-style recipes: "size": [w, h] drives the output canvas."""
+    recipes = corpus["recipes"]
+    recipes["cards"]["Alpha"]["size"] = [256, 436]
+    corpus["recipe_path"].write_text(json.dumps(recipes), encoding="utf-8")
+    built, _, errors = build(corpus)
+    assert errors == []
+    img = Image.open(corpus["out"] / "Alpha.png")
+    assert img.size == (256, 436) and img.mode == "RGBA"
+    # Beta (no size) keeps the 512×512 default
+    assert Image.open(corpus["out"] / "Beta.png").size == (512, 512)
+
+
+def test_portrait_source_kept_whole_at_matching_size(corpus):
+    """A source already at the target size must pass through uncropped
+    (the 512×873 weapon sprites keep their full height — no letterbox,
+    no blade-tip clipping)."""
+    portrait = synth_sprite(512, 0).resize((256, 436))
+    (corpus["base"] / "sprites" / "A.png").write_bytes(png_bytes(portrait))
+    loaded = am.load_source_image(png_bytes(portrait), (256, 436))
+    assert loaded.size == (256, 436)
+    assert loaded.tobytes() == portrait.convert("RGBA").tobytes()
+
+
+def test_composite_extras_are_cover_cropped_to_target_size(corpus):
+    """Secondary (square) sources of a portrait recipe are cover-cropped to
+    the target aspect, never stretched."""
+    recipes = corpus["recipes"]
+    recipes["cards"]["Beta"]["size"] = [256, 436]
+    corpus["recipe_path"].write_text(json.dumps(recipes), encoding="utf-8")
+    built, _, errors = build(corpus)
+    assert errors == []
+    assert Image.open(corpus["out"] / "Beta.png").size == (256, 436)
+
+
+@pytest.mark.parametrize("bad", [[512], [512, 512, 512], ["512", "873"],
+                                 [512, 0], [512, 4096], "512x873"])
+def test_bad_size_is_clear_error(corpus, bad):
+    recipes = corpus["recipes"]
+    recipes["cards"]["Alpha"]["size"] = bad
+    corpus["recipe_path"].write_text(json.dumps(recipes), encoding="utf-8")
+    built, _, errors = build(corpus)
+    assert built == 1  # Beta still builds
+    assert len(errors) == 1 and "size" in errors[0] and "Alpha" in errors[0]
+
+
 def test_encode_png_fixed_settings_stable():
     img = synth_sprite(128, 2)
     assert am.encode_png(img) == am.encode_png(img.copy())

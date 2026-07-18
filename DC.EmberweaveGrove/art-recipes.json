@@ -163,6 +163,7 @@
       "source": ["GLOWINGBRANCH", "ORB-OF-FIRE"],
       "sourceCard": "Suntree_Twig (mid-run weapon card, no class menu) + Orb of Fire",
       "seed": 700000099,
+      "size": [512, 873],
       "ops": [
         { "op": "mirror" },
         { "op": "rotate_crop", "degrees": 6 },

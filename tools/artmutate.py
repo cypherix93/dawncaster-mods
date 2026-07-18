@@ -3,7 +3,11 @@
 Reads `DC.<Pack>/art-recipes.json`, resolves each card's `source` sprite key(s)
 via `tools/out/sprite-index.json`, applies the op chain (tools/artmutate_ops.py)
 plus the pack-level `finisher`, and writes `DC.<Pack>/art/<CardName>.png`
-(512×512 RGBA, full bleed).
+(RGBA, full bleed). Output size defaults to 512×512; a recipe may set
+`"size": [w, h]` for non-square targets (starting-weapon art is 512×873 —
+the shipped portrait weapon-sprite size, measured from extraction). Sources
+are cover-cropped (centered, aspect-preserving) to the target size before
+the op chain runs.
 
 Deterministic: same recipe + same source bytes ⇒ byte-identical PNGs (fixed
 encoder settings, no timestamps, seeded ops derive RNG from the card's `seed`).
@@ -44,8 +48,9 @@ PACKS_DIR = REPO_DIR
 SPRITE_INDEX = TOOLS_DIR / "out" / "sprite-index.json"
 SPRITES_BASE = TOOLS_DIR / "out"  # index 'file' entries are relative to this
 
-ART_SIZE = (512, 512)
-ENGINE_VERSION = 1  # bump to force-invalidate all build state
+ART_SIZE = (512, 512)  # default output size; recipes may override via "size"
+SIZE_MIN, SIZE_MAX = 64, 2048
+ENGINE_VERSION = 2  # bump to force-invalidate all build state
 STATE_FILENAME = ".build-state.json"
 
 
@@ -79,18 +84,40 @@ def resolve_source_paths(source, index: dict, base: Path = SPRITES_BASE) -> list
     return paths
 
 
-def load_source_image(data: bytes) -> Image.Image:
-    """Decode sprite bytes -> 512×512 RGBA canvas (center-square-crop + Lanczos)."""
+def load_source_image(data: bytes, size: tuple[int, int] = ART_SIZE) -> Image.Image:
+    """Decode sprite bytes -> target-size RGBA canvas (centered cover-crop + Lanczos).
+
+    Cover semantics: the largest centered window matching the target aspect is
+    cropped from the source, then Lanczos-resized — never letterboxed, never
+    stretched. A source already at the target size passes through untouched
+    (so a 512×873 weapon sprite keeps its full height for a 512×873 target)."""
     img = Image.open(io.BytesIO(data))
     img.load()
     img = img.convert("RGBA")
-    if img.size != ART_SIZE:
+    if img.size != size:
         w, h = img.size
-        side = min(w, h)
-        left, top = (w - side) // 2, (h - side) // 2
-        img = img.crop((left, top, left + side, top + side)).resize(
-            ART_SIZE, Image.Resampling.LANCZOS)
+        tw, th = size
+        if w * th >= h * tw:  # source too wide for target aspect -> crop width
+            win_w, win_h = max(1, (h * tw) // th), h
+        else:                 # source too tall -> crop height
+            win_w, win_h = w, max(1, (w * th) // tw)
+        left, top = (w - win_w) // 2, (h - win_h) // 2
+        img = img.crop((left, top, left + win_w, top + win_h)).resize(
+            size, Image.Resampling.LANCZOS)
     return img
+
+
+def parse_size(card_recipe: dict) -> tuple[int, int]:
+    """Recipe optional "size": [w, h] -> validated target size (default 512×512)."""
+    size = card_recipe.get("size")
+    if size is None:
+        return ART_SIZE
+    if (not isinstance(size, list) or len(size) != 2
+            or not all(isinstance(v, int) and not isinstance(v, bool)
+                       and SIZE_MIN <= v <= SIZE_MAX for v in size)):
+        raise BuildError(f"'size' must be [width, height] ints in "
+                         f"{SIZE_MIN}..{SIZE_MAX}, got {size!r}")
+    return size[0], size[1]
 
 
 def encode_png(img: Image.Image) -> bytes:
@@ -171,13 +198,14 @@ def build_card(card_recipe: dict, finisher: list, source_bytes: list[bytes]) -> 
     ops = card_recipe.get("ops")
     if not isinstance(ops, list):
         raise BuildError("recipe needs an 'ops' list")
-    images = [load_source_image(b) for b in source_bytes]
+    size = parse_size(card_recipe)
+    images = [load_source_image(b, size) for b in source_bytes]
     try:
         out = apply_ops(images[0], images[1:], ops + list(finisher or []), seed)
     except OpError as e:
         raise BuildError(str(e)) from None
-    if out.size != ART_SIZE:
-        raise BuildError(f"op chain produced {out.size}, expected {ART_SIZE}")
+    if out.size != size:
+        raise BuildError(f"op chain produced {out.size}, expected {size}")
     return encode_png(out.convert("RGBA"))
 
 

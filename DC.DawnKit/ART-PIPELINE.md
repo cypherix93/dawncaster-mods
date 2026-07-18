@@ -9,9 +9,10 @@ Art facts below are verified from the extracted assets — see
 
 | Surface | Size | Format | Notes |
 |---|---|---|---|
-| Player card art | **512×512** | RGBA PNG | Full-bleed square, **no frame** — the game UI draws the frame/border on top (frame color from `Card.GetColor()` / `colorCard`) |
+| Player card art | **512×512** | RGBA PNG | Full-bleed square, **no frame** — the game UI draws the frame/border on top (frame color from `Card.GetColor()` / `colorCard`). Measured from extraction: CARDART_4_15 (Fireball), CARDART_5_41 (Cleave), ABILITYART_2_55 (Poison Dart) all 512×512 |
+| Starting-weapon art (char-creation weapon card face) | **512×873** | RGBA PNG | **Portrait** full-bleed — square art letterboxes in the tall weapon frame. Measured from extraction via `Card.artwork.m_PathID`: LONGSWORD, DAGGERS, FORCEWAND, HATCHETS, KNUCKLES, WARMACE, GREATSWORD are all 512×873 |
 | Monster/creature ability art | **256×256** | RGBA PNG | Same full-bleed convention |
-| Talent/power art (`Talent.powerImage`) | 512×512 | RGBA PNG | `abilityart_*` sheets |
+| Talent/power art (`Talent.powerImage`) | **512×512** | RGBA PNG | Square — measured from extraction across 10 tier-0 talent `powerImage` path_ids (MASKS_OF_MISERY_18/8, CARD_UNLOCKS_56, DEIFIC-LARCENY, ARTIFICERS-INSIGHT, CARDART_3_62/38, WILL_OF_THE_JUNGLE, TELEVAN_INSIGHT_ECLYPSE, MOM_PHANTOMCARD: all 512×512) |
 | Event art (`AreaEvent.eventImage`) | varies | RGBA PNG | Not size-locked; measure a reference before shipping |
 
 In the shipped game these are sprites cut from 4096² spritesheets (`cardart_1..5`,
@@ -58,16 +59,20 @@ tools/artforge.py      — normalize: center-crop to square, Lanczos-resize to 5
 mods/<pack>/art/<CardName>.png     — shipping art, committed
         │
         ▼
-tools/validate_art.py  — gate: exact 512×512 (or 256×256 for monster cards), RGBA,
-        │                file < ~600 KB, name matches a card in the pack manifest
+tools/validate_art.py  — gate: exact per-type size (cards/powers 512×512, weapons
+        │                512×873 portrait — measured from extraction; 256×256 for
+        │                monster cards), RGBA, file budget scaled by pixel area
+        │                (~600 KB at 512², ~1023 KB at 512×873), name matches a
+        │                card in the pack manifest
         ▼
 tools/contact_sheet.py — HTML review sheet: art rendered at game display size next to
                          name/cost/rarity, like ftk2's *-contact-sheet.html
 ```
 
 Status: **art sourcing is recipe-driven sprite mutation — see `ART-MUTATION-SPEC.md`.**
-`tools/artmutate.py` (build/preview from `DC.*/art-recipes.json`),
-`tools/validate_art.py` (512×512 RGBA gate + `--distinctness` perceptual-hash check)
+`tools/artmutate.py` (build/preview from `DC.*/art-recipes.json`; recipes may set
+`"size": [w, h]` — starting weapons build at 512×873 portrait),
+`tools/validate_art.py` (per-type size RGBA gate + `--distinctness` perceptual-hash check)
 and `tools/contact_sheet.py` (source→result pair sheets) exist and are deterministic
 (same inputs → same bytes) per the ftk2 iconforge convention. `artforge.py`
 (normalizing external/original art) remains unwritten — only needed if this mod is

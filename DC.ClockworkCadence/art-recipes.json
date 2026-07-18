@@ -164,10 +164,10 @@
       "source": ["STAFFOFTHUNDER", "ORB-OF-LIGHTNING"],
       "sourceCard": "Staff of Thunder (mid-run weapon card, no class menu) + Orb of Thunder",
       "seed": 700000299,
+      "size": [512, 873],
       "ops": [
         { "op": "mirror" },
-        { "op": "rotate_crop", "degrees": 8 },
-        { "op": "zoom_crop", "factor": 1.12, "gravity": "top" },
+        { "op": "zoom_crop", "factor": 1.05, "gravity": "bottom" },
         { "op": "composite", "mask": "radial", "center": [0.5, 0.32], "radius": 0.55, "softness": 0.55, "opacity": 0.5 },
         { "op": "gradient_map", "palette": ["#0d1420", "#4a5a6e", "#7fd4ff"], "strength": 0.3 },
         { "op": "color_wash", "color": "#b07d2e", "opacity": 0.14, "blend": "overlay" },

@@ -15,7 +15,8 @@ and the extracted pool in tools/out/data/):
   - name collision-free (case-insensitive) vs pool and other packs
   - player-pool legality (expansion, rarity, suffix — ProcessCard filter)
   - meta.nearestExisting references a real extracted card
-  - cost/color coherence + power-shape warnings; art presence/512x512 RGBA check
+  - cost/color coherence + power-shape warnings; art presence/RGBA check at the
+    item type's size (cards/powers 512x512, weapons 512x873 — measured)
 
 v1.1 (WEAPON-SPEC.md §7.1):
   - weapons: full card schema, category forced BasicAttack, `classes` entries
@@ -154,7 +155,7 @@ LIST_DEFAULT_FIELDS = ["keywords", "cardKeywords", "flags", "playConditions"]
 
 
 def validate_card(card: dict, idx: int, pack_dir: Path, id_block, pack_names_lower,
-                  findings: list[dict]) -> None:
+                  findings: list[dict], art_size: tuple[int, int] = (512, 512)) -> None:
     label = card.get("name") or f"cards[{idx}]"
     err = lambda check, msg: findings.append(_finding("ERROR", label, check, msg))   # noqa: E731
     warn = lambda check, msg: findings.append(_finding("WARN", label, check, msg))   # noqa: E731
@@ -290,10 +291,13 @@ def validate_card(card: dict, idx: int, pack_dir: Path, id_block, pack_names_low
         err("shape", "meta must be an object")
 
     # --- art
-    _validate_art(card.get("art"), pack_dir, warn)
+    _validate_art(card.get("art"), pack_dir, warn, art_size)
 
 
-def _validate_art(art, pack_dir: Path, warn) -> None:
+def _validate_art(art, pack_dir: Path, warn,
+                  expected: tuple[int, int] = (512, 512)) -> None:
+    """expected: per-type art size — cards/weapon powers 512×512, starting
+    weapons 512×873 portrait (both measured from extraction)."""
     if not (isinstance(art, str) and art):
         return
     art_path = pack_dir / art
@@ -303,8 +307,9 @@ def _validate_art(art, pack_dir: Path, warn) -> None:
         info = _png_info(art_path)
         if info is None:
             warn("art_not_png", f"art file {art} is not a PNG")
-        elif (info[0], info[1]) != (512, 512):
-            warn("art_dimensions", f"art is {info[0]}x{info[1]}, spec wants 512x512")
+        elif (info[0], info[1]) != expected:
+            warn("art_dimensions", f"art is {info[0]}x{info[1]}, spec wants "
+                 f"{expected[0]}x{expected[1]} for this item type")
         elif info[2] != 6:
             warn("art_not_rgba", f"art PNG colortype {info[2]}, spec wants RGBA (6)")
 
@@ -531,7 +536,9 @@ def validate_pack(manifest: dict, pack_path: Path) -> list[dict]:
             perr("shape", f"weapons[{i}] is not an object")
             continue
         label = w.get("name") or f"weapons[{i}]"
-        validate_card(w, i, pack_dir, id_block, pack_names_lower, findings)
+        # starting-weapon art is portrait 512×873 (measured from extraction)
+        validate_card(w, i, pack_dir, id_block, pack_names_lower, findings,
+                      art_size=(512, 873))
         check_identity(label, w.get("cardID"), w.get("name"))
         if w.get("category") != "BasicAttack":
             findings.append(_finding("ERROR", label, "weapon_not_basicattack",

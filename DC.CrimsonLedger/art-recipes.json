@@ -155,6 +155,7 @@
       "source": ["SHAMSHIR", "BLOOD_AND_IRON_ECLYPSE"],
       "sourceCard": "Shamshir (mid-run weapon card, no class menu) + Blood and Iron",
       "seed": 700000399,
+      "size": [512, 873],
       "ops": [
         { "op": "mirror" },
         { "op": "rotate_crop", "degrees": -6 },
