@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>DawnKit.Packs</AssemblyName>
+    <RootNamespace>DawnKit.Packs</RootNamespace>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GameDir>E:\Games\Steam\steamapps\common\Dawncaster</GameDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- ACCEPTANCE GUARD (SPEC.md M1a): this assembly is a pure public-API consumer.
+       It references the DawnKit engine project, BepInEx, Newtonsoft.Json and the
+       minimal Unity runtime for BaseUnityPlugin — deliberately NOT Assembly-CSharp
+       and NOT Harmony. The compiler therefore proves it uses zero game types and
+       zero engine internals (everything internal to DawnKit is invisible here). -->
+  <ItemGroup>
+    <ProjectReference Include="..\DawnKit\DawnKit.csproj" Private="false" />
+    <Reference Include="BepInEx">
+      <HintPath>$(GameDir)\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(GameDir)\Dawncaster_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(GameDir)\Dawncaster_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(GameDir)\Dawncaster_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>
