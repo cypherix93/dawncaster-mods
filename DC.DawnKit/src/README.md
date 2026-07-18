@@ -96,6 +96,15 @@ The injection/lifecycle/set/Codex behavior is unchanged from the monolith
   category forced `BasicAttack`. One bad item is skipped with a named error and
   a `RegisterResult.Failed`; collisions vs the live pools are checked at
   injection time. Failures also count into the per-pack "skipped" log line.
+- **schemaVersion handshake (M2)**: `pack.json` may declare an optional
+  top-level integer `"schemaVersion"` (absent = 1). `DawnKit.Packs` supports
+  schemaVersion **1**; a pack declaring a higher version is refused entirely
+  (one log error naming the pack, its declared version, the supported version,
+  and the remedy: update DawnKit.Packs) and reported via the public
+  `Mods.ReportFailedMod` API so the boot report shows it as a failed mod and
+  the status row's error count includes it. Equal/lower/absent loads normally.
+  The gate's decision table is pinned by a boot self-check log line
+  (`Schema gate self-check: 5/5 reference cases OK`).
 - **Set rows / bonuses / Sunforge / Codex**: identical patch set, now applied
   individually by the engine's PatchManager with per-target
   `Target found:` / `Target MISSING:` boot logging; a missing target disables

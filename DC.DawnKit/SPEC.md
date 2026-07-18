@@ -311,5 +311,14 @@ is the game's own, and removal degrades safely:
    parse exact-then-case-insensitive with a warning — M1a behavior).
 5. **Sim-gate provenance** (MOD-TOOLKIT #7): should `DawnKit.Packs` surface a status
    warning for packs without a sim/balance stamp?
-6. **Semver/capability handshake** (MOD-TOOLKIT §2.2): schema/API version refusal in
-   M1b, or defer to M2 with the public release?
+6. ~~**Semver/capability handshake**~~ — **resolved (2026-07-18, M2, DawnKit 0.7.0):
+   implemented pack-side with the public release.** `pack.json` gains an OPTIONAL
+   top-level `"schemaVersion": 1` (integer; absent = 1). `DawnKit.Packs` supports
+   schemaVersion 1 (`SchemaGate.SupportedSchemaVersion`); a pack declaring a HIGHER
+   version is refused **entirely** — fail-safe, since a newer schema may carry content
+   types the loader cannot see — with one log error naming the pack, its declared
+   version, the supported version, and the remedy (update DawnKit.Packs). The refusal
+   is reported through the new public `Mods.ReportFailedMod(owner, error)` API, so the
+   boot report shows the pack as a failed mod and the status row's error count includes
+   it. Equal/lower/absent loads normally. Engine-version semver policy:
+   `src/README.md` VERSIONING.

@@ -284,6 +284,14 @@ explicit set's block, too).
   boot): per-mod items with IDs/names/sets/classes and applied/FAILED status,
   the conflict list, unresolved references. The bug-report channel — attach it
   to issue reports.
+- **`Mods.ReportFailedMod(owner, error)`** (M2): the seam for failures that
+  happen before any item can be registered — e.g. `DawnKit.Packs` refusing a
+  whole pack over a newer-than-supported manifest `schemaVersion` (a pack.json
+  declaring `schemaVersion` above the loader's supported value — currently 1;
+  absent means 1 — is refused entirely, with the remedy "update DawnKit.Packs"
+  in the log error). The reported mod appears in the boot report as
+  `<owner>: 1 registered, 0 applied, 1 failed`, counts into the status row's
+  error count, and its reason shows in the DiagnosticsDump.
 
 ## 9. Knobs
 

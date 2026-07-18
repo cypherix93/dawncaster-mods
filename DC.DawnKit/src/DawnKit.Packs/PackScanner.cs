@@ -56,16 +56,38 @@ namespace DawnKit.Packs
                 return;
             }
 
-            bool hasCards = pm?.cards != null && pm.cards.Count > 0;
-            bool hasWeapons = pm?.weapons != null && pm.weapons.Count > 0;
-            bool hasPowers = pm?.weaponPowers != null && pm.weaponPowers.Count > 0;
+            if (pm == null)
+            {
+                PacksPlugin.Log.LogError($"[DawnKit.Packs] {manifestFile}: empty manifest — pack skipped.");
+                return;
+            }
+
+            string packName = string.IsNullOrEmpty(pm.pack) ? Path.GetFileName(packDir) : pm.pack;
+
+            // Manifest schemaVersion handshake (M2, SchemaGate doc): this check
+            // runs BEFORE the content checks — a newer-schema pack may consist
+            // entirely of content types this loader does not know about, so no
+            // other conclusion about it is safe. Whole-pack refusal, reported to
+            // the engine ledger so the boot report / status row count it as a
+            // failed mod.
+            if (!SchemaGate.IsSupported(pm.schemaVersion))
+            {
+                string msg = $"declares pack.json schemaVersion {pm.schemaVersion}, but this DawnKit.Packs " +
+                             $"supports up to {SchemaGate.SupportedSchemaVersion} — pack refused entirely. " +
+                             "Remedy: update DawnKit.Packs (and DawnKit) to a release that supports it.";
+                PacksPlugin.Log.LogError($"[DawnKit.Packs] {packName}: {msg}");
+                Mods.ReportFailedMod(packName, msg);
+                return;
+            }
+
+            bool hasCards = pm.cards != null && pm.cards.Count > 0;
+            bool hasWeapons = pm.weapons != null && pm.weapons.Count > 0;
+            bool hasPowers = pm.weaponPowers != null && pm.weaponPowers.Count > 0;
             if (!hasCards && !hasWeapons && !hasPowers)
             {
                 PacksPlugin.Log.LogError($"[DawnKit.Packs] {manifestFile}: no cards/weapons/weaponPowers in manifest — pack skipped.");
                 return;
             }
-
-            string packName = string.IsNullOrEmpty(pm.pack) ? Path.GetFileName(packDir) : pm.pack;
 
             // Per-pack synthetic set from the ID block (CARD-PACK-SPEC.md §3);
             // an explicit ExpansionOverride wins and disables synthetic sets.

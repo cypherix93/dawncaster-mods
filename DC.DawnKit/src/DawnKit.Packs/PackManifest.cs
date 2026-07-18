@@ -8,6 +8,15 @@ namespace DawnKit.Packs
 
     public class PackManifest
     {
+        /// <summary>
+        /// Manifest schema version (M2 semver handshake, MOD-TOOLKIT §2.2 /
+        /// SPEC.md §11 #6). Optional; absent means 1. A pack declaring a version
+        /// HIGHER than <see cref="SchemaGate.SupportedSchemaVersion"/> is refused
+        /// entirely (it may rely on fields/content types this loader does not
+        /// know); equal or lower loads normally. Nullable so "absent" is
+        /// distinguishable from an explicit 0.
+        /// </summary>
+        public int? schemaVersion;
         public string pack;
         public List<long> idBlock;
         public List<CardManifest> cards;

@@ -72,6 +72,17 @@ namespace DawnKit.Packs
 
             Logger.LogInfo($"[DawnKit.Packs] Configured. PacksPath={packsPath.Value}, ExpansionOverride={(overrideCanonical ?? "(none — per-pack synthetic sets)")}, AutoDiscoverModCards={autoDiscoverModCards.Value}.");
 
+            // schemaVersion gate determinism check (the M1b AutoId self-check
+            // pattern): pins the decision table in the boot log.
+            if (SchemaGate.SelfCheck(out int passed, out int total))
+            {
+                Logger.LogInfo($"[DawnKit.Packs] Schema gate self-check: {passed}/{total} reference cases OK (supported schemaVersion {SchemaGate.SupportedSchemaVersion}).");
+            }
+            else
+            {
+                Logger.LogError($"[DawnKit.Packs] Schema gate self-check FAILED: {passed}/{total} reference cases — schemaVersion refusals may be wrong.");
+            }
+
             PackScanner.RegisterAll(packsPath.Value, overrideCanonical, autoDiscoverModCards.Value);
         }
 
