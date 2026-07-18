@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Dawncaster.Sandbox/Dawncaster.Sandbox.csproj" />
+  <Project Path="DawnKit.Packs/DawnKit.Packs.csproj" />
+  <Project Path="DawnKit/DawnKit.csproj" />
+</Solution>

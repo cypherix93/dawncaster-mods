@@ -1,183 +1,54 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
-using HarmonyLib;
-using UnityEngine;
 
 namespace Dawncaster.Sandbox
 {
+    /// <summary>
+    /// Thin dev sandbox (SPEC.md §3.1): the SandboxStrike hello-world card,
+    /// registered through the DawnKit PUBLIC API only — no Harmony, no game
+    /// assembly, no engine internals. Experiments only; never shipped. Also the
+    /// living proof of the clean-spelled enum mirrors (typed builder overloads).
+    /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
-    public class SandboxPlugin : BaseUnityPlugin
+    [BepInDependency(DawnKit.DawnKitPlugin.Guid)]
+    public sealed class SandboxPlugin : BaseUnityPlugin
     {
         public const string PluginGuid = "com.dawncastermods.sandbox";
         public const string PluginName = "Dawncaster Sandbox";
-        public const string PluginVersion = "0.4.0";
+        public const string PluginVersion = "0.5.0";
 
-        private const string CardName = "SandboxStrike";
-        private const int CardId = 900001;
-
-        internal static SandboxPlugin Instance;
-
-        private ConfigEntry<string> packsPath;
-        private ConfigEntry<string> expansionOverride;
-        private ConfigEntry<bool> autoDiscoverModCards;
         private ConfigEntry<bool> injectSandboxCard;
 
         private void Awake()
         {
-            Instance = this;
-
-            packsPath = Config.Bind("Packs", "PacksPath",
-                Path.Combine(Paths.PluginPath, "DawncasterPacks"),
-                "Directory scanned for <Pack>/pack.json card-pack manifests (CARD-PACK-SPEC.md schema).");
-            expansionOverride = Config.Bind("Packs", "ExpansionOverride",
-                "",
-                "Emergency override: when non-empty, every loaded card's expansion is forced to this " +
-                "AssetManager.CardExpansions member and per-pack synthetic card sets are disabled " +
-                "(no set rows in run settings). Default empty = each pack becomes its own card set, " +
-                "toggleable in the run-settings 'card sets' screen like the official sets.");
-            autoDiscoverModCards = Config.Bind("Packs", "AutoDiscoverModCards",
-                true,
-                "Mark all loaded mod cards as discovered in the Codex (in-memory injection into the " +
-                "codex card list) so they render face-up instead of as undiscovered silhouettes.");
             injectSandboxCard = Config.Bind("Sandbox", "InjectSandboxCard",
                 false,
                 "Inject the SandboxStrike hello-world test card (id 900001).");
 
-            PackLoader.Configure(packsPath.Value, expansionOverride.Value, autoDiscoverModCards.Value);
-
-            var harmony = new Harmony(PluginGuid);
-            harmony.PatchAll(typeof(AssetLoadHooks));
-            harmony.PatchAll(typeof(SetScreenPatches));
-            Logger.LogInfo($"[Sandbox] {PluginName} {PluginVersion} loaded, hooks installed.");
-        }
-
-        [HarmonyPatch]
-        internal static class AssetLoadHooks
-        {
-            // ---- Phase 1 (cards): player-asset load ----
-
-            // Primary hook: GameLoader's async boot path calls
-            // AssetManager.SetPlayerAssetsLoaded() after CreateCardCollectionsAsync.
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(AssetManager), nameof(AssetManager.SetPlayerAssetsLoaded))]
-            private static void SetPlayerAssetsLoaded_Postfix()
+            if (!injectSandboxCard.Value)
             {
-                Instance?.OnPlayerAssetsLoaded("SetPlayerAssetsLoaded");
+                Logger.LogInfo($"[Sandbox] {PluginName} {PluginVersion} loaded (InjectSandboxCard=false — nothing registered).");
+                return;
             }
 
-            // Safety net: the synchronous path (LoadAllAssets -> LoadPlayerAssets)
-            // sets the playerAssetsLoaded flag directly without calling
-            // SetPlayerAssetsLoaded(), so hook it too. Injection is idempotent.
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(AssetManager), nameof(AssetManager.LoadPlayerAssets))]
-            private static void LoadPlayerAssets_Postfix()
-            {
-                Instance?.OnPlayerAssetsLoaded("LoadPlayerAssets");
-            }
+            // Registration is declarative and lifecycle-safe: DawnKit applies it
+            // at the right load phase, re-applies after ForceReloadAssets, and
+            // refreshes caches/run-lists. This plugin runs zero patches.
+            DawnKit.RegisterResult result = DawnKit.Cards.Build("SandboxStrike")
+                .Owner("Sandbox")
+                .Id(900001)
+                .Expansion(DawnKit.Expansion.Core)
+                .Type(DawnKit.CardType.Melee)
+                .Category(DawnKit.CardCategory.Action)
+                .Rarity(DawnKit.Rarity.Common) // clean spelling — engine maps to the game's Card.CardRariry
+                .Cost("STR", 1)
+                .Description("Deal 6 damage. (Sandbox mod test)")
+                .Effect(DawnKit.Trigger.PlayAction, "damage:6")
+                .Register();
 
-            // ---- Phase 2 (references): world-asset load ----
-            // referenceStatus targets only exist after CreateStatusCollections()
-            // runs in the world phase, which is always after the player phase
-            // (LoadAllAssets: LoadPlayerAssets then LoadWorldAssets).
-
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(AssetManager), nameof(AssetManager.SetWorldAssetsLoaded))]
-            private static void SetWorldAssetsLoaded_Postfix()
-            {
-                PackLoader.ResolveReferences("SetWorldAssetsLoaded", finalPass: true);
-            }
-
-            // Safety net, same reasoning as LoadPlayerAssets. Resolution is
-            // idempotent (already-resolved refs are non-null and skipped).
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(AssetManager), nameof(AssetManager.LoadWorldAssets))]
-            private static void LoadWorldAssets_Postfix()
-            {
-                PackLoader.ResolveReferences("LoadWorldAssets", finalPass: true);
-            }
-        }
-
-        private void OnPlayerAssetsLoaded(string source)
-        {
-            PackLoader.InjectPacks(source);
-            if (injectSandboxCard.Value)
-            {
-                InjectCards(source);
-            }
-        }
-
-        private void InjectCards(string source)
-        {
-            try
-            {
-                // Idempotency guard: check the list directly (GetCard(name) logs a
-                // warning when the card is missing, so avoid it here).
-                if (AssetManager.allCards.Any(c => c != null && c.name == CardName))
-                {
-                    Logger.LogInfo($"[Sandbox] {CardName} already present (hook: {source}), skipping.");
-                    return;
-                }
-
-                // cardID collision check.
-                int id = CardId;
-                while (AssetManager.allCards.Any(c => c != null && c.cardID == id))
-                {
-                    Logger.LogWarning($"[Sandbox] cardID {id} collides with an existing card, trying {id + 1}.");
-                    id++;
-                }
-
-                Card card = ScriptableObject.CreateInstance<Card>();
-                card.name = CardName;
-                card.hideFlags = HideFlags.HideAndDontSave; // survive scene loads, hide from Unity teardown
-                card.cardID = id;
-                card.cardexpansion = AssetManager.CardExpansions.Core;
-                card.cardType = Card.CardType.Melee;
-                card.cardCategory = Card.CardCategory.Action;
-                card.cardRarity = Card.CardRariry.Common; // enum name is typo'd in game code
-                card.costSTR = 1;
-                card.cardDescription = "Deal 6 damage. (Sandbox mod test)";
-
-                // Initialize every list/ref field the game code touches — most are
-                // not initialized inline on Card (only 'keywords' is).
-                card.cardKeywords = new List<string>();
-                card.playConditions = new List<Condition>();
-                card.keywords = new List<Card.CardProperties>();
-                card.CardEffectList = new List<CardEffect>
-                {
-                    new CardEffect
-                    {
-                        cardTrigger = EventHandler.GameTriggers.PlayAction,
-                        codeLine = "damage:6",
-                        forecast = true,
-                        referenceCard = new Card[0],
-                        effectConditions = new List<Condition>()
-                    }
-                };
-                // Non-null Enchantment payload avoids NREs in Codex display code.
-                card.CardEnchantments = new Enchantment
-                {
-                    enchantmentText = "",
-                    CardEffectList = new List<CardEffect>()
-                };
-
-                AssetManager.allCards.Add(card);
-                AssetManager.playercards.Add(card);
-                AssetManager.RefreshCaches();
-                if (PlayerHandler.thePlayerData != null)
-                {
-                    AssetManager.CreateRunLists();
-                }
-
-                Logger.LogInfo($"[Sandbox] Injected {CardName} (id {id}), allCards={AssetManager.allCards.Count} (hook: {source})");
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError($"[Sandbox] Card injection failed (hook: {source}): {ex}");
-            }
+            Logger.LogInfo(result.Ok
+                ? $"[Sandbox] {PluginName} {PluginVersion} loaded — SandboxStrike registered (applied at asset load)."
+                : $"[Sandbox] {PluginName} {PluginVersion} loaded — SandboxStrike registration FAILED: {result.Error}");
         }
     }
 }
