@@ -6,7 +6,9 @@
 
 ## 1. What we're building
 
-A modding toolkit for **human modders**, in two stages:
+A modding toolkit for **human modders** — explicitly including not-so-technical ones.
+The measure of success is that creating content follows an easily human-usable pattern:
+describe the card, don't program the injection. Two stages:
 
 1. **The engine (now)** — a clean library that sits on top of the game's own code and
    handles content injection *properly*: lifecycle, registration, collision safety,
@@ -29,6 +31,41 @@ sample library the designer UI ships with.
 ## 2. The engine — design
 
 Working name: **DawnKit** (placeholder — naming is open question #1).
+
+### 2.0 The pain ledger — the value proposition, concretely
+
+Every row below is a pain **we personally hit** building the four packs. The engine's
+entire reason to exist is that no modder ever hits them again. Each row is therefore an
+M1 requirement with the acceptance test: *"a modder can ship content without knowing
+this exists."*
+
+| # | Pain we hit | What it cost us | Engine answer |
+|---|---|---|---|
+| 1 | Finding injection points at all | Full decompile + tracing the AssetManager lifecycle | Lifecycle owned by the engine; clients declare content, never hook |
+| 2 | Sync vs async boot paths diverge (`SetPlayerAssetsLoaded` not called on the sync path) | A live-debug session + dual hooks | Engine hooks both; invisible |
+| 3 | `ForceReloadAssets` silently wipes injected content | Re-injection logic + the object-identity-vs-ID keying gotcha | Registrations are durable; engine re-applies automatically |
+| 4 | References resolve in a later load phase (statuses after cards; early `GetStatus` risks re-entrant loading) | Two-phase resolver design | Refs declared by name; engine resolves at the right phase |
+| 5 | ScriptableObject landmines: null lists NRE the Codex, missing `HideAndDontSave` lets Unity tear down cards on scene change, `CardEnchantments` must be non-null | Crash-hunting + factory conventions | Engine factories construct everything safely |
+| 6 | cardID space is a minefield (shipped IDs scattered to 41M; our first-choice 900k range had 235 collisions) | A collision-analysis pass to find free space | Hash-based auto-ID allocation + boot-time collision refusal with a named conflict |
+| 7 | Card names are identity (lowercase-keyed caches, display name == SO name) | Collision checks hand-rolled in three places | One ownership registry validates names/IDs across ALL mods |
+| 8 | Card sets are a C# enum — you can't just "add a set" | The whole synthetic-CardExpansions design (stable derived values, persistence analysis) | `Sets.Register("Name")` — one line |
+| 9 | The set-selection UI doesn't know your set exists | Prefab row cloning, invoking a private `ToggleSet`, patching FOUR raw-int render points, eye-icon preview wiring | Engine owns all set-screen integration; registered sets just appear, named, with previews |
+| 10 | Excluding mod sets farms run bonuses (bonus transmutes/rerolls key off `excludedsets.Count`) | Found only by reading reward code | Engine counts only native exclusions |
+| 11 | Sunforge reroll math assumes the enum's size | Same research pass | Engine adjusts baseline per registered set |
+| 12 | New cards render as undiscovered silhouettes in the Codex; a second hidden filter drops synthetic-set cards from the list entirely | Codex.dtt reverse-engineering | Auto-discovery + filter integration, config-gated |
+| 13 | Localization: inline text works for cards/talents/events but silently NOT for statuses; key patterns are undocumented (`{cardID}_N/_D/_E`) | Decompile verification per content type | Inline text always works; engine handles the loc plumbing per type |
+| 14 | The effect DSL is entirely undocumented (565 commands, `;`/`:` syntax, `[[tokens]]`), with idiom traps — `inflict`+referenceStatus is used by 441 shipped cards, the lookalike status-name-command form by exactly 1 | Extraction + statistical idiom analysis | Vocabulary embedded in the engine; validated at `Register()` with did-you-mean errors; documented ability reference |
+| 15 | The game's enums contain typos that are API surface (`CardRariry`, `Phyisical`) | Spelling discipline everywhere | The API exposes **correctly-spelled** enums and maps to the game's internally — humans never type the typo |
+| 16 | Art specs are tribal knowledge (512×512 full-bleed, frame drawn by UI, PPU, HideFlags), and sprite names don't match card names (PPtr correlation required) | Sprite extraction + correlation tooling | `.Art("file.png")` just works; placeholder fallback built in |
+| 17 | Player-pool membership has hidden rules (`ProcessCard`: expansion None/Metaprogress, Monster rarity, Companion suffix all silently exclude) | The Core-camouflage detour before real sets | Sensible defaults; membership explicit in the builder |
+| 18 | Weapons/powers have structural conventions (weapon = BasicAttack card + `excludeFromRewards`; power = tier-0 Talent; live Profession list attachment) | A dedicated research pass + spec | `Weapons.Build()` / `WeaponPowers.Build()` encode the conventions |
+| 19 | The only feedback channel is log-file spelunking (BepInEx LogOutput + Player.log) | Every verification round-trip | Player-facing in-game status ("3 mods, 51 cards, 1 error — click for details") + per-mod diagnostics dump |
+| 20 | Save-safety on uninstall was unknowable without research (stale enum ints, Codex residue, in-run decks) | A dedicated analysis pass | Degradation behaviors are engineered + documented guarantees |
+| 21 | Game updates invalidate everything quietly (version change triggers asset wipe/reload) | Discovered in AssetManager code | Engine survives reloads by design; toolchain ships a patch-day checklist |
+
+That table is the elevator pitch: **we already paid the tuition; the library is the
+refund for everyone else.** When we evaluate any M1 API proposal, the question is "which
+rows does this erase, and does it add any new ones?"
 
 ### 2.1 Shape
 
