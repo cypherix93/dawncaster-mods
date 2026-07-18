@@ -14,7 +14,7 @@ namespace Dawncaster.Sandbox
     {
         public const string PluginGuid = "com.dawncastermods.sandbox";
         public const string PluginName = "Dawncaster Sandbox";
-        public const string PluginVersion = "0.3.0";
+        public const string PluginVersion = "0.4.0";
 
         private const string CardName = "SandboxStrike";
         private const int CardId = 900001;

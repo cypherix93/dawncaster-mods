@@ -34,6 +34,22 @@ def test_pool_loaders():
     assert gd.status_pathid_map()  # PPtr resolution table non-empty
 
 
+def test_talent_and_profession_loaders():
+    assert len(gd.pool_talents()) == 383
+    assert len(gd.pool_talent_ids()) == 383
+    assert gd.talent_commands() >= {"resetweaponcooldown", "addtalent", "startstatus",
+                                    "addnextcardfree", "addnextbykeyword"}
+    # union: talent extras + full SpellEffects fall-through (TalentHandler.cs:510)
+    union = gd.talent_effect_commands()
+    assert "damage" in union and "resetweaponcooldown" in union
+    assert len(union) == len(gd.effect_commands() | gd.talent_commands())
+    assert gd.profession_names() == {"Arcanist", "Hunter", "Knight", "Rogue",
+                                     "Scion", "Seeker", "Warrior"}
+    assert gd.resolve_talent_reference("Acrobatic Weapon")
+    assert gd.resolve_talent_reference("Acrobatic_Weapon.json (weapon rider)")
+    assert not gd.resolve_talent_reference("Totally Made Up Talent")
+
+
 # ------------------------------------------------------------------ fixtures
 
 def good_card(**overrides):
@@ -54,8 +70,43 @@ def good_card(**overrides):
     return card
 
 
-def run(cards, id_block=(700009900, 700009999), tmp_path=None):
+def good_weapon(**overrides):
+    weapon = good_card(
+        name="Zz Tithing Blade", cardID=700009990, type="Melee",
+        category="BasicAttack", cost={"STR": 1},
+        description="Deal 5 damage.",
+        meta={"archetype": "weapon", "nearestExisting": "Longsword",
+              "whyDifferent": "test fixture"},
+    )
+    weapon["classes"] = ["Knight", "Warrior"]
+    weapon.update(overrides)
+    return weapon
+
+
+def good_power(**overrides):
+    power = {
+        "name": "Zz Bloodletting", "talentID": 700009991,
+        "description": "Inflict 2 Bleeding at the start of your next combat.",
+        "flavortext": "", "cooldown": 3, "keywords": [],
+        "effects": [{"trigger": "ActivateWeapon", "codeLine": "startstatus:2",
+                     "forecast": False, "referenceStatus": "Bleeding",
+                     "referenceCards": [], "conditions": []}],
+        "requirements": {"rDEX": 0, "rINT": 0, "rSTR": 0},
+        "classes": ["Knight"], "art": "art/Missing.png",
+        "meta": {"archetype": "weapon power", "nearestExisting": "Acrobatic Weapon",
+                 "whyDifferent": "test fixture"},
+    }
+    power.update(overrides)
+    return power
+
+
+def run(cards, id_block=(700009900, 700009999), tmp_path=None,
+        weapons=None, powers=None):
     manifest = {"pack": "TestPack", "idBlock": list(id_block), "cards": cards}
+    if weapons is not None:
+        manifest["weapons"] = weapons
+    if powers is not None:
+        manifest["weaponPowers"] = powers
     pack_path = (tmp_path or gd.PACKS_DIR / "_nonexistent") / "pack.json"
     return vp.validate_pack(manifest, pack_path)
 
@@ -208,3 +259,181 @@ def test_missing_required_fields(tmp_path):
 def test_keyword_vocabulary(tmp_path, kw, ok):
     findings = run([good_card(keywords=[kw])], tmp_path=tmp_path)
     assert bool(errors(findings, "bad_keyword")) != ok
+
+
+# ================================================================ v1.1 weapons
+
+
+def test_clean_weapon_and_power_pass(tmp_path):
+    findings = run([good_card()], tmp_path=tmp_path,
+                   weapons=[good_weapon()], powers=[good_power()])
+    assert not errors(findings), findings
+
+
+def test_weapons_only_pack_is_legal(tmp_path):
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()],
+                   powers=[good_power()])
+    assert not errors(findings, "no_cards")
+
+
+def test_empty_manifest_rejected(tmp_path):
+    findings = run([], tmp_path=tmp_path)
+    assert errors(findings, "no_cards")
+
+
+def test_weapon_must_be_basicattack(tmp_path):
+    findings = run([], tmp_path=tmp_path,
+                   weapons=[good_weapon(category="Action")])
+    assert errors(findings, "weapon_not_basicattack")
+
+
+def test_weapon_classes_validated(tmp_path):
+    findings = run([], tmp_path=tmp_path,
+                   weapons=[good_weapon(classes=["Paladin"])])
+    assert errors(findings, "bad_class")
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon(classes=[])])
+    assert errors(findings, "missing_classes")
+    w = good_weapon()
+    del w["classes"]
+    assert errors(run([], tmp_path=tmp_path, weapons=[w]), "missing_classes")
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon(classes=["all"])])
+    assert not errors(findings, "bad_class")
+
+
+def test_weapon_id_topdown_advisory(tmp_path):
+    # weapon ID below a regular card's ID -> advisory only
+    findings = run([good_card(cardID=700009950)], tmp_path=tmp_path,
+                   weapons=[good_weapon(cardID=700009910)])
+    assert any(f["check"] == "weapon_id_not_topdown" for f in findings)
+    assert not errors(findings, "weapon_id_not_topdown")  # advisory, not an error
+    findings = run([good_card(cardID=700009901)], tmp_path=tmp_path,
+                   weapons=[good_weapon(cardID=700009990)])
+    assert not any(f["check"] == "weapon_id_not_topdown" for f in findings)
+
+
+def test_weapon_shares_card_id_namespace(tmp_path):
+    findings = run([good_card(cardID=700009990)], tmp_path=tmp_path,
+                   weapons=[good_weapon(cardID=700009990)])
+    assert errors(findings, "id_collision")
+
+
+# =========================================================== v1.1 weapon powers
+
+
+def test_power_talent_id_separate_namespace(tmp_path):
+    # a talentID may share a number with a cardID (different lookup spaces, §3)
+    findings = run([good_card(cardID=700009991)], tmp_path=tmp_path,
+                   powers=[good_power(talentID=700009991)])
+    assert not errors(findings), findings
+
+
+def test_power_talent_id_collides_with_shipped(tmp_path):
+    shipped_id = next(iter(gd.pool_talent_ids()))
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()],
+                   powers=[good_power(talentID=shipped_id)])
+    assert errors(findings, "talent_id_collision")
+
+
+def test_power_name_collides_with_shipped_talent(tmp_path):
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()],
+                   powers=[good_power(name="acrobatic weapon")])  # case-insensitive
+    assert errors(findings, "talent_name_collision")
+
+
+def test_power_talent_id_in_block_and_unique(tmp_path):
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()],
+                   powers=[good_power(talentID=700000001)])
+    assert errors(findings, "id_outside_block")
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()],
+                   powers=[good_power(), good_power(name="Zz Other Power")])
+    assert errors(findings, "talent_id_collision")
+
+
+def test_power_codeline_uses_union_vocabulary(tmp_path):
+    # talent-switch command + SpellEffects fall-through command both legal
+    p = good_power()
+    p["effects"][0]["codeLine"] = "addnextcardfree:1; heal:5:self"
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()], powers=[p])
+    assert not errors(findings, "unknown_command"), findings
+    p2 = good_power()
+    p2["effects"][0]["codeLine"] = "summonvoltron:9000"
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()], powers=[p2])
+    assert errors(findings, "unknown_command")
+
+
+def test_card_codeline_does_not_get_talent_vocabulary(tmp_path):
+    # talent-only commands stay illegal on regular cards
+    c = good_card()
+    c["effects"][0]["codeLine"] = "addnextcardfree:1"
+    assert errors(run([c], tmp_path=tmp_path), "unknown_command")
+
+
+def test_cooldown_degeneracy_hard_error(tmp_path):
+    p = good_power()
+    p["effects"][0]["codeLine"] = "startstatus:2; resetweaponcooldown"
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()], powers=[p])
+    assert errors(findings, "weapon_cooldown_degeneracy")
+    # every cooldown-reducing spelling is caught
+    for cmd in ("lowercooldown", "reducecooldown:1", "setcooldown:0"):
+        p2 = good_power()
+        p2["effects"][0]["codeLine"] = cmd
+        findings = run([], tmp_path=tmp_path, weapons=[good_weapon()], powers=[p2])
+        assert errors(findings, "weapon_cooldown_degeneracy"), cmd
+    # the same command on a non-ActivateWeapon rider is legal
+    p3 = good_power(effects=[
+        {"trigger": "ActivateWeapon", "codeLine": "startstatus:2", "forecast": False,
+         "referenceStatus": "Bleeding", "referenceCards": [], "conditions": []},
+        {"trigger": "VictoryPhase", "codeLine": "resetweaponcooldown",
+         "forecast": False, "referenceStatus": None, "referenceCards": [],
+         "conditions": []}])
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()], powers=[p3])
+    assert not errors(findings, "weapon_cooldown_degeneracy")
+
+
+def test_power_schema_errors(tmp_path):
+    p = good_power()
+    del p["cooldown"]
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()], powers=[p])
+    assert errors(findings, "missing_field")
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()],
+                   powers=[good_power(cooldown=0)])
+    assert errors(findings, "bad_cooldown")
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()],
+                   powers=[good_power(requirements={"rLUCK": 1})])
+    assert errors(findings, "bad_requirements")
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()],
+                   powers=[good_power(classes=["Paladin"])])
+    assert errors(findings, "bad_class")
+    p4 = good_power()
+    p4["meta"]["nearestExisting"] = "Totally Made Up Talent"
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()], powers=[p4])
+    assert errors(findings, "meta_bad_reference")
+
+
+def test_power_without_activateweapon_warns(tmp_path):
+    p = good_power(effects=[{"trigger": "StartCombat", "codeLine": "bless:1",
+                             "forecast": False, "referenceStatus": "Evasion",
+                             "referenceCards": [], "conditions": []}])
+    findings = run([], tmp_path=tmp_path, weapons=[good_weapon()], powers=[p])
+    assert any(f["check"] == "no_activateweapon" for f in findings)
+    assert not errors(findings, "no_activateweapon")
+
+
+def test_cross_pack_weapon_and_power_collisions(tmp_path, monkeypatch):
+    sibling_dir = tmp_path / "OtherPack"
+    sibling_dir.mkdir()
+    sibling = {"pack": "OtherPack", "idBlock": [700009900, 700009999],
+               "cards": [], "weapons": [good_weapon()], "weaponPowers": [good_power()]}
+    (sibling_dir / "pack.json").write_text(json.dumps(sibling), encoding="utf-8")
+    monkeypatch.setattr(gd, "PACKS_DIR", tmp_path)
+
+    mine_dir = tmp_path / "MinePack"
+    mine_dir.mkdir()
+    manifest = {"pack": "MinePack", "idBlock": [700009900, 700009999],
+                "cards": [], "weapons": [good_weapon()],
+                "weaponPowers": [good_power()]}
+    findings = vp.validate_pack(manifest, mine_dir / "pack.json")
+    assert errors(findings, "id_collision")          # weapon card namespace
+    assert errors(findings, "name_collision")
+    assert errors(findings, "talent_id_collision")   # power talent namespace
+    assert errors(findings, "talent_name_collision")

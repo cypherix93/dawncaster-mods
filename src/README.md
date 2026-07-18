@@ -6,6 +6,12 @@ BepInEx plugin for Dawncaster (Steam, Unity 2022.3.62f2, Mono). Features:
    `<PacksPath>/<Pack>/pack.json` manifest (schema: `CARD-PACK-SPEC.md` §2) into
    `AssetManager.allCards`/`playercards` at asset-load time. This is how the four
    repo packs (47 cards) get into the game.
+1b. **Weapons & weapon powers** (manifest **v1.1**, `WEAPON-SPEC.md` §2/§5, plugin
+   v0.4.0) — optional `weapons` (starting-weapon cards, category `BasicAttack`,
+   offered at character creation via `Profession.weapons`) and `weaponPowers`
+   (tier-0 `Talent`s with an `ActivateWeapon` payload, offered via
+   `Profession.talents`) arrays in the same pack.json. See "How weapons load"
+   below.
 2. **Per-pack card sets** (`SetScreenPatches.cs`, v0.3.0) — every pack shows up as its
    own toggleable row in the run-settings "card sets" screen (and the Sunforge set
    screen), wired to the same `excludedsets` logic as the official Core/Extended/…
@@ -29,18 +35,18 @@ No game files are modified; everything is runtime injection via Harmony.
 ## Build
 
 ```powershell
-dotnet build "D:\temp\claude\dawncaster-mods\src\Dawncaster.Sandbox\Dawncaster.Sandbox.csproj" -c Release
+dotnet build "D:\src\mods\dawncaster-mods\src\Dawncaster.Sandbox\Dawncaster.Sandbox.csproj" -c Release
 ```
 
 Output: `src\Dawncaster.Sandbox\bin\Release\Dawncaster.Sandbox.dll` (references to
 BepInEx/Harmony/Assembly-CSharp/UnityEngine/Newtonsoft.Json are `Private=false`, so only
-this one DLL ships; `reference\effect-commands.txt` is embedded into it for runtime
-codeLine validation).
+this one DLL ships; `reference\effect-commands.txt` and `reference\talent-commands.txt`
+are embedded into it for runtime codeLine validation).
 
 ## Install
 
 ```powershell
-Copy-Item "D:\temp\claude\dawncaster-mods\src\Dawncaster.Sandbox\bin\Release\Dawncaster.Sandbox.dll" `
+Copy-Item "D:\src\mods\dawncaster-mods\src\Dawncaster.Sandbox\bin\Release\Dawncaster.Sandbox.dll" `
           "E:\Games\Steam\steamapps\common\Dawncaster\BepInEx\plugins\" -Force
 ```
 
@@ -52,7 +58,7 @@ Launch the game normally (Steam must be running).
 
 | Section.Key | Default | Meaning |
 |---|---|---|
-| `Packs.PacksPath` | `<plugin dir>\DawncasterPacks` | Directory scanned for `<Pack>/pack.json` manifests. **Dev setup**: point it at the repo — `D:\temp\claude\dawncaster-mods\packs` — so the checked-in manifests are the live source. **Non-dev deployment**: copy each `packs\<Pack>\` folder (with its `pack.json` + optional `art\`) into `BepInEx\plugins\DawncasterPacks\`. |
+| `Packs.PacksPath` | `<plugin dir>\DawncasterPacks` | Directory scanned for `<Pack>/pack.json` manifests. **Dev setup**: point it at the repo — `D:\src\mods\dawncaster-mods\packs` — so the checked-in manifests are the live source. **Non-dev deployment**: copy each `packs\<Pack>\` folder (with its `pack.json` + optional `art\`) into `BepInEx\plugins\DawncasterPacks\`. |
 | `Packs.ExpansionOverride` | *(empty)* | **Emergency override.** When non-empty, every loaded card's expansion is forced to this `AssetManager.CardExpansions` member and per-pack synthetic sets are disabled (no set rows). Default empty = each pack becomes its own card set (see below). *(v0.2.0 defaulted this to `Core`; if your cfg predates 0.3.0, blank the line or delete the cfg.)* |
 | `Packs.AutoDiscoverModCards` | `true` | Add all loaded mod card IDs to the in-memory Codex list so they render as discovered. In-memory only — the plugin never writes `Codex.dtt` itself (the game persists the list on its own saves; stale mod IDs are harmless, see save-compatibility below). |
 | `Sandbox.InjectSandboxCard` | `false` | Inject the SandboxStrike test card (id 900001). |
@@ -92,6 +98,47 @@ Launch the game normally (Steam must be running).
   placeholder art.
 - **audioClip** stays `null` — verified safe: every usage site null-checks it
   (`CodexUI.cs:1229`, `CombatUIHandler.cs:1224`, `SpellEffects.cs:260`, `SpellManager.cs:630`).
+
+## How weapons & weapon powers load (v0.4.0, manifest v1.1 — WEAPON-SPEC.md §5)
+
+Both arrays ride the same phase-1 hooks (after `AllClasses()` has populated
+`AssetManager.allClasses`) and the same phase-2 reference resolver.
+
+- **Weapons are Cards** built by the existing card factory (full card schema +
+  a `classes` list). Category **must** parse to `BasicAttack` — anything else is
+  logged and skipped. `excludeFromRewards` is forced `true`; weapons register in
+  `allCards` **only** (never `playercards` — they enter play via character
+  creation, not rewards). Same cardID/name collision policy as cards.
+- **Weapon powers are tier-0 Talents** (`ScriptableObject.CreateInstance<Talent>`):
+  `ID = talentID`, `tier = 0`, `cooldown`, description/flavortext inline,
+  `unique = true`, all exclusion flags false, `requiredTalents`/
+  `requiredProfessions` empty (class gating is purely `Profession.talents`
+  membership). Registered in `AssetManager.allTalents` + `RefreshCaches()`;
+  talentID/name collision vs `allTalents` ⇒ skip with error. `powerImage` uses
+  `packs\<Pack>\art\<Name>.png` when present, else the two-band placeholder
+  (white). `audioClip` stays null (only usage site null-checks,
+  PlayerUIHandler.cs:1631).
+- **codeLine validation**: talent effects check against the embedded
+  `effect-commands.txt` ∪ `talent-commands.txt` (the `RunTalentEffect` switch
+  falls through to SpellEffects, TalentHandler.cs:510) — 660 commands; card
+  effects keep the 565-command effect vocabulary.
+- **Class attachment**: for each name in `classes` (exact Profession asset name,
+  or `"all"`), the live `Profession` in `AssetManager.allClasses` gets the card/
+  talent appended to `profession.weapons` / `profession.talents`. The
+  character-creation UI reads those lists live (`CharacterBuilder.LoadWeapons`) —
+  no UI patching. Unknown class name ⇒ error logged, that attachment alone
+  skipped. Attachment is idempotent **by cardID/talentID + name**, not object
+  identity, and replaces stale instances — so re-injection after
+  `ForceReloadAssets()` converges (spec §5.5).
+- **Log lines**:
+  `[PackLoader] <Pack>: N weapons, M weapon powers injected (classes: ...)` per
+  pack, plus a per-class debug dump after every injection pass:
+  `[PackLoader] Class weapon/talent counts: Knight=2w/10t, ...` (weapon/talent
+  list sizes on each live Profession — verify the lists actually grew).
+- **Set rows**: weapons inherit the pack's synthetic expansion and appear in the
+  pack's set row/preview, but set exclusion only filters the reward pool —
+  weapons/powers stay offered at character creation even when the pack's card
+  set is toggled off (v1 scope).
 
 ## How the set / Codex integration works (v0.3.0, `SetScreenPatches.cs`)
 
@@ -150,6 +197,36 @@ so mod cards survive any filter pass.
   missing cards). Finish runs before uninstalling.
 
 ## Verification results
+
+### Weapons & weapon powers (2026-07-18, plugin 0.4.0, manifest v1.1)
+
+Game launched with the real pack content (5 weapons + 11 weapon powers across the
+four repo packs, authored against WEAPON-SPEC §2); `BepInEx\LogOutput.log`:
+
+```
+[Info   :   BepInEx] Loading [Dawncaster Sandbox 0.4.0]
+[Info   :PackLoader] [PackLoader] Configured. PacksPath=D:\src\mods\dawncaster-mods\packs, ExpansionOverride=(none — per-pack synthetic sets), AutoDiscoverModCards=True, command vocabulary: 565 effect / 660 talent-union.
+[Info   :PackLoader] [PackLoader] Clockwork Cadence: 12 cards injected, 0 skipped (hook: SetPlayerAssetsLoaded)
+[Info   :PackLoader] [PackLoader] Clockwork Cadence: 1 weapons, 3 weapon powers injected (classes: Arcanist, Seeker)
+[Info   :PackLoader] [PackLoader] CrimsonLedger: 1 weapons, 3 weapon powers injected (classes: Knight, Warrior)
+[Info   :PackLoader] [PackLoader] EmberweaveGrove: 1 weapons, 3 weapon powers injected (classes: Arcanist, Knight)
+[Info   :PackLoader] [PackLoader] VenomousLegacy: 2 weapons, 2 weapon powers injected (classes: Hunter, Rogue, Warrior)
+[Info   :PackLoader] [PackLoader] Class weapon/talent counts: Arcanist=3w/6t, Hunter=2w/3t, Knight=3w/6t, Rogue=2w/2t, Seeker=2w/4t, Warrior=2w/5t, Scion=0w/0t
+[Info   :PackLoader] [PackLoader] Reference resolution: 56 resolved, 0 unresolved (hook: SetPlayerAssetsLoaded/phase1)
+[Info   :PackLoader] [PackLoader] Reference resolution: 0 resolved, 0 unresolved (hook: SetWorldAssetsLoaded)
+```
+
+- All **5 weapons + 11 weapon powers injected, 0 skipped** (plus the 47 cards).
+- **Profession lists actually grew**: every class shows exactly base + mod counts
+  (e.g. Knight 3w = Longsword + Bloodprice Falchion + Cinderbough Wand, 6t =
+  1 shipped tier-0 + 5 mod powers; Scion untouched at 0w/0t — no pack targets it).
+- All **56 references resolved, 0 unresolved** (40 card refs + 16 weapon/power refs).
+- Zero errors/exceptions in the log (`grep -ciE "error|exception"` = 0).
+- Synthetic set counts include the weapons (13/14/13/12 cards); the reward pool
+  does not (weapons are `allCards`-only + `excludeFromRewards`).
+- In-game char-creation UI walkthrough (weapon offered/locked rendering, power
+  activation in exploration, cooldown tick) is the WEAPON-SPEC §7 gate-3 QA pass
+  and still needs a manual session.
 
 ### Per-pack card sets + Codex discovery (2026-07-18, plugin 0.3.0)
 

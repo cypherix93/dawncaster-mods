@@ -11,6 +11,9 @@ namespace Dawncaster.Sandbox
         public string pack;
         public List<long> idBlock;
         public List<CardManifest> cards;
+        // v1.1 (WEAPON-SPEC.md §2) — both optional.
+        public List<WeaponManifest> weapons;
+        public List<WeaponPowerManifest> weaponPowers;
     }
 
     public class CardManifest
@@ -35,6 +38,40 @@ namespace Dawncaster.Sandbox
         public string art;
         // "meta" is intentionally not declared — it is review-gate data,
         // stripped before load per spec.
+    }
+
+    /// <summary>
+    /// WEAPON-SPEC.md §2 — a starting weapon IS a card (full card schema) plus
+    /// the Professions that offer it at character creation.
+    /// </summary>
+    public class WeaponManifest : CardManifest
+    {
+        public List<string> classes; // exact Profession asset names; "all" allowed
+    }
+
+    /// <summary>
+    /// WEAPON-SPEC.md §2 — a weapon power is a tier-0 Talent.
+    /// "meta" is intentionally not declared (review-gate data, stripped on load).
+    /// </summary>
+    public class WeaponPowerManifest
+    {
+        public string name;
+        public int talentID;
+        public string description;
+        public string flavortext;
+        public int cooldown;
+        public List<string> keywords;
+        public List<EffectManifest> effects;
+        public RequirementsManifest requirements;
+        public List<string> classes;
+        public string art; // powerImage PNG, 512x512
+    }
+
+    public class RequirementsManifest
+    {
+        public int rDEX;
+        public int rINT;
+        public int rSTR;
     }
 
     public class EffectManifest

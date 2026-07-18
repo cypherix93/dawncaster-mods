@@ -19,6 +19,7 @@ REPO_DIR = TOOLS_DIR.parent
 DATA_DIR = TOOLS_DIR / "out" / "data"
 DATA_INDEX = TOOLS_DIR / "out" / "data-index.json"
 EFFECT_COMMANDS_FILE = REPO_DIR / "reference" / "effect-commands.txt"
+TALENT_COMMANDS_FILE = REPO_DIR / "reference" / "talent-commands.txt"
 PACKS_DIR = REPO_DIR / "packs"
 
 # --------------------------------------------------------------------------- enums
@@ -131,6 +132,23 @@ def effect_commands() -> frozenset[str]:
 
 
 @lru_cache(maxsize=1)
+def talent_commands() -> frozenset[str]:
+    """The TalentHandler.RunTalentEffect switch labels (reference/talent-commands.txt).
+
+    Talent codeLines fall through to the SpellEffects DSL for anything else
+    (TalentHandler.cs:510-516), so validate talent effects against
+    talent_effect_commands(), the union."""
+    lines = TALENT_COMMANDS_FILE.read_text(encoding="utf-8").splitlines()
+    return frozenset(ln.strip() for ln in lines if ln.strip())
+
+
+@lru_cache(maxsize=1)
+def talent_effect_commands() -> frozenset[str]:
+    """Full vocabulary legal in a Talent effect codeLine (talent switch ∪ SpellEffects)."""
+    return effect_commands() | talent_commands()
+
+
+@lru_cache(maxsize=1)
 def status_names() -> frozenset[str]:
     """The 49 shipped StatusEffect asset names."""
     return frozenset(p.stem.replace("_", " ") for p in (DATA_DIR / "StatusEffect").glob("*.json"))
@@ -210,6 +228,56 @@ def resolve_pool_reference(ref: str) -> bool:
 @lru_cache(maxsize=1)
 def pool_card_ids() -> frozenset[int]:
     return frozenset(c["cardID"] for c in pool_cards())
+
+
+# ---- talents & professions (WEAPON-SPEC.md) ----
+
+
+@lru_cache(maxsize=1)
+def pool_talents() -> list[dict]:
+    """All extracted Talent asset dicts (raw JSON, enum ints)."""
+    return [json.loads(p.read_text(encoding="utf-8"))
+            for p in sorted((DATA_DIR / "Talent").glob("*.json"))]
+
+
+@lru_cache(maxsize=1)
+def pool_talent_ids() -> frozenset[int]:
+    """Talent.ID values of the 383 shipped talents (separate namespace from cardIDs)."""
+    return frozenset(t["ID"] for t in pool_talents())
+
+
+@lru_cache(maxsize=1)
+def pool_talent_names_lower() -> frozenset[str]:
+    return frozenset(t["m_Name"].lower() for t in pool_talents())
+
+
+@lru_cache(maxsize=1)
+def pool_talent_name_keys() -> frozenset[str]:
+    """Lowercased display names AND extracted filename stems (underscored)."""
+    keys = {p.stem.lower() for p in (DATA_DIR / "Talent").glob("*.json")}
+    keys |= pool_talent_names_lower()
+    return frozenset(keys)
+
+
+def resolve_talent_reference(ref: str) -> bool:
+    """True if `ref` plausibly names a real extracted talent (same lenient
+    formats as resolve_pool_reference)."""
+    if not isinstance(ref, str) or not ref.strip():
+        return False
+    first = ref.split(";")[0].split(" (")[0].strip()
+    if first.lower().endswith(".json"):
+        first = first[:-5]
+    keys = pool_talent_name_keys()
+    return (first.lower() in keys
+            or first.replace(" ", "_").lower() in keys
+            or first.replace("_", " ").lower() in keys)
+
+
+@lru_cache(maxsize=1)
+def profession_names() -> frozenset[str]:
+    """The 7 shipped Profession asset names (Arcanist, Hunter, Knight, Rogue,
+    Scion, Seeker, Warrior) — the legal `classes` entries besides "all"."""
+    return frozenset(p.stem for p in (DATA_DIR / "Profession").glob("*.json"))
 
 
 def other_pack_manifests(exclude: Path | None = None) -> list[tuple[Path, dict]]:

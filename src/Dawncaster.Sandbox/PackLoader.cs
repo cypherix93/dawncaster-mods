@@ -11,6 +11,10 @@ namespace Dawncaster.Sandbox
 {
     /// <summary>
     /// Loads card packs (PacksPath/&lt;Pack&gt;/pack.json) into AssetManager at runtime.
+    /// Manifest v1.1 (WEAPON-SPEC.md) additionally supports "weapons" (BasicAttack
+    /// cards registered in allCards only + appended to Profession.weapons) and
+    /// "weaponPowers" (tier-0 Talents registered in allTalents + appended to
+    /// Profession.talents).
     ///
     /// Two-phase load, matching the game's own boot order (LoadPlayerAssets then
     /// LoadWorldAssets):
@@ -52,14 +56,26 @@ namespace Dawncaster.Sandbox
             public string PackName;
             public CardManifest Manifest;
             public Card Card;
+            public bool IsWeapon;              // WEAPON-SPEC §5 — registered in allCards only
+            public List<string> Classes;       // weapon target Professions (manifest "classes")
+            public readonly List<EffectBinding> Effects = new List<EffectBinding>();
+        }
+
+        private sealed class InjectedTalent
+        {
+            public string PackName;
+            public WeaponPowerManifest Manifest;
+            public Talent Talent;
             public readonly List<EffectBinding> Effects = new List<EffectBinding>();
         }
 
         private static string packsPath;
         private static AssetManager.CardExpansions? expansionOverride;
         private static bool autoDiscoverModCards;
-        private static HashSet<string> knownCommands; // null => runtime command validation unavailable
+        private static HashSet<string> knownCommands;  // effect DSL; null => runtime command validation unavailable
+        private static HashSet<string> talentCommands; // effect DSL ∪ TalentHandler.RunTalentEffect switch labels
         private static readonly List<InjectedCard> tracked = new List<InjectedCard>();
+        private static readonly List<InjectedTalent> trackedTalents = new List<InjectedTalent>();
 
         /// <summary>
         /// One entry per loaded pack whose cards carry a synthetic CardExpansions
@@ -100,21 +116,31 @@ namespace Dawncaster.Sandbox
                     Log.LogWarning($"[PackLoader] ExpansionOverride '{configuredExpansionOverride}' is not a CardExpansions member — manifest expansions will be used as-is.");
                 }
             }
-            knownCommands = LoadKnownCommands();
-            Log.LogInfo($"[PackLoader] Configured. PacksPath={packsPath}, ExpansionOverride={(expansionOverride.HasValue ? expansionOverride.Value.ToString() : "(none — per-pack synthetic sets)")}, AutoDiscoverModCards={autoDiscoverModCards}, command vocabulary: {(knownCommands != null ? knownCommands.Count.ToString() : "unavailable")}.");
+            knownCommands = LoadCommandFile("effect-commands.txt");
+            HashSet<string> talentOnly = LoadCommandFile("talent-commands.txt");
+            if (knownCommands != null && talentOnly != null)
+            {
+                talentCommands = new HashSet<string>(knownCommands, StringComparer.Ordinal);
+                talentCommands.UnionWith(talentOnly);
+            }
+            else
+            {
+                talentCommands = null; // half a vocabulary would misreport — disable instead
+            }
+            Log.LogInfo($"[PackLoader] Configured. PacksPath={packsPath}, ExpansionOverride={(expansionOverride.HasValue ? expansionOverride.Value.ToString() : "(none — per-pack synthetic sets)")}, AutoDiscoverModCards={autoDiscoverModCards}, command vocabulary: {(knownCommands != null ? knownCommands.Count.ToString() : "unavailable")} effect / {(talentCommands != null ? talentCommands.Count.ToString() : "unavailable")} talent-union.");
         }
 
-        private static HashSet<string> LoadKnownCommands()
+        private static HashSet<string> LoadCommandFile(string fileName)
         {
             try
             {
-                // reference/effect-commands.txt is embedded into the DLL at build time.
+                // reference/*.txt vocabularies are embedded into the DLL at build time.
                 using (var stream = Assembly.GetExecutingAssembly()
-                           .GetManifestResourceStream("Dawncaster.Sandbox.effect-commands.txt"))
+                           .GetManifestResourceStream("Dawncaster.Sandbox." + fileName))
                 {
                     if (stream == null)
                     {
-                        Log.LogWarning("[PackLoader] Embedded effect-commands.txt not found; codeLine command validation disabled.");
+                        Log.LogWarning($"[PackLoader] Embedded {fileName} not found; codeLine command validation disabled.");
                         return null;
                     }
                     using (var reader = new StreamReader(stream))
@@ -135,7 +161,7 @@ namespace Dawncaster.Sandbox
             }
             catch (Exception ex)
             {
-                Log.LogWarning($"[PackLoader] Failed to load command vocabulary: {ex.Message}; codeLine command validation disabled.");
+                Log.LogWarning($"[PackLoader] Failed to load command vocabulary {fileName}: {ex.Message}; codeLine command validation disabled.");
                 return null;
             }
         }
@@ -165,10 +191,12 @@ namespace Dawncaster.Sandbox
             }
 
             // Prune entries wiped by ForceReloadAssets()/ClearAllCollections() so
-            // their cards get rebuilt this pass.
+            // their cards/talents get rebuilt this pass.
             tracked.RemoveAll(t => t.Card == null ||
                                    (!AssetManager.allCards.Contains(t.Card) &&
                                     !AssetManager.metacards.Contains(t.Card)));
+            trackedTalents.RemoveAll(t => t.Talent == null ||
+                                          !AssetManager.allTalents.Contains(t.Talent));
 
             foreach (string packDir in Directory.GetDirectories(packsPath).OrderBy(d => d, StringComparer.OrdinalIgnoreCase))
             {
@@ -189,9 +217,12 @@ namespace Dawncaster.Sandbox
                     continue;
                 }
 
-                if (pm?.cards == null || pm.cards.Count == 0)
+                bool hasCards = pm?.cards != null && pm.cards.Count > 0;
+                bool hasWeapons = pm?.weapons != null && pm.weapons.Count > 0;
+                bool hasPowers = pm?.weaponPowers != null && pm.weaponPowers.Count > 0;
+                if (!hasCards && !hasWeapons && !hasPowers)
                 {
-                    Log.LogError($"[PackLoader] {manifestFile}: no cards in manifest — pack skipped.");
+                    Log.LogError($"[PackLoader] {manifestFile}: no cards/weapons/weaponPowers in manifest — pack skipped.");
                     continue;
                 }
 
@@ -199,7 +230,7 @@ namespace Dawncaster.Sandbox
                 AssetManager.CardExpansions? syntheticSet = ComputeSyntheticSet(pm, packName);
                 int injected = 0, skipped = 0, alreadyPresent = 0;
 
-                foreach (CardManifest cm in pm.cards)
+                foreach (CardManifest cm in pm.cards ?? new List<CardManifest>())
                 {
                     try
                     {
@@ -250,7 +281,11 @@ namespace Dawncaster.Sandbox
                     }
                 }
 
-                if (injected > 0)
+                // ---- v1.1: weapons (Cards, allCards only) + weapon powers (tier-0 Talents) ----
+                int weaponsInjected = InjectWeapons(pm, packName, packDir, syntheticSet);
+                int powersInjected = InjectWeaponPowers(pm, packName, packDir, syntheticSet);
+
+                if (injected + weaponsInjected + powersInjected > 0)
                 {
                     AssetManager.RefreshCaches();
                     if (PlayerHandler.thePlayerData != null)
@@ -259,9 +294,20 @@ namespace Dawncaster.Sandbox
                     }
                 }
 
+                // Class attachment runs every pass (idempotent by ID/name) so a
+                // ForceReloadAssets that re-fetched Profession assets — or wiped and
+                // rebuilt our cards — always converges on the live instances (§5.5).
+                List<string> attachedClasses = AttachPackToClasses(packName);
+
                 string presentNote = alreadyPresent > 0 ? $", {alreadyPresent} already present" : "";
                 Log.LogInfo($"[PackLoader] {packName}: {injected} cards injected, {skipped} skipped{presentNote} (hook: {source})");
+                if (hasWeapons || hasPowers)
+                {
+                    Log.LogInfo($"[PackLoader] {packName}: {weaponsInjected} weapons, {powersInjected} weapon powers injected (classes: {(attachedClasses.Count > 0 ? string.Join(", ", attachedClasses) : "none")})");
+                }
             }
+
+            LogClassCounts();
 
             RebuildPackSets();
             MarkModCardsDiscovered(source);
@@ -366,6 +412,328 @@ namespace Dawncaster.Sandbox
         }
 
         // ------------------------------------------------------------------
+        // Weapons & weapon powers (WEAPON-SPEC.md §5)
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// Weapon cards: full card factory, category forced to BasicAttack,
+        /// excludeFromRewards always true, registered in allCards ONLY (weapons
+        /// enter play via character creation, never rewards — spec §5.2).
+        /// </summary>
+        private static int InjectWeapons(PackManifest pm, string packName, string packDir,
+            AssetManager.CardExpansions? syntheticSet)
+        {
+            int injected = 0;
+            if (pm.weapons == null)
+            {
+                return 0;
+            }
+            foreach (WeaponManifest wm in pm.weapons)
+            {
+                try
+                {
+                    if (wm == null)
+                    {
+                        Log.LogError($"[PackLoader] {packName}: null weapon entry — skipped.");
+                        continue;
+                    }
+                    if (tracked.Any(t => t.Manifest.cardID == wm.cardID))
+                    {
+                        continue; // already injected this process and still registered
+                    }
+                    if (AssetManager.allCards.Any(c => c != null && c.cardID == wm.cardID) ||
+                        AssetManager.metacards.Any(c => c != null && c.cardID == wm.cardID))
+                    {
+                        Log.LogError($"[PackLoader] {packName}/{wm.name}: weapon cardID {wm.cardID} collides with an existing card — skipped.");
+                        continue;
+                    }
+                    if (AssetManager.allCards.Any(c => c != null && string.Equals(c.name, wm.name, StringComparison.OrdinalIgnoreCase)) ||
+                        AssetManager.metacards.Any(c => c != null && string.Equals(c.name, wm.name, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        Log.LogError($"[PackLoader] {packName}/{wm.name}: weapon name collides with an existing card — skipped.");
+                        continue;
+                    }
+
+                    InjectedCard ic = BuildCard(packName, packDir, wm, syntheticSet);
+                    if (ic.Card.cardCategory != Card.CardCategory.BasicAttack)
+                    {
+                        Log.LogError($"[PackLoader] {packName}/{wm.name}: weapon category is {ic.Card.cardCategory}, must be BasicAttack — skipped.");
+                        UnityEngine.Object.Destroy(ic.Card);
+                        continue;
+                    }
+                    ic.Card.excludeFromRewards = true; // forced default for weapons
+                    ic.IsWeapon = true;
+                    ic.Classes = wm.classes;
+                    AssetManager.allCards.Add(ic.Card); // NOT playercards (spec §5.2)
+                    tracked.Add(ic);
+                    injected++;
+                }
+                catch (ManifestError me)
+                {
+                    Log.LogError($"[PackLoader] {packName}/{wm?.name ?? "?"}: {me.Message} — weapon skipped.");
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError($"[PackLoader] {packName}/{wm?.name ?? "?"}: unexpected error, weapon skipped: {ex}");
+                }
+            }
+            return injected;
+        }
+
+        /// <summary>
+        /// Weapon powers: tier-0 Talent ScriptableObjects, registered in
+        /// AssetManager.allTalents (RefreshCaches rebuilds the talent lookup caches
+        /// afterwards). Class gating happens purely via Profession.talents
+        /// membership — requiredTalents/requiredProfessions stay empty (spec §5.1).
+        /// </summary>
+        private static int InjectWeaponPowers(PackManifest pm, string packName, string packDir,
+            AssetManager.CardExpansions? syntheticSet)
+        {
+            int injected = 0;
+            if (pm.weaponPowers == null)
+            {
+                return 0;
+            }
+            foreach (WeaponPowerManifest wp in pm.weaponPowers)
+            {
+                try
+                {
+                    if (wp == null)
+                    {
+                        Log.LogError($"[PackLoader] {packName}: null weaponPower entry — skipped.");
+                        continue;
+                    }
+                    if (trackedTalents.Any(t => t.Manifest.talentID == wp.talentID))
+                    {
+                        continue; // already injected this process and still registered
+                    }
+                    if (AssetManager.allTalents.Any(t => t != null && t.ID == wp.talentID))
+                    {
+                        Log.LogError($"[PackLoader] {packName}/{wp.name}: talentID {wp.talentID} collides with an existing talent — skipped.");
+                        continue;
+                    }
+                    if (AssetManager.allTalents.Any(t => t != null && string.Equals(t.name, wp.name, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        Log.LogError($"[PackLoader] {packName}/{wp.name}: talent name collides with an existing talent — skipped.");
+                        continue;
+                    }
+
+                    InjectedTalent it = BuildTalent(packName, packDir, wp, syntheticSet);
+                    AssetManager.allTalents.Add(it.Talent);
+                    trackedTalents.Add(it);
+                    injected++;
+                }
+                catch (ManifestError me)
+                {
+                    Log.LogError($"[PackLoader] {packName}/{wp?.name ?? "?"}: {me.Message} — weapon power skipped.");
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError($"[PackLoader] {packName}/{wp?.name ?? "?"}: unexpected error, weapon power skipped: {ex}");
+                }
+            }
+            return injected;
+        }
+
+        private static InjectedTalent BuildTalent(string packName, string packDir,
+            WeaponPowerManifest m, AssetManager.CardExpansions? syntheticSet)
+        {
+            if (string.IsNullOrEmpty(m.name))
+            {
+                throw new ManifestError("weapon power has no name");
+            }
+            if (m.talentID == 0)
+            {
+                throw new ManifestError("talentID is missing or 0");
+            }
+
+            var it = new InjectedTalent { PackName = packName, Manifest = m };
+
+            Talent t = ScriptableObject.CreateInstance<Talent>();
+            t.name = m.name;
+            t.hideFlags = HideFlags.HideAndDontSave;
+            t.ID = m.talentID;
+            t.tier = 0; // weapon powers ARE the tier-0 pool (CreateCharacterFunctions.GetRandomWeaponPower)
+            t.expansion = expansionOverride ?? syntheticSet ?? AssetManager.CardExpansions.Core;
+            t.description = m.description ?? "";
+            t.flavortext = m.flavortext ?? "";
+            t.cooldown = m.cooldown;
+            t.keywords = m.keywords != null ? new List<string>(m.keywords) : new List<string>();
+            t.unique = true;
+            t.storyTalent = false;
+            t.excludeFromRandom = false;
+            t.excludeFromSunforge = false;
+            t.excludeFromCodex = false;
+            t.infernalOffering = false;
+            t.requiredTalents = new List<Talent>();
+            t.requiredProfessions = new List<Profession>(); // gating is Profession.talents membership, not requirements
+            if (m.requirements != null)
+            {
+                t.rDEX = m.requirements.rDEX;
+                t.rINT = m.requirements.rINT;
+                t.rSTR = m.requirements.rSTR;
+            }
+
+            t.effectList = new List<CardEffect>();
+            if (m.effects != null)
+            {
+                foreach (EffectManifest fx in m.effects)
+                {
+                    // Talent codeLines may use the full SpellEffects DSL plus the
+                    // TalentHandler.RunTalentEffect extras (falls through at
+                    // TalentHandler.cs:510) — validate against the union vocabulary.
+                    t.effectList.Add(BuildEffect(fx, m.name, it.Effects, talentCommands));
+                }
+            }
+
+            // powerImage: prefer packs/<Pack>/<art> (or art/<Name>.png), else the
+            // two-band placeholder. audioClip stays null — the only Talent usage
+            // site null-checks it (PlayerUIHandler.cs:1631).
+            string artPath = string.IsNullOrEmpty(m.art) ? $"art/{m.name}.png" : m.art;
+            t.powerImage = LoadSpriteFile(packDir, artPath, m.name)
+                ?? CreatePlaceholderSprite(PlaceholderColor(Card.ColorOverwrite.White));
+
+            it.Talent = t;
+            return it;
+        }
+
+        // ---- class attachment (spec §5.3) ----
+
+        /// <summary>
+        /// Appends this pack's tracked weapons/talents to the live Profession
+        /// assets in AssetManager.allClasses. Idempotent and stale-safe: keyed on
+        /// cardID/talentID + name, replacing any previous (wiped) instance so the
+        /// character-creation UI always sees the registered object. Returns the
+        /// distinct class names that carry at least one attachment.
+        /// </summary>
+        private static List<string> AttachPackToClasses(string packName)
+        {
+            var attached = new List<string>();
+            bool anyContent = tracked.Any(t => t.IsWeapon && t.PackName == packName) ||
+                              trackedTalents.Any(t => t.PackName == packName);
+            if (!anyContent)
+            {
+                return attached;
+            }
+            if (AssetManager.allClasses == null || AssetManager.allClasses.Count == 0)
+            {
+                Log.LogWarning($"[PackLoader] {packName}: AssetManager.allClasses is empty — class attachment deferred to the next load pass.");
+                return attached;
+            }
+
+            foreach (InjectedCard t in tracked)
+            {
+                if (!t.IsWeapon || t.PackName != packName)
+                {
+                    continue;
+                }
+                foreach (Profession prof in ResolveClasses(packName, t.Card.name, t.Classes))
+                {
+                    if (prof.weapons == null)
+                    {
+                        prof.weapons = new List<Card>();
+                    }
+                    if (!prof.weapons.Contains(t.Card))
+                    {
+                        prof.weapons.RemoveAll(w => w != null &&
+                            (w.cardID == t.Card.cardID ||
+                             string.Equals(w.name, t.Card.name, StringComparison.OrdinalIgnoreCase)));
+                        prof.weapons.Add(t.Card);
+                    }
+                    if (!attached.Contains(prof.name))
+                    {
+                        attached.Add(prof.name);
+                    }
+                }
+            }
+
+            foreach (InjectedTalent t in trackedTalents)
+            {
+                if (t.PackName != packName)
+                {
+                    continue;
+                }
+                foreach (Profession prof in ResolveClasses(packName, t.Talent.name, t.Manifest.classes))
+                {
+                    if (prof.talents == null)
+                    {
+                        prof.talents = new List<Talent>();
+                    }
+                    if (!prof.talents.Contains(t.Talent))
+                    {
+                        prof.talents.RemoveAll(x => x != null &&
+                            (x.ID == t.Talent.ID ||
+                             string.Equals(x.name, t.Talent.name, StringComparison.OrdinalIgnoreCase)));
+                        prof.talents.Add(t.Talent);
+                    }
+                    if (!attached.Contains(prof.name))
+                    {
+                        attached.Add(prof.name);
+                    }
+                }
+            }
+
+            attached.Sort(StringComparer.OrdinalIgnoreCase);
+            return attached;
+        }
+
+        /// <summary>Manifest class names → live Professions. "all" = every class;
+        /// unknown names log an error and skip only that attachment (spec §5.3).</summary>
+        private static List<Profession> ResolveClasses(string packName, string owner, List<string> classes)
+        {
+            var result = new List<Profession>();
+            if (classes == null || classes.Count == 0)
+            {
+                Log.LogError($"[PackLoader] {packName}/{owner}: no target classes declared — not offered to any Profession.");
+                return result;
+            }
+            foreach (string cls in classes)
+            {
+                if (string.IsNullOrEmpty(cls))
+                {
+                    continue;
+                }
+                if (string.Equals(cls, "all", StringComparison.OrdinalIgnoreCase))
+                {
+                    foreach (Profession p in AssetManager.allClasses)
+                    {
+                        if (p != null && !result.Contains(p))
+                        {
+                            result.Add(p);
+                        }
+                    }
+                    continue;
+                }
+                Profession prof = AssetManager.allClasses.FirstOrDefault(p => p != null &&
+                    string.Equals(p.name, cls, StringComparison.OrdinalIgnoreCase));
+                if (prof == null)
+                {
+                    Log.LogError($"[PackLoader] {packName}/{owner}: unknown class '{cls}' — that attachment skipped.");
+                    continue;
+                }
+                if (!result.Contains(prof))
+                {
+                    result.Add(prof);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>Debug dump: per-class weapon/talent list sizes after injection,
+        /// so live verification can confirm Profession lists actually grew.</summary>
+        private static void LogClassCounts()
+        {
+            if (AssetManager.allClasses == null || AssetManager.allClasses.Count == 0 ||
+                (!tracked.Any(t => t.IsWeapon) && trackedTalents.Count == 0))
+            {
+                return;
+            }
+            Log.LogInfo("[PackLoader] Class weapon/talent counts: " + string.Join(", ",
+                AssetManager.allClasses.Where(p => p != null).Select(p =>
+                    $"{p.name}={(p.weapons?.Count ?? 0)}w/{(p.talents?.Count ?? 0)}t")));
+        }
+
+        // ------------------------------------------------------------------
         // Phase 2 — resolve references (world-asset hooks)
         // ------------------------------------------------------------------
 
@@ -390,9 +758,14 @@ namespace Dawncaster.Sandbox
             int resolved = 0;
             var unresolved = new List<string>();
 
-            foreach (InjectedCard t in tracked)
+            var owners = tracked
+                .Select(t => new { Label = $"{t.PackName}/{t.Card.name}", Bindings = t.Effects })
+                .Concat(trackedTalents
+                    .Select(t => new { Label = $"{t.PackName}/{t.Talent.name} (weapon power)", Bindings = t.Effects }));
+
+            foreach (var owner in owners)
             {
-                foreach (EffectBinding b in t.Effects)
+                foreach (EffectBinding b in owner.Bindings)
                 {
                     // referenceStatus by asset name.
                     if (b.Effect.referenceStatus == null && !string.IsNullOrEmpty(b.Manifest.referenceStatus))
@@ -405,7 +778,7 @@ namespace Dawncaster.Sandbox
                         }
                         else if (finalPass)
                         {
-                            unresolved.Add($"referenceStatus '{b.Manifest.referenceStatus}' on {t.PackName}/{t.Card.name}");
+                            unresolved.Add($"referenceStatus '{b.Manifest.referenceStatus}' on {owner.Label}");
                         }
                     }
 
@@ -429,7 +802,7 @@ namespace Dawncaster.Sandbox
                         }
                         else if (finalPass)
                         {
-                            unresolved.Add($"referenceCard '{names[i]}' on {t.PackName}/{t.Card.name}");
+                            unresolved.Add($"referenceCard '{names[i]}' on {owner.Label}");
                         }
                     }
                 }
@@ -506,7 +879,7 @@ namespace Dawncaster.Sandbox
             {
                 foreach (EffectManifest fx in m.effects)
                 {
-                    card.CardEffectList.Add(BuildEffect(fx, m.name, ic));
+                    card.CardEffectList.Add(BuildEffect(fx, m.name, ic.Effects, knownCommands));
                 }
             }
 
@@ -533,7 +906,7 @@ namespace Dawncaster.Sandbox
                 {
                     foreach (EffectManifest fx in m.enchantment.effects)
                     {
-                        ench.CardEffectList.Add(BuildEffect(fx, m.name, ic));
+                        ench.CardEffectList.Add(BuildEffect(fx, m.name, ic.Effects, knownCommands));
                     }
                 }
                 card.CardEnchantments = ench;
@@ -566,23 +939,24 @@ namespace Dawncaster.Sandbox
             }
         }
 
-        private static CardEffect BuildEffect(EffectManifest m, string cardName, InjectedCard owner)
+        private static CardEffect BuildEffect(EffectManifest m, string ownerName,
+            List<EffectBinding> sink, HashSet<string> vocabulary)
         {
             if (m == null)
             {
                 throw new ManifestError("null effect entry");
             }
-            ValidateCodeLine(m.codeLine, cardName);
+            ValidateCodeLine(m.codeLine, vocabulary);
             var fx = new CardEffect
             {
-                cardTrigger = ParseEnum<EventHandler.GameTriggers>(m.trigger, "trigger", cardName),
+                cardTrigger = ParseEnum<EventHandler.GameTriggers>(m.trigger, "trigger", ownerName),
                 codeLine = m.codeLine ?? "",
                 forecast = m.forecast,
                 hideReferenceCards = m.hideReferenceCards,
                 referenceCard = new Card[m.referenceCards?.Count ?? 0],
-                effectConditions = BuildConditions(m.conditions, cardName)
+                effectConditions = BuildConditions(m.conditions, ownerName)
             };
-            owner.Effects.Add(new EffectBinding { Effect = fx, Manifest = m });
+            sink.Add(new EffectBinding { Effect = fx, Manifest = m });
             return fx;
         }
 
@@ -610,9 +984,9 @@ namespace Dawncaster.Sandbox
             return result;
         }
 
-        private static void ValidateCodeLine(string codeLine, string cardName)
+        private static void ValidateCodeLine(string codeLine, HashSet<string> vocabulary)
         {
-            if (knownCommands == null || string.IsNullOrEmpty(codeLine))
+            if (vocabulary == null || string.IsNullOrEmpty(codeLine))
             {
                 return;
             }
@@ -624,7 +998,7 @@ namespace Dawncaster.Sandbox
                     continue;
                 }
                 string command = s.Split(':')[0].Trim();
-                if (command.Length > 0 && !knownCommands.Contains(command))
+                if (command.Length > 0 && !vocabulary.Contains(command))
                 {
                     throw new ManifestError($"unknown effect command '{command}' in codeLine '{codeLine}'");
                 }
@@ -701,39 +1075,49 @@ namespace Dawncaster.Sandbox
         private static Sprite LoadArt(string packDir, CardManifest m, Card card)
         {
             // Prefer shipped PNG (art/<CardName>.png per ART-PIPELINE.md).
-            if (!string.IsNullOrEmpty(m.art))
+            Sprite fromFile = LoadSpriteFile(packDir, m.art, card.name);
+            return fromFile != null
+                ? fromFile
+                : CreatePlaceholderSprite(PlaceholderColor(card.GetColor()));
+        }
+
+        /// <summary>PNG at packDir/relPath as a HideAndDontSave sprite, or null.</summary>
+        private static Sprite LoadSpriteFile(string packDir, string relPath, string ownerName)
+        {
+            if (string.IsNullOrEmpty(relPath))
             {
-                string pngPath = Path.Combine(packDir, m.art.Replace('/', Path.DirectorySeparatorChar));
-                if (File.Exists(pngPath))
-                {
-                    try
-                    {
-                        var tex = new Texture2D(2, 2, TextureFormat.RGBA32, mipChain: false);
-                        tex.LoadImage(File.ReadAllBytes(pngPath)); // resizes to actual dimensions
-                        tex.wrapMode = TextureWrapMode.Clamp;
-                        tex.hideFlags = HideFlags.HideAndDontSave;
-                        var sprite = Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height),
-                            new Vector2(0.5f, 0.5f), 100f); // 100 PPU = Unity default
-                        sprite.hideFlags = HideFlags.HideAndDontSave;
-                        return sprite;
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.LogWarning($"[PackLoader] {card.name}: failed to load art '{pngPath}' ({ex.Message}) — using placeholder.");
-                    }
-                }
+                return null;
             }
-            return CreatePlaceholderArt(card);
+            string pngPath = Path.Combine(packDir, relPath.Replace('/', Path.DirectorySeparatorChar));
+            if (!File.Exists(pngPath))
+            {
+                return null;
+            }
+            try
+            {
+                var tex = new Texture2D(2, 2, TextureFormat.RGBA32, mipChain: false);
+                tex.LoadImage(File.ReadAllBytes(pngPath)); // resizes to actual dimensions
+                tex.wrapMode = TextureWrapMode.Clamp;
+                tex.hideFlags = HideFlags.HideAndDontSave;
+                var sprite = Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height),
+                    new Vector2(0.5f, 0.5f), 100f); // 100 PPU = Unity default
+                sprite.hideFlags = HideFlags.HideAndDontSave;
+                return sprite;
+            }
+            catch (Exception ex)
+            {
+                Log.LogWarning($"[PackLoader] {ownerName}: failed to load art '{pngPath}' ({ex.Message}) — using placeholder.");
+                return null;
+            }
         }
 
         /// <summary>
-        /// 512×512 two-band placeholder: flat color from the card's cost-color
-        /// identity (Card.GetColor(), which reads only cost fields/colorCard),
-        /// with a slightly darker lower half so it is obviously placeholder art.
+        /// 512×512 two-band placeholder: flat base color (cards: cost-color identity
+        /// via Card.GetColor(); weapon powers: white), with a slightly darker lower
+        /// half so it is obviously placeholder art.
         /// </summary>
-        private static Sprite CreatePlaceholderArt(Card card)
+        private static Sprite CreatePlaceholderSprite(Color32 baseColor)
         {
-            Color32 baseColor = PlaceholderColor(card.GetColor());
             var darker = new Color32(
                 (byte)(baseColor.r * 0.65f),
                 (byte)(baseColor.g * 0.65f),

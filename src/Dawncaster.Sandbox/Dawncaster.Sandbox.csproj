@@ -58,8 +58,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Effect-DSL command vocabulary, embedded for runtime codeLine validation. -->
+    <!-- Effect-DSL + talent-DSL command vocabularies, embedded for runtime codeLine validation. -->
     <EmbeddedResource Include="..\..\reference\effect-commands.txt" LogicalName="Dawncaster.Sandbox.effect-commands.txt" />
+    <EmbeddedResource Include="..\..\reference\talent-commands.txt" LogicalName="Dawncaster.Sandbox.talent-commands.txt" />
   </ItemGroup>
 
 </Project>
