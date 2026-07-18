@@ -20,4 +20,6 @@ __pycache__/
 # .NET
 DC.*/src/**/bin/
 DC.*/src/**/obj/
+DC.*/examples/**/bin/
+DC.*/examples/**/obj/
 *.csproj.user

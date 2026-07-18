@@ -1,6 +1,8 @@
-# DawnKit — engine + data client + dev sandbox (M1b)
+# DawnKit — engine + data client + dev sandbox (M1)
 
-BepInEx plugins for Dawncaster (Steam, Unity 2022.3.62f2, Mono). The former
+BepInEx plugins for Dawncaster (Steam, Unity 2022.3.62f2, Mono). **Public API
+reference: [`../API.md`](../API.md)**; tutorials: `../examples/MyFirstMod`
+(C#) and `../examples/ExamplePack` (data-only). The former
 `Dawncaster.Sandbox` 0.4.0 monolith is split per `../SPEC.md` §3 into:
 
 | Assembly | Plugin GUID | Role |

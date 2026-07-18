@@ -1,0 +1,42 @@
+{
+  "pack": "My First Mod",
+  "idBlock": [737673400, 737673499],
+  "cards": [
+    {
+      "name": "Practice Strike",
+      "cardID": 737673400,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "STR": 1 },
+      "description": "Deal 6 damage.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:6",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "",
+      "meta": {
+        "archetype": "tutorial example (not shipped content)",
+        "nearestExisting": "Bash.json",
+        "whyDifferent": "Deliberately NOT different - this is the DawnKit hello-world card (the data twin of examples/MyFirstMod), kept as close to a vanilla 1-STR common attack as possible so the manifest is readable. Real packs must justify uniqueness here.",
+        "intendedDeck": "None - delete this card and start your own pack from this file."
+      }
+    }
+  ]
+}

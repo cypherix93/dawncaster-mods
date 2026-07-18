@@ -283,6 +283,19 @@ is the game's own, and removal degrades safely:
   intentional-conflict boots (`src/README.md`); pytest 155 green.
 - **M1c — examples + docs**: `examples/` (§7), public API reference doc, pytest AutoId
   vectors. Exit = MOD-TOOLKIT M1 success test (20-line example mod registers a card).
+  **Status: DONE (2026-07-18).** `examples/MyFirstMod/` (complete compiling BepInEx
+  project; the plugin is ~20 lines — one `Sets.Register(name, author)` + one
+  `Cards.Build(...).InSet(set).AutoId()...Register()` with the result-check idiom;
+  line-by-line README) and `examples/ExamplePack/` (the same set + card as a data-only
+  `pack.json` on the AutoId-derived block 737,673,400 — a pinned reference vector —
+  passing `validate_pack.py` with 0 errors/0 warnings); `API.md` public reference
+  (registries, builders, validation/error model, lifecycle, AutoId, ownership, knobs,
+  log vocabulary, Harmony-porting note). §7's fuller dataset (weapon + power + art in
+  the data example) folded down to the one-set-one-card twins — the richer versions
+  are the four live `DC.*` packs themselves. Live-verified: with MyFirstMod.dll
+  deployed the boot report reads `5 mods · 64 items registered, 64 applied, 0 failed`
+  with set 377734 [1 cards]; after removal, clean 4-mod baseline again. pytest green;
+  AutoId vectors were already pinned in M1b (`tools/tests/test_autoid.py`).
 
 ## 11. Open questions
 

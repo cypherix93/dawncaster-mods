@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>MyFirstMod</AssemblyName>
+    <RootNamespace>MyFirstMod</RootNamespace>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- Your Dawncaster install (BepInEx extracted into it). -->
+    <GameDir>E:\Games\Steam\steamapps\common\Dawncaster</GameDir>
+    <!-- The built engine DLL. Default: this repo's build output
+         (dotnet build ..\..\src\DawnKit.slnx -c Release first).
+         For a standalone mod, point it at your game's
+         BepInEx\plugins\DawnKit.dll instead. -->
+    <DawnKitDll>..\..\src\DawnKit\bin\Release\DawnKit.dll</DawnKitDll>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- DawnKit public API only — no Assembly-CSharp, no Harmony. Private=false:
+       none of these ship with your mod; only MyFirstMod.dll does. -->
+  <ItemGroup>
+    <Reference Include="DawnKit">
+      <HintPath>$(DawnKitDll)</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>$(GameDir)\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(GameDir)\Dawncaster_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(GameDir)\Dawncaster_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>
