@@ -342,7 +342,7 @@ boot sequence a healthy install prints:
 | `DawnKit 0.8.0 loaded — 16/16 patch targets applied.` | Boot summary. |
 | `<owner>: N cards injected, M skipped (hook: <hook>)` | Phase-1 injection per mod. |
 | `<owner>: N weapons, M weapon powers, S starting cards injected (classes: …)` | Loadout injection + class attachment. |
-| `Class weapon/talent/starting-card counts: Arcanist=3w/6t/2s, …` | Post-attachment per-class totals. |
+| `Class weapon/talent/starting-card counts: Arcanist=3w/6t/3s, …` | Post-attachment per-class totals — includes the vanilla baseline (each playable class ships 1 native starting card). |
 | `Synthetic card sets: <Name>=(CardExpansions)<value> [N cards], …` | Set table with values and counts. |
 | `Reference resolution: N resolved, M unresolved (hook: …)` | Phase-1/phase-2 ref passes; unresolved names are listed. |
 | `── Boot report ──` … `── end boot report ──` | Consolidated per-mod counts + conflicts (§8). |
