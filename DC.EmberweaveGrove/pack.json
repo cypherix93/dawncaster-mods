@@ -682,9 +682,9 @@
           "hideReferenceCards": false,
           "conditions": [
             {
-              "value": "CardsBurned",
+              "value": "AnyValue",
               "op": "IsMoreThan",
-              "target": "0",
+              "target": "[[cardsBuried]]:0",
               "ignoreForDisplay": false
             }
           ]
@@ -699,7 +699,7 @@
       "meta": {
         "archetype": "burn/Firecast x graveyard bridge (basic-attack slot)",
         "nearestExisting": "Forcewand.json (statline twin: 2 elemental damage + archetype rider); Warmace.json (only shipped weapon applying a status)",
-        "whyDifferent": "Every shipped weapon's rider is positional or unconditional (Ambush, Flanking, Cascade, always-on). Cinderbough Wand is the first whose rider reads run/combat state from an archetype (CardsBurned > 0) - once any bury has happened this combat, the repeating basic attack becomes a burn engine. It closes the pack's missing graveyard->burn direction (DESIGN-NOTES gap map) from turn 1 of the run.",
+        "whyDifferent": "Every shipped weapon's rider is positional or unconditional (Ambush, Flanking, Cascade, always-on). Cinderbough Wand is the first whose rider reads run/combat state from an archetype ([[cardsBuried]] > 0 via AnyValue; the CardsBurned condition value is an unimplemented always-true stub in ConditionChecker) - once any bury has happened this combat, the repeating basic attack becomes a burn engine. It closes the pack's missing graveyard->burn direction (DESIGN-NOTES gap map) from turn 1 of the run.",
         "intendedDeck": "EmberweaveGrove bury shells: Emberseed/Gravemoss enable it by turn 2; Combust/Flameletting read the Burning it accrues.",
         "powerNotes": "Statline par: damage 2 at 1 Neutral, Common - identical to 5 of 6 shipped weapons. Rider = 1 Burning/turn, gated behind a real setup (a bury) exactly like Warmace's ungated 2 Brittle/turn at cost 2; conditional 1/turn at cost 1 is under that shipped ceiling."
       }
@@ -891,7 +891,7 @@
         "archetype": "burn/bury starting card - turn-1 ignition for both pack clocks",
         "nearestExisting": "Dedication.json (Knight keystone starting card - the only burier among the 63: bury-for-HOLY economy, Divine, Deplete: Ascend); Singe.json (0-cost: 2 Burning + bury; not a starting card)",
         "whyDifferent": "Dedication converts burials into energy in a Divine economy shell; Singe pays in Burning with no attack. Stoke the Coals is the attack version that starts both pack clocks on turn 1: the burial immediately turns on Cinderbough Wand's bury-gated 1 Burning/turn rider AND spins the Firecast roulette (a buried Firecast card casts). No shipped starting card stocks the graveyard as a resource - Dedication's burial is fuel, not stock.",
-        "intendedDeck": "Loadout: Cinderbough Wand (2 fire, rider live once CardsBurned > 0) + Cindersong/Pyregraft + this. Deliberately the simplest card in the pack - the corpus rule is that defaults are simple (Sneak Attack = 4 dmg + Ambush reset).",
+        "intendedDeck": "Loadout: Cinderbough Wand (2 fire, rider live once [[cardsBuried]] > 0) + Cindersong/Pyregraft + this. Deliberately the simplest card in the pack - the corpus rule is that defaults are simple (Sneak Attack = 4 dmg + Ambush reset).",
         "powerNotes": "Starting-card curve: cost 1 (81% mode), Common, 2 effect lines. 3 dmg at 1 INT sits at the low end of the 1-cost common band (3-5); bury:1 (top of deck, SpellEffects.BuryCard) is archetype-positive here and neutral-to-negative outside bury shells - the delta prices the rider. Strictly under in-pack Ashfeast (3 dmg + Ancestral-gated 4 Burning)."
       }
     }

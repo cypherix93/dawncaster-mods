@@ -261,7 +261,9 @@ extracted tier-0 talents distribute cooldown 1×1, 2×20, 3×32, 4×8, 5×2, 6×
 - **Role:** graveyard→burn bridge in the basic-attack slot (the direction the gap map
   calls missing).
 - **Budget:** statline par (2 fire dmg, 1 Neutral, Common). Rider = 1 Burning/turn gated
-  on `CardsBurned > 0`; Warmace ships an UNgated 2-status/turn rider at cost 2, so a
+  on `AnyValue IsMoreThan [[cardsBuried]]:0` (NOT the `CardsBurned` condition value —
+  that is an unimplemented always-true stub in ConditionChecker.cs, and no vanilla card
+  uses it); Warmace ships an UNgated 2-status/turn rider at cost 2, so a
   bury-gated 1/turn at cost 1 is under the shipped ceiling.
 - **Nearest:** Forcewand (statline twin) / Warmace (status rider). **Different:** first
   weapon whose rider reads archetype state (graveyard) instead of position/cost-weave.
@@ -319,7 +321,7 @@ Strikes, Seeker=Mindstrike, Warrior=Backswing; Scion has none) + **57 distinct
   is the budget axis.
 
 ### Starting card: Stoke the Coals — 700000095, Magic/Fire, C, 1 INT, Arcanist/Knight
-- **Role in loadout:** Cinderbough Wand's rider needs `CardsBurned > 0`; Cindersong's
+- **Role in loadout:** Cinderbough Wand's rider needs `[[cardsBuried]] > 0`; Cindersong's
   rider needs burials. Stoke the Coals is the turn-1 ignition — 3 fire damage + bury a
   card — so the weapon and power are live from the first turn, and the buried card spins
   the Firecast roulette. Weapon (bury-gated burn basic) + power (burn opener) + card
