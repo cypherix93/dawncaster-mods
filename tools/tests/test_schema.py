@@ -14,6 +14,7 @@ import gamedata as gd
 SCHEMA_PATH = gd.REPO_DIR / "schemas" / "pack.schema.json"
 REAL_MANIFESTS = sorted(gd.REPO_DIR.glob("DC.*/pack.json")) + [
     gd.REPO_DIR / "DC.DawnKit" / "examples" / "ExamplePack" / "pack.json",
+    gd.REPO_DIR / "DC.DawnKit" / "examples" / "ExampleEventPack" / "pack.json",
 ]
 
 

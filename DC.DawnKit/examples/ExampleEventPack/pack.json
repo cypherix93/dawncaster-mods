@@ -1,0 +1,14 @@
+{
+  "$schema": "../../../schemas/pack.schema.json",
+  "schemaVersion": 2,
+  "pack": "Example Event Pack",
+  "events": [
+    {
+      "name": "Hello Wayfarer",
+      "storyFile": "events/HelloWayfarer.ink.json",
+      "minLevel": 0,
+      "maxLevel": 0,
+      "unique": false
+    }
+  ]
+}
