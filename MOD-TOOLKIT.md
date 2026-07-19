@@ -216,6 +216,9 @@ dawncaster-mods/
   MOD-TOOLKIT.md                # this direction doc
   docs/
     CONVENTIONS.md              # per-package rules + SPEC template (adapted from ftk2)
+    design/                     # content-design methodology (binding) + corpus stats
+      METHODOLOGY.md
+      CORPUS-STATS.md
     research/                   # decompile-verified knowledge, shared by all packages
       GROUND-TRUTH.md
       GAME-MECHANICS.md

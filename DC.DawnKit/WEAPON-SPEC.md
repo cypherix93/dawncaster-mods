@@ -3,7 +3,9 @@
 Contract for adding modded **starting weapons**, **activatable weapon abilities**
 ("weapon powers") and **starting cards** via card packs. Grounded in the decompiled
 source; every mechanism below is verified at the cited file/method. Companion to
-`CARD-PACK-SPEC.md` (this spec extends the same pack manifest).
+`CARD-PACK-SPEC.md` (this spec extends the same pack manifest). Design methodology
+(binding for all drafting): `../docs/design/METHODOLOGY.md`; measured corpora:
+`../docs/design/CORPUS-STATS.md`.
 
 ## 1. Ground truth — how the shipped system works
 
@@ -175,39 +177,28 @@ know the array too (§7.0 closed).
 
 ## 4. Power budgets
 
+The measured corpora (weapon statlines, 66-talent cooldown histogram + payoff ladder,
+63-card starting-card curve) live in `../docs/design/CORPUS-STATS.md` §§2–4; the design
+loop and per-type addenda are `../docs/design/METHODOLOGY.md`. The normative rules,
+for citation stability:
+
 - **Weapons**: baseline = the shipped class weapons (BasicAttack, ~1-cost, Common;
   repeating every turn). A mod weapon must stay statline-comparable to the 6 shipped
-  base weapons **for its classes** — study their extracted JSONs; the weapon's identity
-  should come from a *rider or condition*, not a bigger number (same "text, not stats"
-  rule as cards). Remember basic attacks restore per the BasicAttack category rules
-  (GAME-MECHANICS Part IV) — any on-hit rider repeats every single turn, all run.
-- **Weapon powers**: baseline = the 66 shipped tier-0 talents
-  (`tools/out/data/Talent/*_Weapon.json` and similar; derive the cooldown-vs-payoff curve
-  from them before designing — do not guess). Two shipped patterns to respect:
-  ActivateWeapon effects fire in **exploration context** (out of combat — payoffs are
-  deck-prep, healing, statuses for *next* combat, economy), and passive riders carry the
-  in-combat identity. An always-on rider must be budgeted as a permanent talent, not as
-  part of the cooldown payoff.
-- **Starting cards**: baseline = the 63-card shipped starting corpus (6 Profession
-  defaults + 57 distinct `KeystoneType.StartingCard` keystone cards; derivation in §1).
-  The measured curve — cite it when budgeting:
-  - **Cost:** 1 total energy on 51/63 (81%); 2-cost 7, 3-cost 3, 0-cost 2. All six
-    Profession defaults are exactly 1-cost in class colors. Mod starting cards should be
-    1-cost unless the pack has a corpus-anchored reason.
-  - **Rarity:** 22 Common / 19 Uncommon / 18 Rare / 4 Legendary. Defaults are 5 C + 1 U —
-    Rare is the keystone-unlock build-around tier; mod starting cards are always-available
-    (no keystone gate in v1), so hold them to Common/Uncommon.
-  - **Type/category:** Utility 40, Melee 10, Magic 5, Divine 5, Corruption 2, Ranged 1;
-    Action 56, Enchantment 4, Equipment 3.
-  - **Complexity:** 1-3 effect codeLines on 60/63 (median 2) — one clean idea, usually
-    one gate.
-  - **Shape:** an archetype *seed* — one cheap card that declares the run's identity on
-    turn 1 and leans on the weapon (7/63 literally "Make a Basic Attack"; 3 of the 6
-    defaults do). A mod starting card should complete the pack's loadout — weapon +
-    power + starting card as one coherent turn-1 story — not be a stray good card.
-  - Deck math: the pick is **one card in a ~13-card starting deck** (surges + weapon ×6 +
-    Block ×2 + it, §1) — it is seen turn 1-2 of nearly every combat early on.
-    Reliability, not raw power, is the real budget axis.
+  base weapons **for its classes**; the weapon's identity should come from a *rider or
+  condition*, not a bigger number (same "text, not stats" rule as cards). Any on-hit
+  rider repeats every single turn, all run — budget it as a permanent engine.
+- **Weapon powers**: baseline = the 66 shipped tier-0 talents; budget against the
+  measured cooldown-vs-payoff ladder — do not guess. ActivateWeapon effects fire in
+  **exploration context** (payoffs are deck-prep, healing, statuses for *next* combat,
+  economy); passive riders carry the in-combat identity and must be budgeted as a
+  permanent talent, not as part of the cooldown payoff.
+- **Starting cards**: baseline = the 63-card shipped starting corpus (derivation in §1;
+  curve in CORPUS-STATS §4). Mod starting cards are 1-cost unless the pack has a
+  corpus-anchored reason, held to Common/Uncommon (Rare is the keystone-unlock tier;
+  mods are always-available in v1), 1–3 effect lines, and must complete the pack's
+  loadout — weapon + power + starting card as one coherent turn-1 story, not a stray
+  good card. The pick is one card in a ~13-card starting deck, seen turn 1–2 of nearly
+  every early combat: **reliability, not raw power, is the real budget axis.**
 
 ## 5. Loader design (implementation contract)
 

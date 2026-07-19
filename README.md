@@ -13,8 +13,12 @@ toolchain at the root. Direction doc: [MOD-TOOLKIT.md](MOD-TOOLKIT.md).
   the packages table below is the menu.
 - **I want to make a pack (no code)** → [docs/TUTORIAL.md](docs/TUTORIAL.md)
   ("your first card in 15 minutes": `dmk new` → edit → gates → install), then
-  [CARD-PACK-SPEC](DC.DawnKit/CARD-PACK-SPEC.md) for the contract and
+  [CARD-PACK-SPEC](DC.DawnKit/CARD-PACK-SPEC.md) for the contract,
+  [docs/design/METHODOLOGY.md](docs/design/METHODOLOGY.md) for the design bar your
+  content is reviewed against, and
   [GAME-MECHANICS](docs/research/GAME-MECHANICS.md) to design well.
+- **I'm an AI agent working in this repo** → [AGENTS.md](AGENTS.md) (task routing,
+  binding rules, commands) — read it before anything else.
 - **I want to write a C# mod** → the public builder API in
   [DC.DawnKit/API.md](DC.DawnKit/API.md), starting from the ~20-line
   [MyFirstMod](DC.DawnKit/examples/MyFirstMod/README.md); engine internals in
@@ -42,7 +46,10 @@ rebuilt locally).
 
 ## Docs
 
+- [AGENTS.md](AGENTS.md) — operating manual for AI agents (task routing + binding rules)
 - [docs/TUTORIAL.md](docs/TUTORIAL.md) — "your first card in 15 minutes" (the data-path walkthrough)
+- [docs/design/METHODOLOGY.md](docs/design/METHODOLOGY.md) — the content-design methodology: design loop, the four review bars (Budget/Uniqueness/Pull-Equity/Flavor), per-type addenda. **Binding for all content drafting.**
+- [docs/design/CORPUS-STATS.md](docs/design/CORPUS-STATS.md) — measured shipped-pool curves (card pool, weapons, powers, starting cards) that budget arguments anchor to
 - [docs/CONVENTIONS.md](docs/CONVENTIONS.md) — per-package rules + SPEC template
 - [docs/ID-REGISTRY.md](docs/ID-REGISTRY.md) — cardID/talentID block allocations (mods own 700,000,000+)
 - [docs/research/GROUND-TRUTH.md](docs/research/GROUND-TRUTH.md) — verified architecture findings from the decompiled game. Start here.

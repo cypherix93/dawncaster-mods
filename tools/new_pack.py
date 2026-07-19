@@ -113,12 +113,15 @@ starting cards share one top-down counter from {high}; weapon-power talentIDs
 reuse the top-down numbers in the separate Talent namespace). **Colors:** <cost pools = frame colors; keep the archetype's
 color identity coherent (DEX green, INT blue, STR red, HOLY gold, hybrids)>.
 
-**Pack thesis.** <2-3 paragraphs: which verified mechanics (GAME-MECHANICS
-Parts I-VII) this pack treats as design material, and what gap in the shipped
-pool it fills. Cite timing facts, not vibes.>
+**Pack thesis.** <2-3 paragraphs per docs/design/METHODOLOGY.md Phase 1: (a) the
+mechanical thesis — 2-3 verified timing facts (GAME-MECHANICS Parts I-VII, cited)
+treated as design material, naming the untapped axis; (b) the fictional thesis —
+one line the whole pack serves; (c) the graph-extension proof — the new edge
+between existing archetypes and the new payoff/enabler this pack adds. Cite
+timing facts, not vibes.>
 
 Rarity mix target ≈ 3-4 C / 2-3 U / 2-3 R / 1 L per 10 cards; cost curve skews
-low (pool is 72% cost 0-1) — CARD-PACK-SPEC §4.
+low (pool is 72% cost 0-1) — CORPUS-STATS §1 / CARD-PACK-SPEC §4.
 
 ---
 
@@ -126,19 +129,36 @@ low (pool is 72% cost 0-1) — CARD-PACK-SPEC §4.
 
 ### {low} {starter} — C, STR 1, Melee/Action
 - **Role:** <what job the card does in a deck>.
-- **Deck:** <which shell wants it; setup/payoff partners>.
-- **Budget:** <math vs the §4 baselines: ~4 dmg per energy at common; each
-  rarity step buys ~+1 damage-equivalent or one rider>.
+- **Deck:** <which shell wants it; setup/payoff partners — MUST name at least
+  one vanilla deck (Pull-Equity Bar, METHODOLOGY §4.3)>.
+- **Budget:** <math vs the CORPUS-STATS curves: ~4 dmg per energy at common;
+  each rarity step buys ~+1 damage-equivalent or one rider; price the whiff
+  mode too>.
 - **Nearest:** <closest shipped card, from the nearest-neighbor audit>.
-  **Difference:** <the new decision it introduces — CARD-PACK-SPEC §5>.
+  **Difference:** <the new decision it introduces — CARD-PACK-SPEC §5 mode 1-4>.
 - **DSL:** <commands/triggers/conditions used, each verified against a shipped
-  card that does the same>.
+  card that does the same; UNVERIFIED flags for anything inferred>.
 
 ## Weapons, weapon powers & starting cards (optional — WEAPON-SPEC.md)
 
 <Starting weapons (BasicAttack cards, IDs top-down), weapon powers (tier-0
 talents) and starting cards (normal cards + classes, IDs continuing the
-top-down counter) if the pack ships any. Same per-item structure as above.>
+top-down counter) if the pack ships any. Same per-item structure as above;
+loadout coherence: weapon + power + starting card = one turn-1 story.>
+
+## Honest uncertainty ranking
+
+<Every UNVERIFIED item ordered by risk, each with its fallback if the sim/QA
+check fails. This list drives the gate-4 in-game QA pass.>
+
+## Validation done offline
+
+<The scripted scans run (name collisions, gap checks, command-vocabulary
+membership) and their results — METHODOLOGY Phase 5.>
+
+## Art direction
+
+<Palette/treatment identity + per-card source rationale — ART-MUTATION-SPEC.>
 
 ## Open questions
 

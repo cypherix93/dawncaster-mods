@@ -18,8 +18,11 @@ One top-level directory per shippable package. Two kinds:
   rebuilt locally from recipes).
 
 Shared assets live at the root: `docs/research/` (decompile-verified knowledge +
-`reference/` command vocabularies), `docs/ID-REGISTRY.md` (ID block allocations),
-`tools/` (Python authoring/CI toolchain), `MOD-TOOLKIT.md` (direction).
+`reference/` command vocabularies), `docs/design/` (content-design methodology +
+measured corpus stats — METHODOLOGY.md is binding for all content drafting; its
+checklist defines what DESIGN-NOTES.md must evidence), `docs/ID-REGISTRY.md` (ID block
+allocations), `tools/` (Python authoring/CI toolchain), `MOD-TOOLKIT.md` (direction),
+`AGENTS.md` (AI-agent operating manual).
 
 ## The engine philosophy (non-negotiable design rule)
 

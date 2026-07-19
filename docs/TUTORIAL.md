@@ -251,12 +251,14 @@ checkout IS the install, no copying. That's how this repo's four packs run.)
 
 ## 8. Where to go next
 
-- **Design a real pack** — [GAME-MECHANICS](research/GAME-MECHANICS.md) is
-  the mechanics bible (timing rules, the archetype synergy web, number
-  grammar); [CARD-PACK-SPEC](../DC.DawnKit/CARD-PACK-SPEC.md) §4–5 gives the
-  power budgets and the uniqueness bar your cards will be reviewed against.
-  Write your rationale into `DESIGN-NOTES.md` as you go (the scaffold has the
-  skeleton).
+- **Design a real pack** — [METHODOLOGY](design/METHODOLOGY.md) is the design
+  loop and the four review bars your cards will be judged against (with
+  [CORPUS-STATS](design/CORPUS-STATS.md) as the budget anchor);
+  [GAME-MECHANICS](research/GAME-MECHANICS.md) is the mechanics bible (timing
+  rules, the archetype synergy web, number grammar);
+  [CARD-PACK-SPEC](../DC.DawnKit/CARD-PACK-SPEC.md) §4–5 anchors the budget
+  and uniqueness rules on the contract side. Write your rationale into
+  `DESIGN-NOTES.md` as you go (the scaffold has the skeleton).
 - **Weapons, weapon powers and starting cards** — same manifest, three more
   arrays (`weapons`, `weaponPowers`, `startingCards` — the full character-
   creation loadout): [WEAPON-SPEC](../DC.DawnKit/WEAPON-SPEC.md).

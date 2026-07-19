@@ -3,9 +3,13 @@
 Contract for designing and shipping new Dawncaster card packs. Grounded in:
 `../docs/research/GAME-MECHANICS.md` (mechanics + synergy web — **required reading**),
 `../docs/research/GROUND-TRUTH.md` (architecture),
-`../docs/research/asset-extraction-notes.md` (real card JSON idioms), and pool
-statistics computed from all 2,525 extracted cards (`tools/card_stats.py` →
-`tools/out/card-stats.json`).
+`../docs/research/asset-extraction-notes.md` (real card JSON idioms), and the measured
+pool statistics in `../docs/design/CORPUS-STATS.md`.
+
+**This file is the contract** (schema, identity, legality, gates). The design
+methodology — the full design loop, the four review bars, per-type addenda — is
+`../docs/design/METHODOLOGY.md`, which is **binding for all content drafting**; §4–§5
+below are the contract-side anchors of two of its bars.
 
 ## 1. Product shape
 
@@ -117,22 +121,15 @@ at load via `AssetManager.GetStatus` / `GetCard` (both verified public).
 
 ## 4. Power budgets (derived from the live pool)
 
-From `card-stats.json` + single-statement damage-card regression (player pool, n=1,243):
+The measured curves (damage-per-energy table, cost/rarity distributions) live in
+`../docs/design/CORPUS-STATS.md` §1; the full Budget Bar is METHODOLOGY §4.1. The
+normative rules, for citation stability:
 
-| Total cost | Common | Uncommon | Rare | Legendary |
-|---|---|---|---|---|
-| 0 | ~2–3 dmg | 3 | — | — |
-| 1 | 3–5 (median 4) | 4–5 | ~5 | ~6 |
-| 2 | ~8 | — | 5–8 | — |
-| 3 | up to 12 | — | 8–15 | — |
-
-Working rules:
 - **~4 damage per energy** at common; each rarity step buys roughly +1 damage-equivalent
   or one rider. Pure vanilla is rare in this pool (only ~20 single-statement damage cards
   in 1,243) — **shipped cards earn their slot with text, not stats**. Match that.
-- Cost distribution to respect: the pool is 15% cost-0, 57% cost-1, 16% cost-2, 11% cost-3,
-  2% cost-4. Packs should skew the same way (this is a low-cost, high-tempo game).
-- Rarity mix per pack (mirrors pool 35/22/25/19): ≈ 3–4 C / 2–3 U / 2–3 R / 1 L per 10.
+- Packs respect the pool's cost skew (15/57/16/11/2% for cost 0–4 — low-cost,
+  high-tempo game) and rarity mix (≈ 3–4 C / 2–3 U / 2–3 R / 1 L per 10).
 - Conditional effects may exceed baseline by the value of the setup cost (see the
   archetype's enabling condition in GAME-MECHANICS Part VI). Statuses use the verified
   timing rules (Part III) — e.g. Burning never decays: budget it as repeating damage.
@@ -153,6 +150,12 @@ introduces a **new decision**, not new numbers. Enforced per card via `meta`:
      on yourself).
 3. **Rejection rule**: "existing card X with +1/-1 numbers" → cut. "Strictly better than
    existing X at same cost/rarity" → cut (power creep gate).
+
+This section is the contract vehicle (the `meta` fields and the mode numbering that
+reviews cite). The uniqueness bar is one of **four** mandatory review bars — Budget,
+Uniqueness, **Pull-Equity** (pool economics: pull-safety, bridge quota, pack-size cap)
+and **Flavor** — all defined with their evidence requirements in
+`../docs/design/METHODOLOGY.md` Phase 4.
 
 ## 6. Design constraints (engine-verified)
 
