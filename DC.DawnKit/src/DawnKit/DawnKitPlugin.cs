@@ -30,6 +30,7 @@ namespace DawnKit
         private ConfigEntry<bool> engineEnabled;
         private ConfigEntry<bool> verboseLogging;
         private ConfigEntry<bool> diagnosticsDump;
+        private ConfigEntry<bool> eventsEnabled;
 
         private void Awake()
         {
@@ -44,8 +45,12 @@ namespace DawnKit
                 "Write BepInEx/DawnKit-diagnostics.txt at boot completion: per-mod registered content " +
                 "with IDs/names/sets/classes, the ownership table, the conflict report and unresolved " +
                 "references. Overwritten each boot. The bug-report channel — attach it to issue reports.");
+            eventsEnabled = Config.Bind("Events", "Enabled", true,
+                "Master switch for modded opportunity events (fail-safe rule): false = no event " +
+                "injection and no story-serving patch behavior — vanilla events untouched.");
             Verbose = verboseLogging.Value;
             DiagnosticsDump = diagnosticsDump.Value;
+            Integration.Dialogues.DialogueIntegration.Enabled = eventsEnabled.Value;
 
             if (!engineEnabled.Value)
             {

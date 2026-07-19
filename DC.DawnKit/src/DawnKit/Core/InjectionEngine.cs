@@ -71,6 +71,10 @@ namespace DawnKit.Core.Lifecycle
             {
                 return;
             }
+            if (!Integration.Dialogues.DialogueIntegration.Available)
+            {
+                return; // knob off or serving path broken — EVENT-SPEC §5/§6 fail-safe
+            }
 
             // Prune instances wiped by ForceReloadAssets()/ClearAllCollections()
             // (membership check, never object identity — same idiom as cards).

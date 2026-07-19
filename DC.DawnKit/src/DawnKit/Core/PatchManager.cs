@@ -4,6 +4,7 @@ using System.Reflection;
 using DawnKit.Core.Lifecycle;
 using DawnKit.Core.Status;
 using DawnKit.Integration.Codex;
+using DawnKit.Integration.Dialogues;
 using DawnKit.Integration.Sets;
 using HarmonyLib;
 
@@ -28,6 +29,7 @@ namespace DawnKit.Core
             internal Func<MethodInfo> Target;
             internal MethodInfo Prefix;
             internal MethodInfo Postfix;
+            internal Action OnApplied;
         }
 
         internal static void ApplyAll(Harmony harmony)
@@ -89,6 +91,15 @@ namespace DawnKit.Core
                 Postfix("AssetManager.CreateRunLists",
                     () => AccessTools.Method(typeof(AssetManager), "CreateRunLists"),
                     typeof(RunListProbe), nameof(RunListProbe.CreateRunLists_Postfix)),
+
+                // ---- Events (Integration.Dialogues) ----
+                new PatchDef
+                {
+                    Label = "DialogueManagerINK.StartDialogue(string)",
+                    Target = () => AccessTools.Method(typeof(DialogueManagerINK), "StartDialogue", new[] { typeof(string) }),
+                    Prefix = AccessTools.Method(typeof(DialogueIntegration), nameof(DialogueIntegration.StartDialogue_Prefix)),
+                    OnApplied = () => DialogueIntegration.PatchApplied = true,
+                },
             };
 
             TargetCount = defs.Count;
@@ -116,6 +127,7 @@ namespace DawnKit.Core
                         prefix: def.Prefix != null ? new HarmonyMethod(def.Prefix) : null,
                         postfix: def.Postfix != null ? new HarmonyMethod(def.Postfix) : null);
                     FoundCount++;
+                    def.OnApplied?.Invoke();
                 }
                 catch (Exception ex)
                 {
@@ -134,6 +146,33 @@ namespace DawnKit.Core
                 () => AccessTools.Field(typeof(CodexUI), "shownExpansions"));
             RunListProbe.RuncardsField = ResolveMember("AssetManager._runcards",
                 () => AccessTools.Field(typeof(AssetManager), "_runcards"));
+
+            // Events story serving (EVENT-SPEC §6): all members the StartDialogue
+            // prefix replays. A missing one disables the WHOLE Events integration
+            // (injection included) — an unservable story must never reach the map.
+            DialogueIntegration.DialogueTempField = ResolveMember("DialogueManagerINK.dialogueTemp",
+                () => AccessTools.Field(typeof(DialogueManagerINK), "dialogueTemp"));
+            DialogueIntegration.StoryField = ResolveMember("DialogueManagerINK.story",
+                () => AccessTools.Field(typeof(DialogueManagerINK), "story"));
+            DialogueIntegration.DialogueNameField = ResolveMember("DialogueManagerINK.dialogueName",
+                () => AccessTools.Field(typeof(DialogueManagerINK), "dialogueName"));
+            DialogueIntegration.AreaUIField = ResolveMember("DialogueManagerINK.areaUI",
+                () => AccessTools.Field(typeof(DialogueManagerINK), "areaUI"));
+            DialogueIntegration.HidePortraitMethod = ResolveMember("DialogueManagerINK.HidePortrait(float, float)",
+                () => AccessTools.Method(typeof(DialogueManagerINK), "HidePortrait", new[] { typeof(float), typeof(float) }));
+            DialogueIntegration.SetDialogueRunningMethod = ResolveMember("DialogueManagerINK.SetDialogueRunning(bool)",
+                () => AccessTools.Method(typeof(DialogueManagerINK), "SetDialogueRunning", new[] { typeof(bool) }));
+            DialogueIntegration.FadeUIInMethod = ResolveMember("DialogueManagerINK.FadeUIIn",
+                () => AccessTools.Method(typeof(DialogueManagerINK), "FadeUIIn"));
+            DialogueIntegration.EnableVisualDialogueUIMethod = ResolveMember("DialogueManagerINK.EnableVisualDialogueUI",
+                () => AccessTools.Method(typeof(DialogueManagerINK), "EnableVisualDialogueUI"));
+            DialogueIntegration.ProceedDialogueMethod = ResolveMember("DialogueManagerINK.ProceedDialogue(int)",
+                () => AccessTools.Method(typeof(DialogueManagerINK), "ProceedDialogue", new[] { typeof(int) }));
+
+            if (DialogueIntegration.Enabled && !(DialogueIntegration.PatchApplied && DialogueIntegration.MembersResolved))
+            {
+                DawnKitPlugin.Log.LogError("[DawnKit] Events integration disabled — StartDialogue target or a tracked member is missing; mod events will NOT be injected (fail-safe: an unservable story must never reach the map).");
+            }
         }
 
         private static T ResolveMember<T>(string label, Func<T> resolve) where T : class
