@@ -84,16 +84,26 @@ namespace DawnKit.Packs
             bool hasWeapons = pm.weapons != null && pm.weapons.Count > 0;
             bool hasPowers = pm.weaponPowers != null && pm.weaponPowers.Count > 0;
             bool hasStartingCards = pm.startingCards != null && pm.startingCards.Count > 0;
-            if (!hasCards && !hasWeapons && !hasPowers && !hasStartingCards)
+            bool hasEvents = pm.events != null && pm.events.Count > 0;
+            bool hasCardSpaceContent = hasCards || hasWeapons || hasPowers || hasStartingCards;
+            if (!hasCardSpaceContent && !hasEvents)
             {
-                PacksPlugin.Log.LogError($"[DawnKit.Packs] {manifestFile}: no cards/weapons/weaponPowers/startingCards in manifest — pack skipped.");
+                PacksPlugin.Log.LogError($"[DawnKit.Packs] {manifestFile}: no cards/weapons/weaponPowers/startingCards/events in manifest — pack skipped.");
                 return;
+            }
+
+            // Advisory only (this loader DOES understand events) — the offline
+            // validator makes it an ERROR; older loaders silently drop them.
+            if (hasEvents && SchemaGate.Effective(pm.schemaVersion) < 2)
+            {
+                PacksPlugin.Log.LogWarning($"[DawnKit.Packs] {packName}: ships events without \"schemaVersion\": 2 — older DawnKit.Packs releases will silently drop them (EVENT-SPEC §4). Declare schemaVersion 2.");
             }
 
             // Per-pack synthetic set from the ID block (CARD-PACK-SPEC.md §3);
             // an explicit ExpansionOverride wins and disables synthetic sets.
+            // Events are name-keyed and set-less — an events-only pack needs no block.
             SetHandle set = null;
-            if (expansionOverride == null)
+            if (expansionOverride == null && hasCardSpaceContent)
             {
                 if (pm.idBlock == null || pm.idBlock.Count < 1)
                 {
@@ -105,7 +115,7 @@ namespace DawnKit.Packs
                 }
             }
 
-            int cards = 0, weapons = 0, powers = 0, startingCards = 0, failed = 0;
+            int cards = 0, weapons = 0, powers = 0, startingCards = 0, eventsRegistered = 0, failed = 0;
 
             foreach (CardManifest cm in pm.cards ?? new List<CardManifest>())
             {
@@ -157,8 +167,27 @@ namespace DawnKit.Packs
                 if (b.Register().Ok) startingCards++; else failed++;
             }
 
+            foreach (EventManifest em in pm.events ?? new List<EventManifest>())
+            {
+                if (em == null)
+                {
+                    PacksPlugin.Log.LogError($"[DawnKit.Packs] {packName}: null event entry — skipped.");
+                    failed++;
+                    continue;
+                }
+                EventBuilder b = Events.Build(em.name).Owner(packName)
+                    .Levels(em.minLevel, em.maxLevel)
+                    .Unique(em.unique);
+                if (!string.IsNullOrEmpty(em.storyFile))
+                {
+                    b.StoryFile(PackPath(packDir, em.storyFile));
+                }
+                // else: Register() fails with "event has no story" — per-item isolation
+                if (b.Register().Ok) eventsRegistered++; else failed++;
+            }
+
             string failNote = failed > 0 ? $", {failed} failed validation" : "";
-            PacksPlugin.Log.LogInfo($"[DawnKit.Packs] {packName}: registered {cards} cards, {weapons} weapons, {powers} weapon powers, {startingCards} starting cards{failNote} (applied at asset load).");
+            PacksPlugin.Log.LogInfo($"[DawnKit.Packs] {packName}: registered {cards} cards, {weapons} weapons, {powers} weapon powers, {startingCards} starting cards, {eventsRegistered} events{failNote} (applied at asset load).");
         }
 
         /// <summary>Manifest → builder mapping shared by cards, weapons and starting

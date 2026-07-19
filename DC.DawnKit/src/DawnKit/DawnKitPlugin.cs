@@ -21,7 +21,7 @@ namespace DawnKit
     {
         public const string Guid = "dcmods.dawnkit";
         public const string PluginName = "DawnKit";
-        public const string Version = "0.8.0";
+        public const string Version = "0.9.0";
 
         internal static ManualLogSource Log;
         internal static bool Verbose;

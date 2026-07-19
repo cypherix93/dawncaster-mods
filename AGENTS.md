@@ -10,7 +10,7 @@ direction/vision: `MOD-TOOLKIT.md`.
 
 | Your task | Required reading |
 |---|---|
-| **Designing/drafting content** (cards, weapons, powers, starting cards, future types) | `docs/design/METHODOLOGY.md` (the binding design loop + bars) → `docs/design/CORPUS-STATS.md` → `docs/research/GAME-MECHANICS.md` (esp. Parts VI + VIII) → your type's contract (`DC.DawnKit/CARD-PACK-SPEC.md` / `DC.DawnKit/WEAPON-SPEC.md`) |
+| **Designing/drafting content** (cards, weapons, powers, starting cards, events, future types) | `docs/design/METHODOLOGY.md` (the binding design loop + bars) → `docs/design/CORPUS-STATS.md` → `docs/research/GAME-MECHANICS.md` (esp. Parts VI + VIII) → your type's contract (`DC.DawnKit/CARD-PACK-SPEC.md` / `DC.DawnKit/WEAPON-SPEC.md` / `DC.DawnKit/EVENT-SPEC.md`) |
 | Engine / C# plugin work | `DC.DawnKit/SPEC.md`, `DC.DawnKit/API.md`, `docs/CONVENTIONS.md` |
 | Card art | `DC.DawnKit/ART-PIPELINE.md`, `DC.DawnKit/ART-MUTATION-SPEC.md` |
 | Python toolchain changes | `docs/CONVENTIONS.md` (testing rules), `tools/tests/` |

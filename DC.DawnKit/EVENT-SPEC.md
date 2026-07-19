@@ -1,4 +1,4 @@
-# Event Spec v0.1 (DRAFT) — opportunity events (Ink)
+# Event Spec v1.0 — opportunity events (Ink)
 
 Contract + engine design for adding modded **opportunity events** — Ink-scripted
 map encounters — via card packs and the C# API. The fourth content family after

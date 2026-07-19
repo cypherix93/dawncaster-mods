@@ -1,4 +1,4 @@
-# DawnKit v0.8.0 — release notes
+# DawnKit v0.9.0 — release notes
 
 > **DRAFT — NOT FOR PUBLICATION.** Internal draft for the M2 "first
 > public-ready cut". Do not publish, upload, or link this release anywhere
@@ -17,6 +17,41 @@ as data (pack folders). All the hard-won engine knowledge from building four
 real content packs — load phases, two-phase reference resolution,
 re-injection after asset wipes, set-screen integration, Codex discovery — is
 encoded once, in the engine, instead of living in any single mod.
+
+## What's new in 0.9.0 — opportunity events (manifest v2)
+
+The fourth content family lands (EVENT-SPEC.md E1): packs and C# mods can ship
+**opportunity events** — Ink-scripted map encounters that join the same global
+fill pool as vanilla roadside events (native frequency, no odds skew).
+
+- **Manifest**: optional top-level `events` array — `name`, `storyFile`
+  (compiled Ink JSON, pack-relative), optional `minLevel`/`maxLevel`/`unique`.
+  Presence requires `"schemaVersion": 2`; older loaders refuse the whole pack
+  instead of silently dropping events. Events are name-keyed — no numeric IDs,
+  no idBlock needed for an events-only pack.
+- **API**: `DawnKit.Events.Build(name).StoryFile(path)` (or `.StoryJson(text)`)
+  `.Levels(min, max).Unique().Register()` — validated at Register(): JSON
+  parses, `inkVersion` ∈ [18, 20], every `>>>` action command in the game's
+  99-command dialogue vocabulary, name collisions vs shipped events (both the
+  Dialogue-name and TextAsset-name namespaces) and other mods.
+- **Engine**: events inject at the world-asset phase and re-inject after game
+  updates like all content; a new `DialogueManagerINK.StartDialogue` prefix
+  serves registered stories by name (vanilla names pass through untouched).
+  Fail-safe: if the patch target or any tracked member is missing, the whole
+  Events integration disables itself — an unservable story never reaches the
+  map. New `[Events] Enabled` config knob (default true).
+- **Authoring pin**: compile stories with **inklecate v1.0.0** (emits
+  inkVersion 20). Inky releases bundling ink ≥ 1.1 emit 21, which the game's
+  runtime rejects.
+- **Validator**: `dmk validate` covers the `events` section (ink version pin,
+  dialogue-action vocabulary with did-you-mean, dual-namespace collisions,
+  `goto` knot checks; `STORYFUNCTION` is reserved for now).
+- **Example**: `examples/ExampleEventPack/` — the "Hello Wayfarer" event
+  (two choices, one `>>>>gold:50` action) with committed `.ink` source.
+- **Honest list**: uninstalling a pack mid-run leaves already-dealt event nodes
+  on the map; picking one aborts cleanly (the dialogue closes, the run
+  continues). Picked `unique` events leave inert name strings in the save's
+  `doneEvents` — harmless, human-readable, stable across reinstalls.
 
 ## What's new in 0.8.0 — starting cards (manifest v1.2)
 

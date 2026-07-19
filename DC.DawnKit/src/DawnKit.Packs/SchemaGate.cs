@@ -18,8 +18,9 @@ namespace DawnKit.Packs
     /// </summary>
     internal static class SchemaGate
     {
-        /// <summary>Highest pack.json schemaVersion this loader understands.</summary>
-        internal const int SupportedSchemaVersion = 1;
+        /// <summary>Highest pack.json schemaVersion this loader understands.
+        /// v2 = the events array (EVENT-SPEC.md §4).</summary>
+        internal const int SupportedSchemaVersion = 2;
 
         /// <summary>The version a manifest is treated as: declared, or 1 when absent.</summary>
         internal static int Effective(int? declared) => declared ?? 1;
@@ -39,8 +40,9 @@ namespace DawnKit.Packs
             {
                 (null, 1, true),                      // absent → 1 → loads
                 (0, 0, true),                         // lower than supported → loads
-                (1, 1, true),                         // exactly supported → loads
-                (2, 2, false),                        // newer → refused entirely
+                (1, 1, true),                         // v1 (cards/weapons/powers/startingCards) → loads
+                (2, 2, true),                         // v2 (adds events, EVENT-SPEC §4) → loads
+                (3, 3, false),                        // newer → refused entirely
                 (int.MaxValue, int.MaxValue, false),  // absurdly newer → refused
             };
             passed = 0;

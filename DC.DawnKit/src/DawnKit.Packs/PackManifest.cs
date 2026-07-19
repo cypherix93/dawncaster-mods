@@ -25,6 +25,21 @@ namespace DawnKit.Packs
         public List<WeaponPowerManifest> weaponPowers;
         // v1.2 (WEAPON-SPEC.md §2) — optional.
         public List<StartingCardManifest> startingCards;
+        // v2 (EVENT-SPEC.md §4) — optional; requires schemaVersion 2.
+        public List<EventManifest> events;
+    }
+
+    /// <summary>
+    /// EVENT-SPEC.md §4 — an opportunity event: name (its whole identity — no
+    /// numeric ID) + pack-relative compiled Ink JSON + selection filters.
+    /// </summary>
+    public class EventManifest
+    {
+        public string name;
+        public string storyFile;
+        public int minLevel;
+        public int maxLevel;
+        public bool unique;
     }
 
     public class CardManifest
