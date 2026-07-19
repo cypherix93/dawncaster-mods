@@ -22,6 +22,7 @@ DATA_INDEX = TOOLS_DIR / "out" / "data-index.json"
 REFERENCE_DIR = REPO_DIR / "docs" / "research" / "reference"
 EFFECT_COMMANDS_FILE = REFERENCE_DIR / "effect-commands.txt"
 TALENT_COMMANDS_FILE = REFERENCE_DIR / "talent-commands.txt"
+DIALOGUE_COMMANDS_FILE = REFERENCE_DIR / "dialogue-action-commands.txt"
 # Content packages live at the repo root as DC.<Name>/ dirs; a dir is a content
 # pack iff it contains pack.json (DC.DawnKit has none — engine, not content).
 PACKS_DIR = REPO_DIR
@@ -284,6 +285,68 @@ def profession_names() -> frozenset[str]:
     """The 7 shipped Profession asset names (Arcanist, Hunter, Knight, Rogue,
     Scion, Seeker, Warrior) — the legal `classes` entries besides "all"."""
     return frozenset(p.stem for p in (DATA_DIR / "Profession").glob("*.json"))
+
+
+# ---- opportunity events (EVENT-SPEC.md) ----
+
+
+@lru_cache(maxsize=1)
+def dialogue_commands() -> frozenset[str]:
+    """The 99 dialogue-action command spellings (DialogueActionHandler.RunActionCode
+    switch labels, docs/research/reference/dialogue-action-commands.txt). The game
+    lowercases commands before dispatch (DialogueActionHandler.cs:29) — the file is
+    lowercase; compare candidate commands lowercased."""
+    lines = DIALOGUE_COMMANDS_FILE.read_text(encoding="utf-8").splitlines()
+    return frozenset(ln.strip() for ln in lines if ln.strip())
+
+
+@lru_cache(maxsize=1)
+def pool_events() -> list[dict]:
+    """All extracted Dialogue asset dicts (raw JSON, PPtr fields)."""
+    return [json.loads(p.read_text(encoding="utf-8"))
+            for p in sorted((DATA_DIR / "Dialogue").glob("*.json"))]
+
+
+@lru_cache(maxsize=1)
+def pool_event_names_lower() -> frozenset[str]:
+    """Shipped Dialogue asset names (the eventLookupCache namespace)."""
+    return frozenset(d["m_Name"].lower() for d in pool_events())
+
+
+@lru_cache(maxsize=1)
+def textasset_pathid_map() -> dict[int, str]:
+    """resources.assets path_id -> TextAsset stem (for Dialogue.textFile PPtrs)."""
+    idx = json.loads(DATA_INDEX.read_text(encoding="utf-8"))
+    out = {}
+    for key, meta in idx.items():
+        if key.startswith("TextAsset/"):
+            out[meta["path_id"]] = key.split("/", 1)[1]
+    return out
+
+
+@lru_cache(maxsize=1)
+def pool_event_textfile_names_lower() -> frozenset[str]:
+    """Names of the TextAssets shipped Dialogues point at — the area-deck
+    eventContent / doneEvents namespace (EVENT-SPEC §1: deck entries carry
+    textFile.name, not Dialogue.name)."""
+    ta = textasset_pathid_map()
+    out = set()
+    for d in pool_events():
+        pid = (d.get("textFile") or {}).get("m_PathID", 0)
+        if pid and pid in ta:
+            out.add(ta[pid].lower())
+    return frozenset(out)
+
+
+def event_pool_collision(name: str) -> bool:
+    """True when `name` collides (case-insensitive; space/underscore variants —
+    extracted stems are SAFE_NAME-underscored) with a shipped Dialogue name or a
+    shipped dialogue TextAsset name."""
+    if not isinstance(name, str):
+        return False
+    keys = pool_event_names_lower() | pool_event_textfile_names_lower()
+    n = name.lower()
+    return n in keys or n.replace(" ", "_") in keys or n.replace("_", " ") in keys
 
 
 def other_pack_manifests(exclude: Path | None = None) -> list[tuple[Path, dict]]:

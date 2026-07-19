@@ -50,6 +50,21 @@ def test_talent_and_profession_loaders():
     assert not gd.resolve_talent_reference("Totally Made Up Talent")
 
 
+def test_dialogue_loaders():
+    # 99 dialogue-action commands (DialogueActionHandler.RunActionCode switch)
+    assert len(gd.dialogue_commands()) == 99
+    assert {"gold", "addcard", "combat"} <= gd.dialogue_commands()
+    # 148 shipped Dialogue SOs; both name namespaces are scanned
+    assert len(gd.pool_events()) == 148
+    assert "mimic" in gd.pool_event_names_lower()
+    assert "mimic" in gd.pool_event_textfile_names_lower()
+    assert gd.textasset_pathid_map()  # PPtr resolution table non-empty
+    # collision helper covers both namespaces + space/underscore variants
+    assert gd.event_pool_collision("Mimic")
+    assert gd.event_pool_collision("abandoned village")
+    assert not gd.event_pool_collision("Hello Wayfarer")
+
+
 # ------------------------------------------------------------------ fixtures
 
 def good_card(**overrides):
