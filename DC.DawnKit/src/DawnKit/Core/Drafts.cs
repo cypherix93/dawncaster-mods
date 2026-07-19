@@ -72,6 +72,18 @@ namespace DawnKit.Core.Lifecycle
         internal string ArtPath;
     }
 
+    /// <summary>Raw builder inputs for an opportunity event (EVENT-SPEC §3).</summary>
+    internal sealed class EventDraft
+    {
+        internal string Owner;
+        internal string Name;
+        internal string StoryJson;
+        internal string StoryFilePath;
+        internal int MinLevel;
+        internal int MaxLevel;
+        internal bool Unique;
+    }
+
     // ------------------------------------------------------------------
     // Parsed (validated) specs — everything the factories need, with all
     // enum members resolved against the game's enums. Built once at
@@ -133,6 +145,17 @@ namespace DawnKit.Core.Lifecycle
 
         internal bool IsWeapon => Kind == CardKind.Weapon;
         internal bool IsStartingCard => Kind == CardKind.StartingCard;
+    }
+
+    /// <summary>Validated event spec — everything EventFactory needs.</summary>
+    internal sealed class ParsedEvent
+    {
+        internal string Owner;
+        internal string Name;
+        internal string StoryJson;
+        internal int MinLevel;
+        internal int MaxLevel;
+        internal bool Unique;
     }
 
     internal sealed class ParsedTalent

@@ -12,7 +12,7 @@ namespace DawnKit
         public bool Ok { get; }
         /// <summary>Human-readable failure reason; null when Ok.</summary>
         public string Error { get; }
-        /// <summary>"card" / "weapon" / "startingCard" / "weaponPower" / "set".</summary>
+        /// <summary>"card" / "weapon" / "startingCard" / "weaponPower" / "event" / "set".</summary>
         public string Kind { get; }
         public string Owner { get; }
         public string Name { get; }

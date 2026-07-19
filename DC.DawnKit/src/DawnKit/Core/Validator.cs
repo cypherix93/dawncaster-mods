@@ -340,5 +340,50 @@ namespace DawnKit.Core.Lifecycle
             }
             throw new ManifestError($"unknown {typeof(T).Name} member '{raw}' for {field}{DidYouMean.Suggest(raw, Enum.GetNames(typeof(T)))}");
         }
+
+        /// <summary>EVENT-SPEC §3: name + compiled Ink story + level gates. The
+        /// story is read (for .StoryFile) and linted here so a bad event is
+        /// refused at Register(), never at pickup.</summary>
+        internal static ParsedEvent ParseEvent(EventDraft d)
+        {
+            if (string.IsNullOrWhiteSpace(d.Name))
+            {
+                throw new ManifestError("event has no name");
+            }
+            string json = d.StoryJson;
+            if (json == null && !string.IsNullOrEmpty(d.StoryFilePath))
+            {
+                try
+                {
+                    json = System.IO.File.ReadAllText(d.StoryFilePath);
+                }
+                catch (Exception ex)
+                {
+                    throw new ManifestError($"cannot read story file '{d.StoryFilePath}': {ex.Message}");
+                }
+            }
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                throw new ManifestError("event has no story — call .StoryJson(...) or .StoryFile(...)");
+            }
+            if (d.MinLevel < 0 || d.MaxLevel < 0)
+            {
+                throw new ManifestError("minLevel/maxLevel must be non-negative");
+            }
+            if (d.MaxLevel != 0 && d.MaxLevel < d.MinLevel)
+            {
+                throw new ManifestError($"maxLevel {d.MaxLevel} < minLevel {d.MinLevel} (maxLevel 0 = uncapped)");
+            }
+            InkStoryLint.Check(json);
+            return new ParsedEvent
+            {
+                Owner = d.Owner,
+                Name = d.Name.Trim(),
+                StoryJson = json,
+                MinLevel = d.MinLevel,
+                MaxLevel = d.MaxLevel,
+                Unique = d.Unique,
+            };
+        }
     }
 }

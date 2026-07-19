@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DawnKit.Core.Ownership;
+using UnityEngine;
 
 namespace DawnKit.Core.Lifecycle
 {
@@ -28,6 +29,16 @@ namespace DawnKit.Core.Lifecycle
         internal readonly List<EffectBinding> Bindings = new List<EffectBinding>();
     }
 
+    /// <summary>A durable opportunity-event registration and its live Dialogue
+    /// instance + story TextAsset (EVENT-SPEC §3). Both are null until injected,
+    /// or after being pruned by an asset wipe.</summary>
+    internal sealed class EventRegistration
+    {
+        internal ParsedEvent Spec;
+        internal Dialogue Event;
+        internal TextAsset Text;
+    }
+
     /// <summary>
     /// The engine registration store. Registrations are declarative and durable
     /// (SPEC.md §3.3): recorded here at Register(), applied by InjectionEngine at
@@ -40,6 +51,7 @@ namespace DawnKit.Core.Lifecycle
     {
         internal static readonly List<CardRegistration> Cards = new List<CardRegistration>();
         internal static readonly List<TalentRegistration> Talents = new List<TalentRegistration>();
+        internal static readonly List<EventRegistration> Events = new List<EventRegistration>();
         /// <summary>Owner display names in first-registration order (injection log grouping).</summary>
         internal static readonly List<string> OwnerOrder = new List<string>();
 
@@ -112,6 +124,41 @@ namespace DawnKit.Core.Lifecycle
             Talents.Add(new TalentRegistration { Spec = spec });
             NoteOwner(spec.Owner);
             RegistrationLedger.Record(new RegistrationInfo(spec.Owner, kind, spec.TalentId, spec.Name, true, null));
+            return RegisterResult.Success(kind, spec.Owner, spec.Name);
+        }
+
+        internal static RegisterResult RegisterEvent(EventDraft draft)
+        {
+            const string kind = "event";
+            if (string.IsNullOrEmpty(draft.Owner))
+            {
+                draft.Owner = OwnerResolver.ResolveCallingOwner();
+            }
+            string owner = draft.Owner;
+            ParsedEvent spec;
+            try
+            {
+                spec = Validator.ParseEvent(draft);
+            }
+            catch (ManifestError me)
+            {
+                DawnKitPlugin.Log.LogError($"[DawnKit] {owner}/{draft.Name ?? "?"}: {me.Message} — event skipped.");
+                RegistrationLedger.Record(new RegistrationInfo(owner, kind, 0, draft.Name, false, me.Message));
+                return RegisterResult.Failed(kind, owner, draft.Name, me.Message);
+            }
+
+            string conflict = FindEventConflict(spec.Owner, spec.Name);
+            if (conflict != null)
+            {
+                DawnKitPlugin.Log.LogError($"[DawnKit] {conflict} — event refused.");
+                RegistrationLedger.Record(new RegistrationInfo(spec.Owner, kind, 0, spec.Name, false, conflict));
+                RegistrationLedger.RecordConflict(spec.Owner, conflict);
+                return RegisterResult.Failed(kind, spec.Owner, spec.Name, conflict);
+            }
+
+            Events.Add(new EventRegistration { Spec = spec });
+            NoteOwner(spec.Owner);
+            RegistrationLedger.Record(new RegistrationInfo(spec.Owner, kind, 0, spec.Name, true, null));
             return RegisterResult.Success(kind, spec.Owner, spec.Name);
         }
 
@@ -256,6 +303,39 @@ namespace DawnKit.Core.Lifecycle
                         return shipped.ID == talentId
                             ? $"{owner}/{name}: talentID {talentId} already owned by the shipped talent pool (talent \"{shipped.name}\")"
                             : $"{owner}/{name}: name already owned by the shipped talent pool (talentID {shipped.ID})";
+                    }
+                }
+            }
+            catch
+            {
+                // Pool probing must never break Register(); injection re-checks.
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Event collision namespace (EVENT-SPEC §3): other mods' event names +
+        /// shipped Dialogue asset names + shipped dialogue TextAsset names — all
+        /// case-insensitive. Pools are only consulted once loaded (world assets);
+        /// injection re-checks either way.
+        /// </summary>
+        private static string FindEventConflict(string owner, string name)
+        {
+            RegistrationInfo other = RegistrationLedger.FindEventSpaceConflict(name);
+            if (other != null)
+            {
+                return $"{owner}/{name}: event name already owned by {other.Owner}";
+            }
+            try
+            {
+                if (AssetManager.allEvents != null && AssetManager.allEvents.Count > 0)
+                {
+                    Dialogue shipped = AssetManager.allEvents.FirstOrDefault(e => e != null &&
+                        (string.Equals(e.name, name, StringComparison.OrdinalIgnoreCase) ||
+                         (e.textFile != null && string.Equals(e.textFile.name, name, StringComparison.OrdinalIgnoreCase))));
+                    if (shipped != null && !Events.Any(r => r.Event == shipped))
+                    {
+                        return $"{owner}/{name}: event name already owned by the shipped event pool (event \"{shipped.name}\")";
                     }
                 }
             }

@@ -90,6 +90,21 @@ namespace DawnKit.Core.Ownership
             return null;
         }
 
+        /// <summary>Same idea for the event space — NAME-only (events have no
+        /// numeric IDs; EVENT-SPEC §3: name-keyed ledger kind "event").</summary>
+        internal static RegistrationInfo FindEventSpaceConflict(string name)
+        {
+            foreach (RegistrationInfo e in entries)
+            {
+                if (e.Ok && e.Kind == "event" &&
+                    string.Equals(e.Name, name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return e;
+                }
+            }
+            return null;
+        }
+
         /// <summary>
         /// Record a conflict for the boot report (register-time cross-mod refusals
         /// and injection-time shipped-pool collisions). Deduplicated by message so
