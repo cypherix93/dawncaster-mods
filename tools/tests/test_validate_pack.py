@@ -561,3 +561,109 @@ def test_cross_pack_weapon_and_power_collisions(tmp_path, monkeypatch):
     assert errors(findings, "name_collision")
     assert errors(findings, "talent_id_collision")   # power talent namespace
     assert errors(findings, "talent_name_collision")
+
+
+# ------------------------------------------------------------------ events
+
+GOOD_STORY = {
+    "inkVersion": 20,
+    "root": [["^A wayfarer waves at you.", {"#": "A Wayfarer"}, "\n",
+              "^>>>>gold:50", "\n", "end", {"#f": 1}], "done", {"#f": 1}],
+    "listDefs": {},
+}
+
+
+def good_event(**overrides):
+    ev = {"name": "Zz Test Wayfarer", "storyFile": "events/ZzTestWayfarer.ink.json",
+          "minLevel": 0, "maxLevel": 0, "unique": False}
+    ev.update(overrides)
+    return ev
+
+
+def event_pack(tmp_path, story=None, **event_overrides):
+    """Write a minimal events-only pack folder; returns its pack.json Path."""
+    pack_dir = tmp_path / "DC.ZzEvents"
+    (pack_dir / "events").mkdir(parents=True, exist_ok=True)
+    (pack_dir / "events" / "ZzTestWayfarer.ink.json").write_text(
+        json.dumps(story if story is not None else GOOD_STORY), encoding="utf-8")
+    manifest = {"schemaVersion": 2, "pack": "Zz Events",
+                "events": [good_event(**event_overrides)]}
+    pack_json = pack_dir / "pack.json"
+    pack_json.write_text(json.dumps(manifest), encoding="utf-8")
+    return pack_json
+
+
+def run_validator(pack_json):
+    manifest = json.loads(pack_json.read_text(encoding="utf-8"))
+    return vp.validate_pack(manifest, pack_json)
+
+
+def test_good_event_pack_passes(tmp_path):
+    findings = run_validator(event_pack(tmp_path))
+    assert errors(findings) == []
+
+
+def test_events_only_pack_needs_no_idblock(tmp_path):
+    findings = run_validator(event_pack(tmp_path))
+    assert errors(findings, "bad_id_block") == []
+
+
+def test_events_require_schema_version_2(tmp_path):
+    pack_json = event_pack(tmp_path)
+    manifest = json.loads(pack_json.read_text(encoding="utf-8"))
+    del manifest["schemaVersion"]
+    pack_json.write_text(json.dumps(manifest), encoding="utf-8")
+    findings = run_validator(pack_json)
+    assert errors(findings, "schema_version")
+
+
+def test_event_unknown_command_did_you_mean(tmp_path):
+    story = json.loads(json.dumps(GOOD_STORY))
+    story["root"][0][3] = "^>>>>glod:50"
+    findings = run_validator(event_pack(tmp_path, story=story))
+    errs = errors(findings, "unknown_command")
+    assert errs and "gold" in errs[0]["msg"]
+
+
+def test_event_command_case_insensitive(tmp_path):
+    # shipped stories use uppercase (Mimic: >>>>DIRECTCOMBAT) — the game
+    # lowercases before dispatch (DialogueActionHandler.cs:29), so GOLD is clean
+    story = json.loads(json.dumps(GOOD_STORY))
+    story["root"][0][3] = "^>>>>GOLD:50"
+    findings = run_validator(event_pack(tmp_path, story=story))
+    assert errors(findings, "unknown_command") == []
+
+
+def test_event_ink_version_pin(tmp_path):
+    story = dict(GOOD_STORY, inkVersion=21)
+    findings = run_validator(event_pack(tmp_path, story=story))
+    assert errors(findings, "bad_ink_version")
+
+
+def test_event_name_collision_with_shipped(tmp_path):
+    findings = run_validator(event_pack(tmp_path, name="Mimic"))
+    assert errors(findings, "event_name_collision")
+
+
+def test_event_goto_and_storyfunction(tmp_path):
+    story = json.loads(json.dumps(GOOD_STORY))
+    story["root"][0][3] = "^>>>goto:no_such_knot"
+    findings = run_validator(event_pack(tmp_path, story=story))
+    assert errors(findings, "goto_unknown_knot")
+
+    story["root"][0][3] = "^>>>STORYFUNCTION:foo:imbueCost"
+    findings = run_validator(event_pack(tmp_path, story=story))
+    assert errors(findings, "storyfunction_reserved")
+
+
+def test_event_level_gate_shape(tmp_path):
+    findings = run_validator(event_pack(tmp_path, minLevel=5, maxLevel=3))
+    assert errors(findings, "bad_levels")
+    # maxLevel 0 = uncapped is legal
+    findings = run_validator(event_pack(tmp_path, minLevel=5, maxLevel=0))
+    assert errors(findings, "bad_levels") == []
+
+
+def test_event_missing_story_file(tmp_path):
+    findings = run_validator(event_pack(tmp_path, storyFile="events/Nope.ink.json"))
+    assert errors(findings, "story_missing")

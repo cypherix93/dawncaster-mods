@@ -476,6 +476,137 @@ def validate_weapon_power(power: dict, idx: int, pack_dir: Path, id_block,
     _validate_art(power.get("art"), pack_dir, warn)
 
 
+REQUIRED_EVENT_FIELDS = ["name", "storyFile"]
+
+
+def _ink_strings(node):
+    """Every string anywhere in a compiled-Ink JSON tree."""
+    if isinstance(node, str):
+        yield node
+    elif isinstance(node, list):
+        for item in node:
+            yield from _ink_strings(item)
+    elif isinstance(node, dict):
+        for v in node.values():
+            yield from _ink_strings(v)
+
+
+def _ink_knots(story: dict) -> set[str]:
+    """Top-level knot names: keys of the trailing dict of the root container."""
+    root = story.get("root")
+    if isinstance(root, list) and root and isinstance(root[-1], dict):
+        return {k for k in root[-1] if k != "#f"}
+    return set()
+
+
+def _validate_story_actions(story: dict, where: str, err) -> None:
+    """Mirror DialogueManagerINK.RunDialogueAction (DialogueManagerINK.cs:1264-1303):
+    a `^`-text line containing `>>>` is stripped to the first '>', has >>>>/>>> and
+    newlines removed, and is ';'-split into ':'-separated statements. `goto` /
+    `STORYFUNCTION` match case-SENSITIVELY there; every other command is lowercased
+    by DialogueActionHandler.RunActionCode (line 29) — hence the lowercase compare."""
+    knots = _ink_knots(story)
+    vocab = gd.dialogue_commands()
+    for line in _ink_strings(story.get("root")):
+        if not line.startswith("^") or ">>>" not in line:
+            continue
+        code = line[1:]
+        gt = code.find(">")
+        if gt > 0:
+            code = code[gt:]
+        code = code.replace(">>>>", "").replace(">>>", "").replace("\n", "")
+        for stmt in code.split(";"):
+            if not stmt.strip():
+                continue
+            parts = stmt.split(":")
+            cmd = parts[0]
+            if cmd == "goto":
+                target = parts[1] if len(parts) > 1 else ""
+                if target not in knots:
+                    err("goto_unknown_knot",
+                        f"{where}: 'goto:{target}' targets a knot that does not exist "
+                        f"(knots: {', '.join(sorted(knots)) or 'none'})")
+                continue
+            if cmd == "STORYFUNCTION":
+                err("storyfunction_reserved",
+                    f"{where}: STORYFUNCTION is reserved in events v0.1 "
+                    "(EVENT-SPEC §11 #4)")
+                continue
+            if cmd.lower() in vocab:
+                continue
+            close = gd.did_you_mean(cmd.lower(), vocab)
+            hint = f" (did you mean {', '.join(map(repr, close))}?)" if close else ""
+            err("unknown_command",
+                f"{where}: dialogue action {cmd!r} not in "
+                f"dialogue-action-commands.txt{hint}")
+
+
+def validate_event(event: dict, idx: int, pack_dir: Path,
+                   findings: list[dict]) -> None:
+    """EVENT-SPEC.md §4: an opportunity event is a name + compiled Ink story +
+    optional level gates / unique flag. Identity is the NAME (Dialogue.name ==
+    TextAsset.name == doneEvents key) — collision-checked against BOTH shipped
+    namespaces and sibling packs."""
+    label = event.get("name") or f"events[{idx}]"
+    err = lambda check, msg: findings.append(_finding("ERROR", label, check, msg))   # noqa: E731
+    warn = lambda check, msg: findings.append(_finding("WARN", label, check, msg))   # noqa: E731
+
+    for f in REQUIRED_EVENT_FIELDS:
+        if f not in event:
+            err("missing_field", f"required field {f!r} missing")
+
+    name = event.get("name")
+    if isinstance(name, str) and name.strip():
+        if gd.event_pool_collision(name):
+            err("event_name_collision",
+                f"name {name!r} collides (case-insensitive) with a shipped "
+                "Dialogue asset or dialogue TextAsset name")
+    elif "name" in event:
+        err("shape", "name must be a non-empty string")
+
+    for fld in ("minLevel", "maxLevel"):
+        if fld in event and (not isinstance(event[fld], int) or event[fld] < 0):
+            err("bad_levels", f"{fld} must be a non-negative integer")
+    min_level = event.get("minLevel", 0)
+    max_level = event.get("maxLevel", 0)
+    if (isinstance(min_level, int) and isinstance(max_level, int)
+            and max_level != 0 and max_level < min_level):
+        err("bad_levels", f"maxLevel {max_level} < minLevel {min_level} "
+                          "(maxLevel 0 = uncapped)")
+    if "unique" in event and not isinstance(event["unique"], bool):
+        err("shape", "unique must be a boolean")
+
+    story_rel = event.get("storyFile")
+    if not (isinstance(story_rel, str) and story_rel):
+        if "storyFile" in event:
+            err("shape", "storyFile must be a pack-relative path string")
+        return
+    if not story_rel.endswith(".json"):
+        warn("story_extension", f"storyFile {story_rel!r} does not end in .json — "
+                                "the loader reads compiled Ink JSON, not .ink source")
+    story_path = pack_dir / story_rel
+    if not story_path.is_file():
+        err("story_missing", f"storyFile {story_rel} not found")
+        return
+    try:
+        story = json.loads(story_path.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError) as e:
+        err("story_invalid", f"storyFile {story_rel} is not valid JSON: {e}")
+        return
+    ink_version = story.get("inkVersion") if isinstance(story, dict) else None
+    if not isinstance(ink_version, int):
+        err("bad_ink_version", f"storyFile {story_rel} has no integer inkVersion — "
+                               "not compiled Ink JSON (compile with inklecate v1.0.0)")
+        return
+    if not (18 <= ink_version <= 20):
+        err("bad_ink_version",
+            f"inkVersion {ink_version} outside the supported range 18-20 — the game "
+            "runtime is pinned at 20 (EVENT-SPEC §1); compile with inklecate v1.0.0 "
+            "(v1.1+ emits 21, which the game rejects)")
+        return
+    _validate_story_actions(story, f"storyFile {story_rel}", err)
+
+
 def validate_pack(manifest: dict, pack_path: Path) -> list[dict]:
     findings: list[dict] = []
     perr = lambda check, msg: findings.append(_finding("ERROR", "<pack>", check, msg))  # noqa: E731
@@ -486,29 +617,45 @@ def validate_pack(manifest: dict, pack_path: Path) -> list[dict]:
     if not isinstance(pack_name, str) or not pack_name:
         perr("missing_field", "pack name missing")
 
-    id_block = manifest.get("idBlock")
-    if (not isinstance(id_block, list) or len(id_block) != 2
-            or not all(isinstance(x, int) for x in id_block) or id_block[0] > id_block[1]):
-        perr("bad_id_block", "idBlock must be [low, high] integers")
-        id_block = None
-    elif not (gd.MOD_ID_RANGE[0] <= id_block[0] and id_block[1] <= gd.MOD_ID_RANGE[1]):
-        perr("bad_id_block", f"idBlock {id_block} outside mod range {gd.MOD_ID_RANGE}")
-
     cards = manifest.get("cards")
     weapons = manifest.get("weapons")
     powers = manifest.get("weaponPowers")
     starting_cards = manifest.get("startingCards")
+    events = manifest.get("events")
     for field, val in (("cards", cards), ("weapons", weapons),
-                       ("weaponPowers", powers), ("startingCards", starting_cards)):
+                       ("weaponPowers", powers), ("startingCards", starting_cards),
+                       ("events", events)):
         if val is not None and not isinstance(val, list):
             perr("shape", f"{field} must be a list")
     cards = cards if isinstance(cards, list) else []
     weapons = weapons if isinstance(weapons, list) else []
     powers = powers if isinstance(powers, list) else []
     starting_cards = starting_cards if isinstance(starting_cards, list) else []
-    if not cards and not weapons and not powers and not starting_cards:
-        perr("no_cards", "manifest has no cards, weapons, weaponPowers, or startingCards")
+    events = events if isinstance(events, list) else []
+    if not cards and not weapons and not powers and not starting_cards and not events:
+        perr("no_cards", "manifest has no cards, weapons, weaponPowers, "
+                         "startingCards, or events")
         return findings
+
+    # events presence requires the v2 manifest handshake (EVENT-SPEC §4):
+    # a v1 loader must refuse the whole pack, not silently drop the events.
+    if events and manifest.get("schemaVersion") != 2:
+        perr("schema_version",
+             'manifest ships events but does not declare "schemaVersion": 2 — '
+             "older loaders would silently drop them (EVENT-SPEC §4 / SchemaGate)")
+
+    # idBlock is only required for content in the card/talent ID spaces —
+    # events are name-keyed (EVENT-SPEC §3: no numeric IDs, no ID-REGISTRY impact).
+    has_card_space_content = bool(cards or weapons or powers or starting_cards)
+    id_block = manifest.get("idBlock")
+    if id_block is None and not has_card_space_content:
+        pass  # events-only pack
+    elif (not isinstance(id_block, list) or len(id_block) != 2
+            or not all(isinstance(x, int) for x in id_block) or id_block[0] > id_block[1]):
+        perr("bad_id_block", "idBlock must be [low, high] integers")
+        id_block = None
+    elif not (gd.MOD_ID_RANGE[0] <= id_block[0] and id_block[1] <= gd.MOD_ID_RANGE[1]):
+        perr("bad_id_block", f"idBlock {id_block} outside mod range {gd.MOD_ID_RANGE}")
 
     # cross-pack collision surfaces (weapons and starting cards share the card
     # namespaces; weaponPowers get their own talentID/talent-name namespaces)
@@ -516,6 +663,7 @@ def validate_pack(manifest: dict, pack_path: Path) -> list[dict]:
     sibling_names: dict[str, str] = {}
     sibling_talent_ids: dict[int, str] = {}
     sibling_talent_names: dict[str, str] = {}
+    sibling_event_names: dict[str, str] = {}
     for sib_path, sib in gd.other_pack_manifests(exclude=pack_path):
         sib_name = sib.get("pack", sib_path.parent.name)
         for c in (list(sib.get("cards") or []) + list(sib.get("weapons") or [])
@@ -533,6 +681,9 @@ def validate_pack(manifest: dict, pack_path: Path) -> list[dict]:
                 sibling_talent_ids.setdefault(p["talentID"], sib_name)
             if isinstance(p.get("name"), str):
                 sibling_talent_names.setdefault(p["name"].lower(), sib_name)
+        for ev in sib.get("events") or []:
+            if isinstance(ev, dict) and isinstance(ev.get("name"), str):
+                sibling_event_names.setdefault(ev["name"].lower(), sib_name)
 
     pack_names_lower = {c["name"].lower() for c in cards + weapons + starting_cards
                         if isinstance(c, dict) and isinstance(c.get("name"), str)}
@@ -658,6 +809,25 @@ def validate_pack(manifest: dict, pack_path: Path) -> list[dict]:
                                          f"name collides with pack "
                                          f"{sibling_talent_names[nm.lower()]!r}"))
             seen_tnames.add(nm.lower())
+
+    # ---- events (EVENT-SPEC §4: name-keyed, no IDs)
+    seen_event_names: set[str] = set()
+    for i, ev in enumerate(events):
+        if not isinstance(ev, dict):
+            perr("shape", f"events[{i}] is not an object")
+            continue
+        label = ev.get("name") or f"events[{i}]"
+        validate_event(ev, i, pack_dir, findings)
+        nm = ev.get("name")
+        if isinstance(nm, str):
+            if nm.lower() in seen_event_names:
+                findings.append(_finding("ERROR", label, "event_name_collision",
+                                         "event name duplicated inside the pack"))
+            if nm.lower() in sibling_event_names:
+                findings.append(_finding("ERROR", label, "event_name_collision",
+                                         f"event name collides with pack "
+                                         f"{sibling_event_names[nm.lower()]!r}"))
+            seen_event_names.add(nm.lower())
 
     # pack-shape advisories (CARD-PACK-SPEC §4: 15/57/16/11/2 cost skew, 35/22/25/19 rarity)
     # — regular cards only; weapons are char-creation offerings, not pool material.
