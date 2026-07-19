@@ -58,13 +58,15 @@ def example_manifest() -> dict:
         .read_text(encoding="utf-8"))
 
 
-def test_schema_version_optional_and_v1_only(validator):
+def test_schema_version_optional_and_known_versions_only(validator):
     m = example_manifest()
     m.pop("schemaVersion", None)
     assert errors(validator, m) == []          # absent = 1
     m["schemaVersion"] = 1
     assert errors(validator, m) == []
-    m["schemaVersion"] = 2
+    m["schemaVersion"] = 2                     # v2 = events (EVENT-SPEC §4)
+    assert errors(validator, m) == []
+    m["schemaVersion"] = 3
     assert any("schemaVersion" in e for e in errors(validator, m))
 
 
@@ -219,3 +221,51 @@ def test_canonical_typos_documented(schema):
     assert "sic" in card["suffix"]["description"]
     assert "CardRariry" in card["rarity"]["description"]
     assert "sic" in card["rarity"]["description"]
+
+
+# ------------------------------------------------------------------- events
+
+def events_manifest() -> dict:
+    return {
+        "$schema": "../../../schemas/pack.schema.json",
+        "schemaVersion": 2,
+        "pack": "Zz Events",
+        "events": [{"name": "Hello Wayfarer",
+                    "storyFile": "events/HelloWayfarer.ink.json",
+                    "minLevel": 0, "maxLevel": 0, "unique": False}],
+    }
+
+
+def test_events_manifest_passes(validator):
+    assert errors(validator, events_manifest()) == []
+
+
+def test_events_require_schema_version_2(validator):
+    m = events_manifest()
+    del m["schemaVersion"]
+    assert errors(validator, m)
+    m["schemaVersion"] = 1
+    assert errors(validator, m)
+
+
+def test_events_only_pack_needs_no_idblock(validator):
+    m = events_manifest()
+    assert "idBlock" not in m and errors(validator, m) == []
+
+
+def test_cards_still_require_idblock(validator):
+    m = example_manifest()
+    del m["idBlock"]
+    assert errors(validator, m)
+
+
+def test_event_entry_shape(validator):
+    m = events_manifest()
+    del m["events"][0]["storyFile"]
+    assert errors(validator, m)
+    m = events_manifest()
+    m["events"][0]["bogusField"] = 1
+    assert errors(validator, m)
+    m = events_manifest()
+    m["events"][0]["minLevel"] = -1
+    assert errors(validator, m)

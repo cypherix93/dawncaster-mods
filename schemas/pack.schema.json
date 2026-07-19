@@ -6,8 +6,27 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "pack",
-    "idBlock"
+    "pack"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "anyOf": [
+          { "required": ["cards"] },
+          { "required": ["weapons"] },
+          { "required": ["weaponPowers"] },
+          { "required": ["startingCards"] }
+        ]
+      },
+      "then": { "required": ["idBlock"] }
+    },
+    {
+      "if": { "required": ["events"] },
+      "then": {
+        "required": ["schemaVersion"],
+        "properties": { "schemaVersion": { "const": 2 } }
+      }
+    }
   ],
   "anyOf": [
     {
@@ -49,6 +68,16 @@
           "minItems": 1
         }
       }
+    },
+    {
+      "required": [
+        "events"
+      ],
+      "properties": {
+        "events": {
+          "minItems": 1
+        }
+      }
     }
   ],
   "properties": {
@@ -59,10 +88,11 @@
     "schemaVersion": {
       "type": "integer",
       "enum": [
-        1
+        1,
+        2
       ],
       "default": 1,
-      "description": "Manifest schema version. Optional; absent means 1. The loader refuses manifests newer than it supports with a player-visible message instead of guessing."
+      "description": "Manifest schema version. Optional; absent means 1. The loader refuses manifests newer than it supports with a player-visible message instead of guessing. Version 2 adds the events array (EVENT-SPEC.md §4) and is REQUIRED whenever events are present."
     },
     "pack": {
       "type": "string",
@@ -108,12 +138,56 @@
         "$ref": "#/definitions/startingCard"
       }
     },
+    "events": {
+      "type": "array",
+      "description": "Opportunity events (EVENT-SPEC.md \u00a74, manifest v2) \u2014 Ink-scripted map encounters. Name-keyed (no numeric IDs; no idBlock needed for an events-only pack). Requires schemaVersion 2.",
+      "items": {
+        "$ref": "#/definitions/event"
+      }
+    },
     "meta": {
       "type": "object",
       "description": "Optional free-form pack-level notes (ignored by the loader)."
     }
   },
   "definitions": {
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "storyFile"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Event identity: Dialogue.name, TextAsset.name AND the persistent doneEvents key. Must be unique (case-insensitive) vs shipped Dialogue assets, shipped dialogue TextAssets, and every other installed pack."
+        },
+        "storyFile": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Pack-relative path to the COMPILED Ink JSON (inkVersion 18-20; inklecate v1.0.0 emits 20). Commit the .ink source beside it; the loader reads only this file."
+        },
+        "minLevel": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Dialogue.minimumLevel — lowest areaLevel that can roll the event."
+        },
+        "maxLevel": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Dialogue.maxLevel — highest areaLevel that can roll the event; 0 = uncapped."
+        },
+        "unique": {
+          "type": "boolean",
+          "default": false,
+          "description": "Once picked, never offered again in that save (persisted into PlayerData.doneEvents by the event NAME)."
+        }
+      }
+    },
     "condition": {
       "type": "object",
       "description": "A ConditionChecker condition. Used both as a card playCondition (gates whether the card can be played) and as an effect condition (gates whether the effect fires).",
