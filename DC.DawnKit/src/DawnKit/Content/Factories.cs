@@ -244,4 +244,45 @@ namespace DawnKit.Content.Factories
             reg.Talent = t;
         }
     }
+
+    /// <summary>
+    /// Safe Dialogue construction from a parsed event spec (EVENT-SPEC §3):
+    /// HideAndDontSave, non-null eventConditions (the P5 landmine class), and the
+    /// naming rule Dialogue.name == TextAsset.name == event name — the area deck
+    /// keys entries by textFile.name (AreaHandler.cs:508) while eventLookupCache
+    /// keys by Dialogue.name (AssetManager.cs:317); equality makes every lookup
+    /// path agree and keeps doneEvents entries human-readable.
+    /// </summary>
+    internal static class EventFactory
+    {
+        /// <summary>Construct the Dialogue + story TextAsset (nothing is added to AssetManager here).</summary>
+        internal static void Build(EventRegistration reg)
+        {
+            ParsedEvent m = reg.Spec;
+
+            var text = new TextAsset(m.StoryJson)
+            {
+                name = m.Name,
+                hideFlags = HideFlags.HideAndDontSave,
+            };
+
+            Dialogue ev = ScriptableObject.CreateInstance<Dialogue>();
+            ev.name = m.Name;
+            ev.hideFlags = HideFlags.HideAndDontSave;
+            ev.eventType = AreaHandler.EventTypes.opportunity;
+            ev.nameOverwrite = "";
+            ev.description = "";
+            ev.eventConditions = new List<AreaCondition>();
+            ev.textFile = text;
+            ev.minimumLevel = m.MinLevel;
+            ev.maxLevel = m.MaxLevel;
+            ev.unique = m.Unique;
+            // rarity stays default (Common=0, like shipped Mimic) — the rarity
+            // filter only applies to shrines; opportunity map nodes render the
+            // generic label + defaultOpportunityImage (EventDisplay.cs:783-789).
+
+            reg.Text = text;
+            reg.Event = ev;
+        }
+    }
 }

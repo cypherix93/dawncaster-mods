@@ -28,9 +28,9 @@ namespace DawnKit.Core.Lifecycle
 
         internal static void LoadPlayerAssets_Postfix() => InjectionEngine.OnPlayerAssetsLoaded("LoadPlayerAssets");
 
-        internal static void SetWorldAssetsLoaded_Postfix() => ReferenceResolver.Resolve("SetWorldAssetsLoaded", finalPass: true);
+        internal static void SetWorldAssetsLoaded_Postfix() => InjectionEngine.OnWorldAssetsLoaded("SetWorldAssetsLoaded");
 
-        internal static void LoadWorldAssets_Postfix() => ReferenceResolver.Resolve("LoadWorldAssets", finalPass: true);
+        internal static void LoadWorldAssets_Postfix() => InjectionEngine.OnWorldAssetsLoaded("LoadWorldAssets");
     }
 
     internal static class InjectionEngine
@@ -45,6 +45,107 @@ namespace DawnKit.Core.Lifecycle
             {
                 DawnKitPlugin.Log.LogError($"[DawnKit] Content injection failed (hook: {source}): {ex}");
             }
+        }
+
+        /// <summary>
+        /// Phase 2 (world assets): inject registered events, refresh the event
+        /// cache, THEN run the authoritative reference-resolution pass (which
+        /// emits the boot report — event counts included). EVENT-SPEC §6.
+        /// </summary>
+        internal static void OnWorldAssetsLoaded(string source)
+        {
+            try
+            {
+                InjectEvents(source);
+            }
+            catch (Exception ex)
+            {
+                DawnKitPlugin.Log.LogError($"[DawnKit] Event injection failed (hook: {source}): {ex}");
+            }
+            ReferenceResolver.Resolve(source, finalPass: true);
+        }
+
+        private static void InjectEvents(string source)
+        {
+            if (Registry.Events.Count == 0)
+            {
+                return;
+            }
+
+            // Prune instances wiped by ForceReloadAssets()/ClearAllCollections()
+            // (membership check, never object identity — same idiom as cards).
+            foreach (EventRegistration r in Registry.Events)
+            {
+                if (r.Event != null && !AssetManager.allEvents.Contains(r.Event))
+                {
+                    r.Event = null;
+                    r.Text = null;
+                }
+            }
+
+            int injectedTotal = 0;
+            foreach (string owner in Registry.OwnerOrder)
+            {
+                int injected = 0, skipped = 0;
+                foreach (EventRegistration r in Registry.Events)
+                {
+                    if (r.Spec.Owner != owner)
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        if (r.Event != null)
+                        {
+                            continue; // already injected this process and still present
+                        }
+                        string conflict = FindEventPoolConflict(r.Spec);
+                        if (conflict != null)
+                        {
+                            DawnKitPlugin.Log.LogError($"[DawnKit] {conflict} — event skipped.");
+                            RegistrationLedger.RecordConflict(r.Spec.Owner, conflict);
+                            skipped++;
+                            continue;
+                        }
+                        EventFactory.Build(r);
+                        AssetManager.allEvents.Add(r.Event);
+                        injected++;
+                    }
+                    catch (Exception ex)
+                    {
+                        DawnKitPlugin.Log.LogError($"[DawnKit] {r.Spec.Owner}/{r.Spec.Name}: unexpected error, event skipped: {ex}");
+                        skipped++;
+                    }
+                }
+                if (injected + skipped > 0)
+                {
+                    DawnKitPlugin.Log.LogInfo($"[DawnKit] {owner}: {injected} events injected, {skipped} skipped (hook: {source})");
+                }
+                injectedTotal += injected;
+            }
+
+            if (injectedTotal > 0)
+            {
+                // Rebuilds eventLookupCache — worldAssetsLoaded is already true in
+                // this postfix, so the event-cache branch runs (AssetManager.cs:310-320).
+                AssetManager.RefreshCaches();
+            }
+        }
+
+        /// <summary>Live-pool backstop: shipped + earlier-injected events, BOTH
+        /// name namespaces (Dialogue.name and textFile.name).</summary>
+        private static string FindEventPoolConflict(ParsedEvent spec)
+        {
+            Dialogue existing = AssetManager.allEvents.FirstOrDefault(e => e != null &&
+                (string.Equals(e.name, spec.Name, StringComparison.OrdinalIgnoreCase) ||
+                 (e.textFile != null && string.Equals(e.textFile.name, spec.Name, StringComparison.OrdinalIgnoreCase))));
+            if (existing == null)
+            {
+                return null;
+            }
+            EventRegistration ours = Registry.Events.FirstOrDefault(r => r.Event == existing);
+            string claimant = ours != null ? ours.Spec.Owner : "the shipped event pool";
+            return $"{spec.Owner}/{spec.Name}: event name already owned by {claimant} (event \"{existing.name}\")";
         }
 
         private static void InjectInner(string source)

@@ -60,12 +60,15 @@ namespace DawnKit.Core.Status
         private static int AppliedCount(string owner)
         {
             return Registry.Cards.Count(r => r.Spec.Owner == owner && r.Card != null) +
-                   Registry.Talents.Count(r => r.Spec.Owner == owner && r.Talent != null);
+                   Registry.Talents.Count(r => r.Spec.Owner == owner && r.Talent != null) +
+                   Registry.Events.Count(r => r.Spec.Owner == owner && r.Event != null);
         }
 
         internal static int TotalApplied()
         {
-            return Registry.Cards.Count(r => r.Card != null) + Registry.Talents.Count(r => r.Talent != null);
+            return Registry.Cards.Count(r => r.Card != null) +
+                   Registry.Talents.Count(r => r.Talent != null) +
+                   Registry.Events.Count(r => r.Event != null);
         }
 
         /// <summary>
@@ -196,6 +199,11 @@ namespace DawnKit.Core.Status
             {
                 return Registry.Talents.Any(r => r.Spec.Owner == e.Owner && r.Spec.TalentId == e.Id && r.Talent != null);
             }
+            if (e.Kind == "event")
+            {
+                return Registry.Events.Any(r => r.Spec.Owner == e.Owner &&
+                    string.Equals(r.Spec.Name, e.Name, StringComparison.OrdinalIgnoreCase) && r.Event != null);
+            }
             return Registry.Cards.Any(r => r.Spec.Owner == e.Owner && r.Spec.CardId == e.Id && r.Card != null);
         }
 
@@ -215,6 +223,17 @@ namespace DawnKit.Core.Status
                 string set = DawnKit.Sets.FindDisplayName((int)t.Spec.Expansion);
                 string classes = t.Spec.Classes != null && t.Spec.Classes.Count > 0 ? string.Join("/", t.Spec.Classes) : null;
                 return (set != null ? $" set={set}" : "") + (classes != null ? $" classes={classes}" : "");
+            }
+            if (e.Kind == "event")
+            {
+                EventRegistration ev = Registry.Events.FirstOrDefault(r => r.Spec.Owner == e.Owner &&
+                    string.Equals(r.Spec.Name, e.Name, StringComparison.OrdinalIgnoreCase));
+                if (ev == null)
+                {
+                    return "";
+                }
+                string levels = ev.Spec.MaxLevel == 0 ? $"{ev.Spec.MinLevel}+" : $"{ev.Spec.MinLevel}-{ev.Spec.MaxLevel}";
+                return $" levels={levels}{(ev.Spec.Unique ? " unique" : "")}";
             }
             CardRegistration c = Registry.Cards.FirstOrDefault(r => r.Spec.Owner == e.Owner && r.Spec.CardId == e.Id);
             if (c == null)
