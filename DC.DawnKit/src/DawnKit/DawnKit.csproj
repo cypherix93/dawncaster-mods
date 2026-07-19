@@ -51,12 +51,21 @@
       <HintPath>$(GameDir)\Dawncaster_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(GameDir)\Dawncaster_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Ink-Libraries">
+      <HintPath>$(GameDir)\Dawncaster_Data\Managed\Ink-Libraries.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <!-- Effect-DSL + talent-DSL command vocabularies, embedded for Register()-time codeLine validation. -->
     <EmbeddedResource Include="..\..\..\docs\research\reference\effect-commands.txt" LogicalName="DawnKit.effect-commands.txt" />
     <EmbeddedResource Include="..\..\..\docs\research\reference\talent-commands.txt" LogicalName="DawnKit.talent-commands.txt" />
+    <EmbeddedResource Include="..\..\..\docs\research\reference\dialogue-action-commands.txt" LogicalName="DawnKit.dialogue-action-commands.txt" />
   </ItemGroup>
 
 </Project>

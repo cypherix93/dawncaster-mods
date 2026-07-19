@@ -18,6 +18,12 @@ namespace DawnKit.Content.Vocabulary
         internal static HashSet<string> EffectCommands { get; private set; }
         internal static HashSet<string> TalentCommands { get; private set; }
 
+        /// <summary>Dialogue-action commands (EVENT-SPEC §1): the 99
+        /// DialogueActionHandler.RunActionCode switch labels. The game lowercases
+        /// before dispatch (DialogueActionHandler.cs:29) — case-INSENSITIVE set,
+        /// unlike the ordinal effect/talent DSL.</summary>
+        internal static HashSet<string> DialogueCommands { get; private set; }
+
         internal static void Initialize()
         {
             EffectCommands = LoadCommandFile("effect-commands.txt");
@@ -31,7 +37,11 @@ namespace DawnKit.Content.Vocabulary
             {
                 TalentCommands = null; // half a vocabulary would misreport — disable instead
             }
-            DawnKitPlugin.Log.LogInfo($"[DawnKit] Command vocabulary: {(EffectCommands != null ? EffectCommands.Count.ToString() : "unavailable")} effect / {(TalentCommands != null ? TalentCommands.Count.ToString() : "unavailable")} talent-union.");
+            HashSet<string> dialogue = LoadCommandFile("dialogue-action-commands.txt");
+            DialogueCommands = dialogue != null
+                ? new HashSet<string>(dialogue, StringComparer.OrdinalIgnoreCase)
+                : null;
+            DawnKitPlugin.Log.LogInfo($"[DawnKit] Command vocabulary: {(EffectCommands != null ? EffectCommands.Count.ToString() : "unavailable")} effect / {(TalentCommands != null ? TalentCommands.Count.ToString() : "unavailable")} talent-union / {(DialogueCommands != null ? DialogueCommands.Count.ToString() : "unavailable")} dialogue.");
         }
 
         private static HashSet<string> LoadCommandFile(string fileName)
