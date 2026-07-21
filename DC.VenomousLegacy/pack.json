@@ -1,7 +1,10 @@
 {
   "$schema": "../schemas/pack.schema.json",
   "pack": "VenomousLegacy",
-  "idBlock": [700000100, 700000199],
+  "idBlock": [
+    700000100,
+    700000199
+  ],
   "cards": [
     {
       "name": "Weeping Blade",
@@ -11,7 +14,9 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Common",
-      "cost": { "STR": 1 },
+      "cost": {
+        "STR": 1
+      },
       "description": "Deal [damage:2] damage twice. \nIf the target is <b>Bleeding</b>, attack a third time.",
       "keywords": [],
       "cardKeywords": [],
@@ -46,7 +51,12 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "StatusOnOpponent", "op": "Is", "target": "bleeding", "ignoreForDisplay": false }
+            {
+              "value": "StatusOnOpponent",
+              "op": "Is",
+              "target": "bleeding",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -71,7 +81,9 @@
       "cost": {},
       "description": "Inflict <b>2 Bleeding</b>. \n<b>Frenzy:</b> Inflict <b>2 Poison</b>.",
       "keywords": [],
-      "cardKeywords": ["frenzy"],
+      "cardKeywords": [
+        "frenzy"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -94,7 +106,12 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "Frenzy", "op": "Is", "target": "", "ignoreForDisplay": false }
+            {
+              "value": "Frenzy",
+              "op": "Is",
+              "target": "",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -116,10 +133,15 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Common",
-      "cost": { "DEXSTR": 1 },
+      "cost": {
+        "DEXSTR": 1
+      },
       "description": "Inflict <b>4 Poison</b>. \n<b>Bloodlust:</b> Gain <b>2 Potency</b>.",
       "keywords": [],
-      "cardKeywords": ["bloodlust", "potency"],
+      "cardKeywords": [
+        "bloodlust",
+        "potency"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -142,7 +164,12 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "Bloodlust", "op": "Is", "target": "", "ignoreForDisplay": false }
+            {
+              "value": "Bloodlust",
+              "op": "Is",
+              "target": "",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -164,10 +191,14 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Common",
-      "cost": { "DEX": 1 },
+      "cost": {
+        "DEX": 1
+      },
       "description": "Inflict <b>4 Poison</b> \nand <b>1 Infected</b>.",
       "keywords": [],
-      "cardKeywords": ["affliction"],
+      "cardKeywords": [
+        "affliction"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -210,10 +241,15 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Common",
-      "cost": { "STR": 1 },
+      "cost": {
+        "STR": 1
+      },
       "description": "Deal [damage:3] damage. \n<b>On Hit:</b> If the target has 5 or more <b>Bleeding</b>, inflict a <b>Deep Wound</b>.",
       "keywords": [],
-      "cardKeywords": ["deep wound", "on hit"],
+      "cardKeywords": [
+        "deep wound",
+        "on hit"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -236,8 +272,18 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "AnyValue", "op": "IsMoreThan", "target": "[[lastDamage]]:0", "ignoreForDisplay": false },
-            { "value": "AnyValue", "op": "IsMoreThan", "target": "[[other(status)Bleeding]]:4", "ignoreForDisplay": false }
+            {
+              "value": "AnyValue",
+              "op": "IsMoreThan",
+              "target": "[[lastDamage]]:0",
+              "ignoreForDisplay": false
+            },
+            {
+              "value": "AnyValue",
+              "op": "IsMoreThan",
+              "target": "[[other(status)Bleeding]]:4",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -259,10 +305,14 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Uncommon",
-      "cost": { "DEX": 1 },
+      "cost": {
+        "DEX": 1
+      },
       "description": "Inflict <b>2 Infected</b>. \nThe target discards all <b>Heal</b> cards.",
       "keywords": [],
-      "cardKeywords": ["affliction"],
+      "cardKeywords": [
+        "affliction"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -305,10 +355,14 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Uncommon",
-      "cost": { "DEX": 1 },
+      "cost": {
+        "DEX": 1
+      },
       "description": "Inflict <b>2 Sickened</b> \nand <b>1 Infected</b>.",
       "keywords": [],
-      "cardKeywords": ["affliction"],
+      "cardKeywords": [
+        "affliction"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -351,10 +405,17 @@
       "category": "Enchantment",
       "suffix": "None",
       "rarity": "Uncommon",
-      "cost": { "DEXSTR": 1 },
+      "cost": {
+        "DEXSTR": 1
+      },
       "description": "This combat, whenever you inflict a <b>Deep Wound</b>, inflict <b>3 Poison</b> and <b>2 Bleeding</b>.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["deep wound", "affliction"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "deep wound",
+        "affliction"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -413,10 +474,16 @@
       "category": "Enchantment",
       "suffix": "None",
       "rarity": "Rare",
-      "cost": { "DEX": 2 },
+      "cost": {
+        "DEX": 2
+      },
       "description": "This combat, whenever <b>Poison</b> damage is dealt, gain <b>1 Armor</b>.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["poison"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "poison"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -446,7 +513,12 @@
             "referenceCards": [],
             "hideReferenceCards": false,
             "conditions": [
-              { "value": "DamageType", "op": "Is", "target": "poison", "ignoreForDisplay": false }
+              {
+                "value": "DamageType",
+                "op": "Is",
+                "target": "poison",
+                "ignoreForDisplay": false
+              }
             ]
           }
         ]
@@ -468,10 +540,14 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Rare",
-      "cost": { "DEXSTR": 2 },
+      "cost": {
+        "DEXSTR": 2
+      },
       "description": "Inflict <b>3 Infected</b>. \nThis combat, whenever your foe gains HEALTH, they gain <b>3 Poison</b>.",
       "keywords": [],
-      "cardKeywords": ["affliction"],
+      "cardKeywords": [
+        "affliction"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -530,10 +606,16 @@
       "category": "Enchantment",
       "suffix": "None",
       "rarity": "Rare",
-      "cost": { "STR": 2 },
+      "cost": {
+        "STR": 2
+      },
       "description": "This combat, deal 1 <b>Piercing</b> damage whenever your foe plays an Action.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["piercing"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "piercing"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -583,15 +665,24 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Legendary",
-      "cost": { "DEXSTR": 3 },
+      "cost": {
+        "DEXSTR": 3
+      },
       "description": "Double your foe's Afflictions. \nDraw a card for each different Affliction on them ([[otherAfflictions]]).",
       "keywords": [],
-      "cardKeywords": ["affliction"],
+      "cardKeywords": [
+        "affliction"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
       "playConditions": [
-        { "value": "AnyValue", "op": "IsMoreThan", "target": "[[otherAfflictions]]:0", "ignoreForDisplay": false }
+        {
+          "value": "AnyValue",
+          "op": "IsMoreThan",
+          "target": "[[otherAfflictions]]:0",
+          "ignoreForDisplay": false
+        }
       ],
       "effects": [
         {
@@ -621,349 +712,6 @@
         "whyDifferent": "Aura of Venom doubles Poison alone every turn; Profanity adds flat +1/+3 to each. This is a one-shot double of EVERYTHING - Poison, Bleeding, Infected, Decay, Bane - plus draw scaling with breadth ([[otherAfflictions]] counts DISTINCT afflictions, cf. Drain_Soul.json vs otherTotalAfflictions). The reward is explicitly for going WIDE across both archetypes and the Infected angle, which is this pack's whole thesis; mono-poison decks get more from Aura of Venom, so it dodges strictly-better.",
         "intendedDeck": "The dual-attrition pile's finisher: Septic Bloom + Lacerate + Ague Fever put 3-4 affliction types out, then Metastasis doubles ~25-35 stacks and refills your hand 3-4 cards.",
         "powerNotes": "Legendary 3-cost anchors: Avatar_of_Blight.json (DEX 3 L), Toxic_Bloom.json (DEXSTR 3 L). Value scales with setup investment per spec 4 conditional rule; playCondition (AnyValue IsMoreThan [[otherAfflictions]]:0, idiom verified in Cling_to_Sanity.json play-condition shape) prevents dead draws. doubleafflictions is in effect-commands.txt; shipped usage is only 'doubleafflictions:self' (Falling_Apart.json). UNVERIFIED: the ':other' target argument - if unsupported, fallback is bare 'doubleafflictions' (default-other like most inflict-family commands) or Profanity-style 'increaseafflictions:[[otherAfflictions]]'; needs sim check before shipping. Draw is clamped by hand cap 10 (DeckHandler)."
-      }
-    }
-  ],
-  "weapons": [
-    {
-      "name": "Blightpin Stiletto",
-      "cardID": 700000199,
-      "expansion": "Extended",
-      "type": "Melee",
-      "category": "BasicAttack",
-      "suffix": "None",
-      "rarity": "Common",
-      "cost": {
-        "Neutral": 1
-      },
-      "description": "Deal [damage:1] damage.\nApply <b>2 Poison</b>.",
-      "keywords": [],
-      "cardKeywords": [
-        "basic",
-        "poison"
-      ],
-      "utilityNumber": "",
-      "charges": 0,
-      "flags": [
-        "excludeFromRewards"
-      ],
-      "playConditions": [],
-      "effects": [
-        {
-          "trigger": "PlayAction",
-          "codeLine": "damage:1",
-          "forecast": true,
-          "referenceStatus": null,
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": []
-        },
-        {
-          "trigger": "PlayAction",
-          "codeLine": "inflict:2",
-          "forecast": true,
-          "referenceStatus": "Poison",
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": []
-        }
-      ],
-      "enchantment": null,
-      "art": "art/BlightpinStiletto.png",
-      "classes": [
-        "Rogue"
-      ],
-      "meta": {
-        "archetype": "poison tick-frequency enabler (basic-attack slot)",
-        "nearestExisting": "Warmace.json (only shipped weapon applying an affliction, Brittle=lastDamage at cost 2); Poison_Dart.json (damage:1; inflict:5 Poison at 1 cost)",
-        "whyDifferent": "The only starting weapon that gives up base damage (1 vs the universal 2) to buy affliction stacks. Poison stacks are duration, not magnitude (Part III) - so a repeating 2-Poison drip means the tick engine never runs dry, which is exactly the axis the pack's payoffs (Potency, tick-frequency) scale on. No shipped weapon makes a stat sacrifice for archetype fuel.",
-        "intendedDeck": "VenomousLegacy poison shells: Septic Bloom/Ague Fever payoffs stay live without spending deck slots on reapplication.",
-        "powerNotes": "Budget: 1 immediate + 2 delayed-flat (~1/foe-play) approximates the 2-damage weapon par; strictly worse upfront tempo is the price of the engine. Poison eats incoming foe healing 1:1, a defensive micro-rider already priced into shipped poison commons."
-      }
-    },
-    {
-      "name": "Flaying Hook",
-      "cardID": 700000198,
-      "expansion": "Extended",
-      "type": "Melee",
-      "category": "BasicAttack",
-      "suffix": "None",
-      "rarity": "Common",
-      "cost": {
-        "Neutral": 1
-      },
-      "description": "Deal [damage:2] damage.\n<b>Bloodlust:</b> Deal 2 extra damage and apply <b>1 Bleeding</b>.",
-      "keywords": [],
-      "cardKeywords": [
-        "basic",
-        "bloodlust"
-      ],
-      "utilityNumber": "",
-      "charges": 0,
-      "flags": [
-        "excludeFromRewards"
-      ],
-      "playConditions": [],
-      "effects": [
-        {
-          "trigger": "PlayAction",
-          "codeLine": "damage:2",
-          "forecast": true,
-          "referenceStatus": null,
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": []
-        },
-        {
-          "trigger": "None",
-          "codeLine": "adddamage:2",
-          "forecast": true,
-          "referenceStatus": null,
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": [
-            {
-              "value": "Bloodlust",
-              "op": "Is",
-              "target": "",
-              "ignoreForDisplay": false
-            }
-          ]
-        },
-        {
-          "trigger": "PlayAction",
-          "codeLine": "inflict:1",
-          "forecast": false,
-          "referenceStatus": "Bleeding",
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": [
-            {
-              "value": "Bloodlust",
-              "op": "Is",
-              "target": "",
-              "ignoreForDisplay": false
-            }
-          ]
-        }
-      ],
-      "enchantment": null,
-      "art": "art/FlayingHook.png",
-      "classes": [
-        "Hunter"
-      ],
-      "meta": {
-        "archetype": "bleed-maintenance payoff (basic-attack slot)",
-        "nearestExisting": "Daggers.json (statline twin: 2 + condition-gated adddamage rider); Cleavers.json (Frenzy-gated bonus + Bleeding)",
-        "whyDifferent": "Daggers' rider is positional (Ambush - first card of the round); Flaying Hook's is archetype-state (Bloodlust: foe Bleeding or bleed damage dealt this turn). It converts maintained bleed into sustained basic-attack pressure that also re-feeds the bleed - a payoff loop, not an opener. No shipped weapon reads an affliction on the foe.",
-        "intendedDeck": "STR bleed-tempo (Weeping Blade, Rupture, Spiteful Ground): one bleed source turns every subsequent basic attack into 4 damage + upkeep.",
-        "powerNotes": "Statline par: base 2 at 1 Neutral. Gated total (4 + 1 Bleeding) needs an external bleed starter and sits below Daggers' shipped ceiling (Ambush = (2+3)*2 = 10, available every round when led). adddamage on trigger None + condition is Daggers' exact encoding."
-      }
-    }
-  ],
-  "weaponPowers": [
-    {
-      "name": "Festering Weapon",
-      "talentID": 700000197,
-      "description": "Use your weapon power to start next combat with <b>Infected</b> equal to your level ([[myLevel]]) on your foe.",
-      "flavortext": "",
-      "cooldown": 2,
-      "keywords": [],
-      "effects": [
-        {
-          "trigger": "ActivateWeapon",
-          "codeLine": "startstatus:[[myLevel]]:false",
-          "forecast": true,
-          "referenceStatus": "Infected",
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": []
-        }
-      ],
-      "requirements": {
-        "rDEX": 0,
-        "rINT": 0,
-        "rSTR": 0
-      },
-      "classes": [
-        "Rogue",
-        "Hunter"
-      ],
-      "art": "art/FesteringWeapon.png",
-      "meta": {
-        "archetype": "Infected flagship (first player-side access)",
-        "nearestExisting": "Baneful Weapon (cd2: startstatus Poison [[myLevel]]*2 on foe + poison-lifegain passive)",
-        "whyDifferent": "All six shipped Infected users are Monster-rarity - no player card or talent can apply it (pack DESIGN-NOTES flagship gap). This is the run's only faucet: Infected ticks per card the foe discards and only clears when the foe heals, so it pressures discard-heavy enemies in a way Poison/Bleeding cannot.",
-        "intendedDeck": "VenomousLegacy attrition: Quarantine/Symbiotic Carapace defend while Infected grinds; poison alongside it blanks enemy self-healing (heals are eaten before they clear Infected).",
-        "powerNotes": "cd2 curve point: level-scaled affliction opener (Baneful = 2xlvl Poison + passive). Runs 1xlvl with no passive because Infected's per-stack value is higher (repeats every foe discard, no natural decay). Command startstatus:X:false is shipped-verbatim; Infected as its referenceStatus is UNVERIFIED (no shipped startstatus user; status asset exists, excludeFromRandom only gates randomstatus rolls) - flagged for in-game QA."
-      }
-    },
-    {
-      "name": "Hemorrhaging Weapon",
-      "talentID": 700000196,
-      "description": "Use your weapon power to inflict <b>Bleeding</b> equal to twice your level ([[myLevel]]*2) at the start of next combat. <b>Passive:</b> Whenever you inflict a <b>Deep Wound</b>, gain <b>3 HEALTH</b>.",
-      "flavortext": "",
-      "cooldown": 3,
-      "keywords": [],
-      "effects": [
-        {
-          "trigger": "ActivateWeapon",
-          "codeLine": "startstatus:[[myLevel]]*2:false",
-          "forecast": true,
-          "referenceStatus": "Bleeding",
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": []
-        },
-        {
-          "trigger": "Deepwound",
-          "codeLine": "heal:3",
-          "forecast": false,
-          "referenceStatus": null,
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": []
-        }
-      ],
-      "requirements": {
-        "rDEX": 0,
-        "rINT": 0,
-        "rSTR": 0
-      },
-      "classes": [
-        "Hunter",
-        "Warrior"
-      ],
-      "art": "art/HemorrhagingWeapon.png",
-      "meta": {
-        "archetype": "bleed opener + Deep Wound sustain",
-        "nearestExisting": "Serrated Weapon (cd2: startstatus Bleeding [[myLevel]]*2 + Lifedrinker Venom potion); Feral Weapon OLD (cd3: same bleed line alone)",
-        "whyDifferent": "Serrated's second half is a one-shot potion; Hemorrhaging's is a permanent rider on the Deepwound trigger - the first tier-0 talent that pays off the threshold-execution half of the bleed archetype instead of the stack half.",
-        "intendedDeck": "Bleed decks running Rupture/deepwound lines; opener guarantees Bloodlust is live for Flaying Hook/Weeping Blade on turn 1.",
-        "powerNotes": "cd3 curve point: shipped cd3 = 2-3xlvl status or free card. Identical primary payload to Feral OLD (cd3) plus a small conditional rider (heal 3, gated on landing Deep Wounds - max 5/combat via E_maxwounds) mirrors Singing Weapon's on-Kill heal rider scale. UNVERIFIED: Deepwound as a rider trigger has no shipped tier-0 precedent (legal GameTriggers member; heal-on-trigger rider pattern is shipped)."
-      }
-    }
-  ],
-  "startingCards": [
-    {
-      "name": "Twin Fangs",
-      "cardID": 700000195,
-      "expansion": "Extended",
-      "type": "Melee",
-      "category": "Action",
-      "suffix": "None",
-      "rarity": "Common",
-      "cost": {
-        "DEX": 1
-      },
-      "description": "Make a Basic Attack.\nIf your foe is <b>Poisoned</b>, make another.",
-      "keywords": [],
-      "cardKeywords": [
-        "affliction"
-      ],
-      "utilityNumber": "",
-      "charges": 0,
-      "flags": [],
-      "playConditions": [],
-      "effects": [
-        {
-          "trigger": "PlayAction",
-          "codeLine": "basicattack:1",
-          "forecast": false,
-          "referenceStatus": null,
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": []
-        },
-        {
-          "trigger": "PlayAction",
-          "codeLine": "basicattack:1",
-          "forecast": false,
-          "referenceStatus": null,
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": [
-            {
-              "value": "StatusOnOpponent",
-              "op": "Is",
-              "target": "poison",
-              "ignoreForDisplay": false
-            }
-          ]
-        }
-      ],
-      "enchantment": null,
-      "art": "art/TwinFangs.png",
-      "classes": [
-        "Rogue"
-      ],
-      "meta": {
-        "archetype": "poison tick-frequency starting card (Rogue half of the loadout)",
-        "nearestExisting": "Sneak_Attack.json (Rogue default: 4 dmg + Ambush reset); Mindstrike.json (Seeker default: discard 1, 2 basic attacks, 1 Focus)",
-        "whyDifferent": "0 of the 63 shipped starting cards reference Poison at all (scripted scan of descriptions + codeLines). Mindstrike's double basic is unconditional; Twin Fangs' repeat is status-gated: with Blightpin Stiletto the first fang's 2 Poison enables the second (the loadout's designed self-synergy - each extra basic is also an extra play, i.e. an extra Poison tick), while with shipped Daggers it needs an external poison source. StatusOnOpponent Is 'poison' matches ConditionChecker.CheckEffect's lowercased-name comparison (shipped targets: 'bleeding', 'burning').",
-        "intendedDeck": "Loadout: Blightpin Stiletto (1 dmg + 2 Poison basic) + Festering Weapon + this. Turn 1: fang, poison lands, fang again - the pack thesis (tick frequency, not stack size) as the opening play.",
-        "powerNotes": "Starting-card curve: cost 1 (81% mode), Common, 2 effect lines, basic-attack skeleton (7/63). With Blightpin: 2 x (1 dmg + 2 Poison) = 2 dmg + 4 Poison for 1 DEX ~ Poison_Dart (C, 1-cost: 1 dmg + 5 Poison) / Toxicity (5 Poison + 1 Potency). Whiff mode (no poison): a single basic, below par - the gap is the archetype commitment price, same structure as Sneak Attack outside Ambush decks."
-      }
-    },
-    {
-      "name": "First Blood",
-      "cardID": 700000194,
-      "expansion": "Extended",
-      "type": "Melee",
-      "category": "Action",
-      "suffix": "None",
-      "rarity": "Common",
-      "cost": {
-        "STR": 1
-      },
-      "description": "Make a Basic Attack.\n<b>On Hit:</b> Inflict <b>2 Bleeding</b>.",
-      "keywords": [],
-      "cardKeywords": [
-        "affliction"
-      ],
-      "utilityNumber": "",
-      "charges": 0,
-      "flags": [],
-      "playConditions": [],
-      "effects": [
-        {
-          "trigger": "PlayAction",
-          "codeLine": "basicattack:1",
-          "forecast": false,
-          "referenceStatus": null,
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": []
-        },
-        {
-          "trigger": "PlayAction",
-          "codeLine": "inflict:2",
-          "forecast": false,
-          "referenceStatus": "Bleeding",
-          "referenceCards": [],
-          "hideReferenceCards": false,
-          "conditions": [
-            {
-              "value": "AnyValue",
-              "op": "IsMoreThan",
-              "target": "[[lastDamage]]:0",
-              "ignoreForDisplay": false
-            }
-          ]
-        }
-      ],
-      "enchantment": null,
-      "art": "art/FirstBlood.png",
-      "classes": [
-        "Hunter",
-        "Warrior"
-      ],
-      "meta": {
-        "archetype": "bleed ignition starting card (Hunter/Warrior half of the loadout)",
-        "nearestExisting": "Feral_Strikes.json (Hunter default: basic attack + Frenzy: Anger per hit); Cleavers.json (C, 1-cost: 2 dmg + Frenzy-gated 2 dmg + 3 Bleeding; not a starting card)",
-        "whyDifferent": "0 of the 63 shipped starting cards inflict Bleeding (scripted scan). Feral Strikes reads the player's own Frenzy; First Blood seeds the FOE-side state every other loadout piece pays off: Flaying Hook's Bloodlust rider (+2 dmg, +1 Bleeding) and Weeping Blade's third hit both need the foe already bleeding. The On Hit gate is the shipped decoded idiom (AnyValue IsMoreThan [[lastDamage]]:0 - Bolstered_Strike/Rupture) so a blocked basic starts nothing.",
-        "intendedDeck": "Loadout: Flaying Hook (Bloodlust rider basic) + Hemorrhaging Weapon (bleed opener) + this. Even without the power's opener, swing 1 arms every Bloodlust gate in the pack from turn 1.",
-        "powerNotes": "Starting-card curve: cost 1 (81% mode), Common, 2 effect lines, basic-attack skeleton (7/63). Basic (~2 dmg) + on-hit 2 Bleeding for 1 STR - under Cleavers' 1-cost package (2 + gated 2 dmg + 3 Bleeding), and under in-pack Weeping Blade's conditional 6-dmg ceiling. Reliability card, not a power card."
       }
     }
   ]

@@ -1,19 +1,40 @@
 # VenomousLegacy — design notes
 
+> **v2.0 (2026-07-20): CARDS-ONLY PACK.** The entire loadout (Blightpin Stiletto,
+> Flaying Hook, Festering Weapon, Hemorrhaging Weapon, Twin Fangs, First Blood) is
+> **retired**: the shipped Khanjali (self-Sinister compounding poison weapon) owns the
+> poison-weapon lane outright, so the Rogue loadout slot moved to **DC.FinalEncore**
+> (Perform archetype) and the Warrior/Hunter slot to **DC.PowderAndPatience**. The 12
+> reward-pool cards below remain — they are archetype-agnostic attrition cards that
+> Khanjali decks *want*, not compete with. The loadout sections below are kept as
+> historical record; their IDs (700000194–700000199) are permanently retired in
+> docs/ID-REGISTRY.md and must never be reused.
+
 **Cluster:** Attrition — poison/affliction stacking, bleed/Deep Wound, the Infected angle.
 **ID block:** 700000100–700000111 (12 cards). **Colors:** DEX (green) for poison/Infected,
 STR (red) for bleed/Deep Wound, DEXSTR (orange) for bridges — matches the shipped pool
 (Toxicity/Poison Coating/Aura of Venom = DEX; Cutting Words/Headshot/Duel Mastery = STR;
 Lacerate/Festering Wounds/Blood Fever = DEXSTR).
 
-**Pack thesis.** Three timing facts from GAME-MECHANICS Part III are treated as design
-material, not trivia:
+**Pack thesis (v2 — corrected 2026-07 after the archetype audit).** The poison
+archetype's currency is the **stack**, and the pack is a stack engine with three
+verified axes:
 
-1. **Poison ticks when the holder plays a card** (Poison.json `effectTrigger: PlayAction`),
-   flat 1/tick — so tick *frequency*, not stack size, is the untapped axis.
-2. **Bleeding ticks when the holder is dealt damage** (Bleeding.json `DealtDamage`) — so hit
+1. **Stacks are a readable resource, not just duration.** 18 shipped cards read
+   `[[other(status)Poison]]`-family tokens (scripted scan: Plague Strike, Vile Strike,
+   Venomancing, Toxic Salve/Vipers Touch doubling, Sleeping/Sapping Venom thresholds,
+   Deadly Poisons' 100-stack **Slay** capstone), and Poison blocks incoming healing
+   **1 per stack** (Poison.json description; SpellEffects.DoHealing). Big stacks are
+   what the shipped pool pays off — the pack must build and accelerate them.
+2. **Tick magnitude is the untapped axis.** The tick formula is
+   `CombatStat.poisonDamage` (default 1) per holder card-play
+   (SpellEffects.Poison, SpellEffects.cs:13555) — and the two raisers are
+   `addpoisondamage` (**0 shipped card users**, scripted scan) and `Potency` (+stacks
+   to every affliction tick you inflict). Tick *frequency* (holder card-plays,
+   Spiteful Ground's angle) remains real but secondary.
+3. **Bleeding ticks when the holder is dealt damage** (Bleeding.json `DealtDamage`) — so hit
    *count* is a bleed payoff, and overstacked bleed is wasted (−1/tick) until converted.
-3. **Infected ticks per card the holder discards and is wiped by ANY health gain**
+4. **Infected ticks per card the holder discards and is wiped by ANY health gain**
    (Infected.json `Discard` / `clearAt: GainHealth`) — while **Poison eats incoming healing
    1:1 before it lands** (DoHealing). Poison therefore *shields* Infected from heals. No
    shipped player card touches Infected at all (all six users are Monster-rarity) — that gap
@@ -227,6 +248,10 @@ Salt the Wound.
 
 ## Validation done offline
 
+- **Archetype audit scans (2026-07):** 18 shipped cards read poison-stack tokens
+  (`[[other(status)Poison]]`-family, scripted scan over `tools/out/data/Card/`);
+  `addpoisondamage` has **0** shipped card users (same scan); the full basic-keyword
+  weapon corpus is 78, not 6 (CORPUS-STATS §2 corrected — Khanjali collision caught).
 - All codeLine commands present in `../docs/research/reference/effect-commands.txt` (scripted check).
 - All 12 names collision-free vs the 2,525 extracted `m_Name`s, case-insensitive
   (scripted check).
@@ -278,14 +303,33 @@ small/level-scaled next-combat status (+ optional passive), cd 3 = free/choice c
 2-3xlvl status, cd 4-5 = permanent deck edits, cd 6+ = dramatic one-offs; passive riders
 are small per-trigger values and do not scale with cooldown.
 
-### Weapon: Blightpin Stiletto - 700000199, Melee, Rogue
-- **Role:** poison tick-frequency enabler; the pack's thesis (duration, not magnitude)
-  in the basic-attack slot.
-- **Budget:** trades base damage BELOW the universal 2 (1 + 2 Poison = par); the only
-  weapon paying a stat cost for archetype fuel. Poison Dart (C, 1 cost) = damage:1 +
-  5 Poison as a one-shot; a repeating 2/turn from the basic is the engine version.
-- **Nearest:** Warmace (only shipped affliction-rider weapon) / Poison_Dart.
-  **Different:** stat sacrifice for fuel; keeps every tick payoff live without deck slots.
+### Weapon: Blightpin Stiletto - 700000199, Melee, Rogue — REDESIGNED (v1.3)
+- **Role:** compounding stack engine in the basic-attack slot — stacks feed more stacks.
+- **History:** v1.1 (damage 1 + flat 2 Poison) collided with **Khanjali** (shipped
+  Eclipse weapon: damage 3 + Poison = Sinister) and was near-dominated — the v1.1 sweep
+  ran against the 6 char-creation weapons only; the real basic-keyword corpus is 78
+  (CORPUS-STATS §2, corrected). v1.2 (a maintenance rider: re-arm 2 Poison when the foe
+  is unpoisoned) was rejected in review: the archetype's currency is the STACK (thesis
+  fact 1 — 18 shipped stack-readers, per-stack heal-block), so re-application without
+  accumulation is noise, and an anti-stack weapon fights its own deck.
+- **Now:** *Deal 1 damage. Inflict 1 Poison, plus 1 for every 4 Poison already on your
+  foe.* Compound growth: the more the deck has invested in stacks, the more every swing
+  deposits. Breakpoints at 4/8/12/16 foe-Poison (integer division floors).
+- **Budget:** keeps the stat sacrifice (damage 1 vs the universal 2) as the price of an
+  ungated scaling rider. Early: 1 dmg + 1 Poison — below Daggers, fair. At 12 foe-Poison:
+  1 + 4/swing. The scaling is entirely deck-dependent; the weapon alone never runs away.
+- **Nearest:** Khanjali (poison basic scaled by an *external* self-resource, Sinister) /
+  Toxic Salve & Aura of Venom (the doubling idiom — one-shot / per-turn) / Venomancing
+  (basics *read* stacks as damage). **Different (mode 3 — new setup for an existing
+  payoff):** compound growth from the foe's own stacks is a mode no shipped card uses;
+  it converts the basic-attack slot into the archetype's interest account and
+  accelerates toward the shipped capstones (Deadly Poisons' 100-stack Slay) instead of
+  competing with any of them.
+- **DSL:** `inflict` + referenceStatus (441-card idiom); token arithmetic —
+  `[[other(status)Poison]]` read (Vile_Strike/Plague_Strike verbatim), `/N` division
+  (Reaver `heal:[[myMissingHealth]]/5` verbatim); zero-result inflict is a no-op
+  (Charged_Blade ships damage:0). **QA flag:** growth loop with Aura of Venom doubling —
+  verify pacing vs the 9,999 stack cap and Deadly Poisons turn counts in gate 4.
 
 ### Weapon: Flaying Hook - 700000198, Melee, Hunter
 - **Role:** bleed-maintenance payoff (Bloodlust: +2 damage, +1 Bleeding).
@@ -295,14 +339,20 @@ are small per-trigger values and do not scale with cooldown.
   **Different:** rider reads an affliction on the foe (archetype state), not position;
   the loop re-feeds the bleed it pays off.
 
-### Power: Festering Weapon - 700000197, cd 2, Rogue/Hunter
+### Power: Festering Weapon - 700000197, cd 2, Rogue/Hunter — UPDATED (v1.2)
 - **Role:** flagship - the game's first player-side Infected access (all six shipped
-  users are Monster-rarity).
-- **Budget vs curve:** cd-2 affliction opener slot (Baneful = Poison 2xlvl + passive);
-  runs 1xlvl and NO passive because Infected repeats per foe discard and never decays
-  (only foe healing clears it). **Nearest:** Baneful Weapon. **UNVERIFIED:**
-  startstatus:X:false is shipped-verbatim, but no shipped talent uses Infected as its
-  referenceStatus (asset exists; excludeFromRandom only gates randomstatus) - QA flag.
+  users are Monster-rarity) - now also the kit's tick-magnitude dial.
+- **Passive added:** *At the start of combat, gain 1 Potency* (+1 damage to every
+  affliction tick you inflict, all combat). This is thesis axis 2 made permanent: the
+  stacks the Stiletto compounds and the Infected the opener plants all tick harder.
+- **Budget vs curve:** cd-2 affliction opener + small passive is exactly Baneful's
+  shape (Poison 2xlvl opener + heal-per-poison-tick passive via addtalent). Opener runs
+  1xlvl (Infected's per-stack value is higher); passive = half a Toxicity (C, 1 DEX:
+  5 Poison + 1 Potency) per combat - shipped small-rider scale. **Nearest:** Baneful
+  Weapon. **DSL:** bless:1 + referenceStatus Potency is Toxicity-verbatim; StartCombat
+  is a GameTriggers member (EventHandler.cs:28). **UNVERIFIED:** startstatus:X:false is
+  shipped-verbatim, but no shipped talent uses Infected as its referenceStatus (asset
+  exists; excludeFromRandom only gates randomstatus) - QA flag.
 
 ### Power: Hemorrhaging Weapon - 700000196, cd 3, Hunter/Warrior
 - **Role:** bleed opener + Deep Wound sustain rider; guarantees Bloodlust live turn 1.
@@ -327,15 +377,17 @@ This pack takes **two** starting cards — it is the only pack with two weapons 
 class-split archetype halves, and each half's weapon rider needs its own ignition.
 
 ### Starting card: Twin Fangs — 700000195, Melee, C, 1 DEX, Rogue
-- **Role in loadout:** the pack thesis (tick *frequency*, not stack size) as the opening
-  play. With Blightpin Stiletto every basic is 1 dmg + 2 Poison; Twin Fangs' first fang
-  lands the poison that unlocks the second — and each extra basic is an extra card play,
-  i.e. an extra Poison tick. Weapon (poison-feed basic) + Festering Weapon (Infected
-  opener) + card (tick doubler) = the attrition Rogue's turn 1.
+- **Role in loadout:** the stack engine as the opening play. Blightpin Stiletto (v1.3)
+  compounds the foe's Poison on every swing; Twin Fangs' first fang seeds the poison
+  that unlocks the second, and the second fang is a second compound read. Every extra
+  basic also procs Poison Coating in that shipped shell. Weapon (compounding basic) +
+  Festering Weapon (Infected opener + Potency passive) + card (basic doubler) = the
+  stack Rogue's turn 1.
 - **Budget vs curve:** cost 1 (81% mode), Common, 2 effect lines, basic-attack skeleton.
-  With Blightpin: 2×(1 dmg + 2 Poison) ≈ Poison_Dart (C, 1: 1 dmg + 5 Poison) /
-  Toxicity. Whiff mode (no poison out): one basic, below par — the archetype commitment
-  price, same structure as Sneak Attack outside Ambush decks.
+  With Blightpin: fang 1 = 1 dmg + 1 Poison, fang 2 = 1 dmg + 1+floor(P/4) Poison — and
+  both fangs scale as the deck stacks. Whiff mode (no poison out): one basic, below
+  par — the archetype commitment price, same structure as Sneak Attack outside Ambush
+  decks.
 - **Nearest existing:** Sneak_Attack (Rogue default) / Mindstrike (Seeker default:
   2 unconditional basics + Focus + discard). **Different:** 0 of the 63 starting cards
   reference Poison at all (scripted scan); the repeat is status-gated, making it a real
