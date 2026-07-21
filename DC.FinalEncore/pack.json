@@ -1,0 +1,635 @@
+{
+  "$schema": "../schemas/pack.schema.json",
+  "pack": "FinalEncore",
+  "idBlock": [700000400, 700000499],
+  "cards": [
+    {
+      "name": "Crowd Work",
+      "cardID": 700000400,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "DEX": 1 },
+      "description": "Deal [damage:2] damage.\n<b>Perform 1</b>.",
+      "keywords": [],
+      "cardKeywords": ["perform"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "perform:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/CrowdWork.png",
+      "meta": {
+        "archetype": "perform (aggressive fuel)",
+        "nearestExisting": "Chorus.json (C, 1 DEX: perform:1 + Cascade draw); Rattler.json (perform basic: 2 dmg OR Flanking-swap Perform 1)",
+        "whyDifferent": "Scripted scan: of the 34 shipped perform: users, ZERO Action-category cards pair damage with Perform - every shipped perform:1 common attaches utility (Chorus: cascade-draw, Abracardabra: free-cost draw, Herald: energy, the Shanty conjurations: potion/ferocity/ambush) and the only damage+perform bodies are weapons (Rattler swaps damage FOR perform via Flanking). Mode 3 - new setup for an existing payoff: aggressive tempo fuel that advances the act without leaving the attack turn. The decision it creates: Perform decks can now keep hitting while building the act instead of tithing turns to utility.",
+        "intendedDeck": "Any vanilla DEX perform/bard shell (Chorus + Abracardabra + Snake Dance + Flourishing Bow) - and any Harp/Rattler/Throwing Knife weapon-swap run; standalone it is a fair 1-cost beater whose Perform opens the vanilla Song delve.",
+        "powerNotes": "1-energy common baseline ~4 dmg (CORPUS-STATS s1). 2 dmg + Perform 1; Rattler prices the swap at 2 dmg == Perform 1 (Rattler.json: 'Deal 2 damage. Flanking: Perform 1 instead'), so total ~4 dmg-equivalent = par. Not strictly better than Chorus (no card flow) nor worse (adds damage). perform:1 verbatim in Chorus.json / Harp.json; effect-commands.txt membership checked."
+      }
+    },
+    {
+      "name": "Smoke and Mirrors",
+      "cardID": 700000401,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "DEX": 1 },
+      "description": "Gain <b>1 Evasion</b>.\nIf you are Performing, <b>Perform 1</b>.",
+      "keywords": [],
+      "cardKeywords": ["perform", "performing"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:1",
+          "forecast": true,
+          "referenceStatus": "Evasion",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "perform:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Performing", "op": "Is", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/SmokeAndMirrors.png",
+      "meta": {
+        "archetype": "perform (defense that keeps the act running)",
+        "nearestExisting": "Dash.json (C, 1 DEX: 1 Evasion + Ambush: DEX); Flourishing_Bow.json (C, 1 DEX: 1 Evasion + 5 Charmed + Finale: Perform 2)",
+        "whyDifferent": "Every shipped 1-DEX Evasion common gates its rider on POSITION (Dash/Come get me!: Ambush) or hand state (Flourishing Bow: Finale); scripted scan: the Performing condition (ConditionChecker.cs:1302, index 51) is used by zero Commons - its shipped users are Legendary/Rare build-arounds (Elegance, Serenade, Moondancing, Crescendo, Shredder Axe). Mode 2 - verified condition x rarity-slot combination no shipped card uses: the first common that pays you for keeping an act alive, and the rider advances the very state it reads. Defense stops costing the show tempo.",
+        "intendedDeck": "Defensive DEX perform shells and any Evasion-orbit rogue deck (Dash/Lay In Wait); standalone it is Dash-par 1 Evasion.",
+        "powerNotes": "Shipped 1-DEX Evasion common curve = 1 Evasion + one conditional rider (Dash, Come get me!, Lay In Wait, Flourishing Bow - scripted scan). Base matches par exactly; the conditional Perform 1 (~2 dmg-equivalent by the Rattler exchange rate) is paid by having started an act first. Performing condition op Is, target empty - schema enum member; bless + referenceStatus Evasion is the 441-card idiom (Evasion.json asset)."
+      }
+    },
+    {
+      "name": "Knife Juggling",
+      "cardID": 700000402,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "DEX": 1 },
+      "description": "Deal [damage:2] damage twice.\nIf you are Performing, attack a third time.",
+      "keywords": [],
+      "cardKeywords": ["performing"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Performing", "op": "Is", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/KnifeJuggling.png",
+      "meta": {
+        "archetype": "perform (multi-hit payoff)",
+        "nearestExisting": "Cleavers.json (C: 2 dmg + Frenzy-gated 2 dmg + 3 Bleeding); Shredder_Axe.json (elite basic: 8 dmg, Performing: Interrupt + Critical Hit)",
+        "whyDifferent": "The multi-hit-for-a-condition skeleton is shipped (Cleavers: Frenzy; VenomousLegacy's Weeping Blade: foe Bleeding), but no shipped card converts an ACT into extra hits - the only Performing attack payoff is Shredder Axe, an elite weapon that pays crit, not count. Mode 4 - new mode of an existing mechanic: hit COUNT as the Performing payoff, which chains into the game's on-hit orbit (Throwing Knife's 'Perform every 3 Hits' literally feeds back into the act). The decision: sequence the act before the knives.",
+        "intendedDeck": "DEX tempo with on-hit payoffs (Throwing Knife weapon-swap runs, Lay In Wait crit setups); standalone 4 damage for 1 DEX is exactly common par.",
+        "powerNotes": "Base 2+2 = 4 dmg = 1-energy common baseline (CORPUS-STATS s1); conditional third hit -> 6, overage paid by the act setup (spec s4 conditional rule). Precedent: Cleavers (C, 1 energy, same shape). Not strictly better: Cleavers' gate (Frenzy) is free when hit, mine needs a started Performance. Multi-effect damage encoding verbatim from Weeping Blade / Cleavers; Performing condition as on Smoke and Mirrors."
+      }
+    },
+    {
+      "name": "Card Trick",
+      "cardID": 700000403,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "DEX": 1 },
+      "description": "Draw 2 cards, then discard a card.\n<b>Perform 1</b>.",
+      "keywords": [],
+      "cardKeywords": ["perform"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "draw:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "discard:1:choose",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "perform:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/CardTrick.png",
+      "meta": {
+        "archetype": "BRIDGE #1: perform -> discard/graveyard",
+        "nearestExisting": "Tempered_Soul.json (U: draw 2, discard 1, Scholar: draw 3); Encore_.json / Juggling_Balls.json (the shipped discard->Perform direction)",
+        "whyDifferent": "Mode 1 - bridge: the shipped perform<->discard edge only runs one way (Encore! and Juggling Balls PAY discards with Perform). This is the enabler side: a perform card that feeds the discard pile on purpose - loading Dead Man's Encore into position (FinishPerformance fires from the graveyard - EventHandler.cs:434-452) and fueling the vanilla discard/graveyard web ([[discardTurn]] readers, Ancestral checks, Myth of Gura's differentCostCards). Tempered Soul's rider upgrades the draw; mine converts the filter into act progress. New decision: WHICH card takes the early bow.",
+        "intendedDeck": "Vanilla discard-payoff decks (Ancestral/Spirit Duet shells) and any perform deck needing card flow; standalone it is a fair 1-cost filter.",
+        "powerNotes": "Anchor: Tempered_Soul.json (U, 1 DEXINT, draw:2 + discard:1:choose verbatim codeLines + a conditional third draw). Swap the Scholar upgrade for an unconditional Perform 1 (~2 dmg-equivalent by the Rattler rate, but requiring act context for full value) - sidegrade, passes the power-creep gate both directions. All three commands in effect-commands.txt."
+      }
+    },
+    {
+      "name": "The Vanishing Act",
+      "cardID": 700000404,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "DEX": 1 },
+      "description": "Gain <b>2 Evasion</b> and <b>Perform 2</b>.\nThen <b>Bury</b> this.",
+      "keywords": [],
+      "cardKeywords": ["perform"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:2",
+          "forecast": true,
+          "referenceStatus": "Evasion",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "perform:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "affliction",
+        "combat": false,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "PostAction",
+            "codeLine": "buryplayed;removeenchant:this",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/TheVanishingAct.png",
+      "meta": {
+        "archetype": "BRIDGE #2: perform -> bury/Firecast",
+        "nearestExisting": "Grand_Entrance.json (0-cost, Ambush: Perform 2); Beseech.json / Turn_to_Ashes.json (the self-bury mechanism)",
+        "whyDifferent": "Mode 2 - verified trigger/zone combination no shipped card uses: scripted scan over all 90 Perform-space cards finds ZERO that bury or reference bury, and zero Bury-archetype cards that Perform. One big act-push whose cost is leaving the combat deck for the rest of the fight - and whose bury event itself is currency in the vanilla burn/Firecast web (GameTriggers.Bury, [[cardsBuried]] readers, GAME-MECHANICS Part VI). Grand Entrance pays Perform 2 for position; this pays for it with the card's own body. New decision: spend the trick forever-this-combat, and WHEN.",
+        "intendedDeck": "Vanilla burn/Firecast bury decks (the Bury-event payoff side) and reshuffle-averse perform tempo; standalone: 2 Evasion + Perform 2 for 1 DEX, once per combat.",
+        "powerNotes": "Above the 1-Evasion common par (2 Evasion + Perform 2 ~ 6 dmg-equivalent at 1 energy) - the overage is priced by self-removal in a reshuffle game (the deck loses the card for the combat) per spec s4's setup-cost rule; Uncommon slot. Self-bury mechanism verbatim: enchant:self helper whose PostAction runs 'buryplayed;removeenchant:this' (Turn_to_Ashes.json codeLine verbatim; Beseech.json proves the helper catches its OWN card's PostAction - its text buries Beseech itself). Enchantment type affliction/combat:false copies Beseech's this-turn helper shape."
+      }
+    },
+    {
+      "name": "Second Act",
+      "cardID": 700000405,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "DEX": 1 },
+      "description": "Deal [damage:4] damage.\n<b>Finale:</b> <b>Perform 2</b> and draw 2 cards.",
+      "keywords": [],
+      "cardKeywords": ["finale", "perform"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:4",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "perform:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Finale", "op": "Is", "target": "", "ignoreForDisplay": false }
+          ]
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "draw:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Finale", "op": "Is", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/SecondAct.png",
+      "meta": {
+        "archetype": "perform (hand-pacing payoff)",
+        "nearestExisting": "Daring_Dash.json (R, 1 DEX: 1 Evasion + Finale: DEX + Perform per action played); Flourishing_Bow.json (C: Finale: Perform 2)",
+        "whyDifferent": "Mode 3 - new payoff for an existing setup: shipped Finale perform cards pay act progress or energy (Daring Dash, Flourishing Bow); none REFILLS. Emptying your hand ends the first act - this card starts the second: act progress plus a fresh 2 cards, on a body that is a fair beater any other time. The decision is pacing: dump the hand INTO the finale instead of banking cards, which is exactly the tempo line the rest of the kit (cheap fuel, weapon metronome) wants.",
+        "intendedDeck": "Any low-cost DEX dump deck that routinely empties its hand (the pool is 57% 1-cost - CORPUS-STATS s1); standalone 4 dmg at 1 DEX is par with a dead rider.",
+        "powerNotes": "Base damage:4 at 1 DEX = common baseline carried at U for the rider headroom. Finale riders (Perform 2 + draw 2) are paid by playing the whole hand first (Finale = hand nearly empty, ConditionChecker.cs:1397-1417) - the same setup cost Daring Dash prices at Rare with a bigger ceiling. Not strictly better than Flourishing Bow (no Evasion/Charmed base). Finale condition encode (value Finale, op Is) decoded from Daring_Dash.json conds [46,2]; draw clamped by hand cap 10."
+      }
+    },
+    {
+      "name": "Curtain Call",
+      "cardID": 700000406,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Enchantment",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "DEX": 2 },
+      "description": "This combat, deal 6 damage whenever you finish a <b>Performance</b>.",
+      "keywords": ["Unique"],
+      "cardKeywords": ["perform", "performance"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "FinishPerformance",
+            "codeLine": "damage:6",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/CurtainCall.png",
+      "meta": {
+        "archetype": "perform (act-completion payoff)",
+        "nearestExisting": "Scalding.json (R, 2 DEX: +1 stack per Perform, on finish deal stacks as Piercing); Crowd_goes_Wild.json (R: finish -> conjure an item); Angelic_Choir.json (R: finish -> heal + HOLY)",
+        "whyDifferent": "Mode 4 - new mode: Scalding's damage is BUILT (per-perform stacks, paid once, bigger the longer the act ran); this is FLAT per completion. The incentive inverts: Scalding wants one long act, Curtain Call wants many short ones - which makes the Song CHOICE itself the decision (Song of Aldour's 2-threshold vs Sages' 5) for the first time. Repeatable immediate damage on FinishPerformance has no shipped user (scan: the other finish payoffs pay items/heals/tide/tempo).",
+        "intendedDeck": "Vanilla bard shells running cheap-threshold songs plus this pack's fuel density; dead without perform sources - Rare build-around slot per METHODOLOGY s4.3.5 (commons carry the pack).",
+        "powerNotes": "A committed deck finishes a 2-3 threshold act roughly every 1.5-2 turns -> ~3-4 dmg/turn sustained at 2 DEX Rare; anchor: Spiteful_Ground-tier reactive rares and Scalding itself (same cost/rarity/trigger surface, ~n dmg per act of n performs vs my flat 6 - crossover at 6, neither dominates). ENCH FinishPerformance trigger verbatim in Scalding.json / Angelic_Choir.json (trig 67); enchant:self + blessing/combat shape as Salt the Wound (VenomousLegacy) / Carnage.json. Unique keyword prevents double-stacked copies."
+      }
+    },
+    {
+      "name": "Dead Man's Encore",
+      "cardID": 700000407,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "DEX": 2 },
+      "description": "Deal [damage:5] damage.\nWhile in your discard pile: deal [damage:3] damage whenever you finish a <b>Performance</b>.",
+      "keywords": [],
+      "cardKeywords": ["perform", "performance"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:5",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "FinishPerformance",
+          "codeLine": "damage:3",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/DeadMansEncore.png",
+      "meta": {
+        "archetype": "perform (graveyard-as-audience flagship)",
+        "nearestExisting": "Chump_Change.json (graveyard-fired FinishPerformance - return:this, as are Soulfood.json and Dance_of_Spirits.json); Scalding.json (finish -> damage, from the enchantment zone)",
+        "whyDifferent": "Mode 2 - verified trigger/zone combination no shipped card uses: FinishPerformance is one of exactly three triggers that scan the GRAVEYARD (EventHandler.cs:474-481, scan at 434-452), and every shipped graveyard user of it does the same thing - return itself to hand (scripted scan: 5 cards, all return:this). This is the first card whose graveyard-bow is a PAYLOAD: once spent, it strikes again on every act completion. The name is the mechanic - the dead man takes his encore. New decision: play it early ON PURPOSE to install a graveyard engine.",
+        "intendedDeck": "Perform decks with discard outlets (Card Trick sends it down early; vanilla Ancestral/discard shells do it for free); standalone it is a clean 5-damage rare.",
+        "powerNotes": "Rare 2-cost damage envelope is 5-8 (CORPUS-STATS s1 table): base 5 sits at the low end, the gap pays for the graveyard rider (~3 per act completion once dead - act completions ~1 per 1.5-2 committed turns). Not strictly better than Break_a_Leg (U, 2 DEX, 5x performanceStacks burst - bigger ceiling, no engine). UNVERIFIED: a damage payload fired from a graveyard card container (shipped graveyard payloads are only return:this; trigger/zone scan itself is decompile-verified, and the effect list runs through the same StartTriggeredEffects path) - fallback if targeting misbehaves: swap payload to 'return:this' (Chump Change verbatim) and re-gate. QA item #1."
+      }
+    },
+    {
+      "name": "The Final Encore",
+      "cardID": 700000408,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Performance",
+      "suffix": "None",
+      "rarity": "Legendary",
+      "cost": {},
+      "description": "After 4 Performances,\ndeal damage equal to twice the cards in your discard pile ([[cardsInGraveyard]]*2).",
+      "keywords": [],
+      "cardKeywords": ["song", "perform"],
+      "utilityNumber": "4",
+      "charges": 0,
+      "flags": ["excludeFromRewards"],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "performancetype:song",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "performance",
+        "combat": true,
+        "showstacks": true,
+        "effects": [
+          {
+            "trigger": "None",
+            "codeLine": "damage:[[cardsInGraveyard]]*2",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/TheFinalEncore.png",
+      "meta": {
+        "archetype": "the pack's namesake act - a new Song in the vanilla delve pool",
+        "nearestExisting": "Song_of_Slaughter.json (R song, threshold 6: 7 x level damage); Song_of_Strength.json (L shredder-pool song, threshold 4: 10 x level)",
+        "whyDifferent": "Mode 3 - new payoff for the game's entire perform enabler web: any perform: with no act open delves from ALL cards with the 'song' cardKeyword game-wide (SpellEffects.ExecutePerform, SpellEffects.cs:10699 + Delve default branch, fromPlayerCards:false) - so this single card extends every bard run in the game with a new act choice. Its payload is also a first: no shipped Performance reads the graveyard (scripted scan) - the damage songs scale with level (Slaughter/Strength). Here the audience IS the graveyard: every spent card is damage waiting for the finale. Delve-only like all 13 shipped Performance cards (excludeFromRewards; NOT excludeFromConjurations, which would remove it from the delve pool).",
+        "intendedDeck": "Chosen at the Song selection, not pulled: mid-to-late combat in any perform deck, spectacular in discard/mill shells (Card Trick, vanilla Ancestral decks). Choosing it over Song of Sages' draw is the pack's signature decision.",
+        "powerNotes": "Songs price by threshold (2-6, per-card utilityNumber - GAME-MECHANICS Part IV): threshold 4 vs Slaughter's 6, payload ~2 x graveyard (typical turn 5-8 graveyard 10-20 cards -> 20-40 damage) vs Slaughter's 7 x level (~35-56) at a lower threshold but requiring graveyard investment - crossover, not domination. [[cardsInGraveyard]] token verified (GAME-MECHANICS Part VI condition/token surface); token*N arithmetic verbatim in Break_a_Leg.json (damage:[[performanceStacks]]*5); payload-as-CardEnchantments with trigger None verbatim in Song_of_Slaughter.json (piercingdamage payload, combatEnchantment 1, showstacks 1). UNVERIFIED: no mod Performance-category card has been loaded before (schema supports category Performance + enchantment type 'performance'); QA item #2 - confirm it appears in the Song delve and completes at 4. Note: shipped Performance cards carry an EMPTY CardEffectList (Song_of_Slaughter.json), but validate_pack requires >=1 effect - the PlayAction 'performancetype:song' line is a deliberate no-op filler (it re-asserts the default performance type; performancetype verified in Dance_of_Blight.json / Ritualist.json)."
+      }
+    }
+  ],
+  "weapons": [
+    {
+      "name": "Encore Blade",
+      "cardID": 700000499,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "BasicAttack",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "Neutral": 1 },
+      "description": "Deal [damage:2] damage.\nIf this is not the first Action you played this turn, <b>Perform 1</b>.",
+      "keywords": [],
+      "cardKeywords": ["basic", "perform"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": ["excludeFromRewards"],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "perform:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "CardsPlayedThisTurn", "op": "IsMoreThan", "target": "0", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/EncoreBlade.png",
+      "classes": ["Rogue"],
+      "meta": {
+        "archetype": "the metronome - sequencing-gated Perform in the basic-attack slot",
+        "nearestExisting": "Rattler.json (perform basic: 2 dmg, Flanking: Perform 1 INSTEAD of damage); Harp.json (Perform 1, NO damage, + Rebound hymn); Throwing_Knife.json (2 dmg, Perform every 3 Hits); Shredder_Axe.json (8 dmg elite, Performing: crit); Daggers.json (statline twin: 2 dmg + Ambush rider) - swept over ALL 78 basic-keyword weapons (CORPUS-STATS s2 rule; scripted scan)",
+        "whyDifferent": "Scripted sweep: 0 of the 78 basic-keyword weapons gate ANY rider on play sequencing (CardsPlayedThisTurn/AlreadyPlayedThisTurn conditions - zero users among basics). The three shipped Perform basics gate on damage-abstinence (Harp), flank-position (Rattler) or hit accrual (Throwing Knife); none creates the every-turn ORDERING decision - play something first, then swing to keep time. It keeps both halves (damage AND perform) only when sequenced, so it neither dominates Rattler's swap nor Throwing Knife's accrual. Daggers (the Rogue incumbent it sits beside) rewards the OPPOSITE sequencing (Ambush = lead with it) - a real menu choice, not a duplicate.",
+        "intendedDeck": "The pack loadout (Opening Number first, blade second) and any DEX perform shell; with vanilla cards alone, any 1-cost play arms the swing.",
+        "powerNotes": "Statline anchor = the 6 starting weapons (CORPUS-STATS s2): damage 2, 1 Neutral, Common, exactly one conditional rider - matched exactly (Daggers-class shape: base 2 + gated rider). Rider budget: Perform 1/turn while sequenced, repeating all run - vs Warmace's UNGATED status rider at 2 Neutral and Daggers' Ambush ceiling ((2+3)x2 crit). Perform 1 ~ 2 dmg by the Rattler exchange rate, gated behind a real cost (the gate forces spending a card before the swing, surrendering Daggers-style Ambush leads). Condition encode: CardsPlayedThisTurn IsMoreThan 0 - at effect time the queue does NOT count the resolving card (Vigorating_Strike.json: 'third card of the round' = Is 2, decoded conds [14,2,'2']); off-by-one is therefore shipped-verified. QA flag: confirm a basic-attack play itself increments the same PlayAction queue count for later swings."
+      }
+    }
+  ],
+  "weaponPowers": [
+    {
+      "name": "Showstopper Weapon",
+      "talentID": 700000498,
+      "description": "Use your weapon power to start next combat with a free <b>Opening Number</b>. <b>Passive:</b> Whenever you finish a <b>Performance</b>, restore <b>2 HEALTH</b>.",
+      "flavortext": "",
+      "cooldown": 3,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "addnextcardfree:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": ["Opening Number"],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "FinishPerformance",
+          "codeLine": "heal:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "requirements": { "rDEX": 0, "rINT": 0, "rSTR": 0 },
+      "classes": ["Rogue"],
+      "art": "art/ShowstopperWeapon.png",
+      "meta": {
+        "archetype": "act ignition (exploration payoff) + completion sustain (passive)",
+        "nearestExisting": "Archivists Weapon (cd 3: addnextcardfree:1 'start next combat with an Acquisition' + heal-1-per-gold-spend passive); Deadly Weapon (cd 3 addnextcardfree shape)",
+        "whyDifferent": "Scripted scan: 0 of the 66 shipped tier-0 talents touch the Perform system in any way - the archetype has weapons (Harp/Rattler/Throwing Knife) but no weapon POWER. The proposal's 'start next combat with 2 Perform' was FALSIFIED in Phase 0 (performance containers are combat-scoped lasting effects in combatData, and ExecutePerform dead-ends outside combat - SpellEffects.cs:10662-10678); this is the spec's own documented fallback: the cd-3 free-opener ladder mode, seeded with the pack's ignition card so turn 1 still opens the show.",
+        "intendedDeck": "The pack loadout: activate between fights -> free Opening Number turn 1 starts the act AND arms Encore Blade's gate with zero energy spent. Passive pays every finished act all run.",
+        "powerNotes": "cd-3 curve point (CORPUS-STATS s3): 'a start-of-combat card (choice-of-3 or free)' - Archivists_Weapon.json is the exact template (cd 3, ActivateWeapon addnextcardfree:1 + one referenceCard + a small heal-per-trigger passive rider on another trigger). Passive scale: heal 2 per FinishPerformance, act completions ~1-2/combat in a committed deck (~2-4 HP/combat) - inside the shipped small-rider band (heal 1-3 per trigger, s3). UNVERIFIED (two, QA item #3): FinishPerformance as a tier-0 rider trigger has no shipped precedent (legal GameTriggers member; talents are scanned by CheckTalents for arbitrary triggers - EventHandler.cs:150); and addnextcardfree referencing a same-pack mod card assumes cards register before talents at load."
+      }
+    }
+  ],
+  "startingCards": [
+    {
+      "name": "Opening Number",
+      "cardID": 700000497,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "DEX": 1 },
+      "description": "Deal 1 damage plus your <b>Performance</b> ([[performanceStacks]]).\n<b>Perform 1</b>.",
+      "keywords": [],
+      "cardKeywords": ["perform"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:1+[[performanceStacks]]",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "perform:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/OpeningNumber.png",
+      "classes": ["Rogue"],
+      "meta": {
+        "archetype": "act ignition starting card - the loadout's first beat",
+        "nearestExisting": "Sneak_Attack.json (Rogue default: 4 dmg + Ambush reset); Snake_Dance.json (C, 1 DEXSTR: read performanceStacks into statuses, then Perform 1 - the read-then-advance ordering this copies)",
+        "whyDifferent": "Scripted scan: 0 of the 63 shipped starting cards (6 Profession defaults + 57 StartingCard keystones) reference the Perform system at all - this is the loadout gap the pack claims. Snake Dance converts the act into statuses; this is the damage version AND the ignition (its own Perform 1 opens the act turn 1). Mode 3: a new archetype SEED shape - the card is deliberately played first, which is exactly what arms Encore Blade's not-first gate.",
+        "intendedDeck": "Loadout: Opening Number leads (1 dmg + Perform 1 starts the act) -> Encore Blade swings second (gate live: 2 dmg + Perform 1) -> Showstopper's passive pays each finished act. As a mid-run pull for others: a fair 1-DEX scaler in any perform shell.",
+        "powerNotes": "Starting-card curve (CORPUS-STATS s4): cost 1 (81% mode), Common, 2 effect lines, archetype-seed shape; reliability axis - turn 1 floor is 1 dmg + Perform 1 (~3 dmg-equivalent by the Rattler rate, under Sneak Attack's 4 but starting the engine), scaling to 4-6 mid-act. Read-then-advance ordering copies Snake_Dance.json verbatim (its effects read [[performanceStacks]] then perform:1) so the damage never depends on the same-card perform resolving first (dodges the delve-pause timing risk). Token arithmetic 1+[[token]] verbatim shape: Treaty_of_Joy.json perform:1+[[banners]], Gravedance.json perform:[[cardsReturnedThisTurn+1]]."
+      }
+    }
+  ]
+}

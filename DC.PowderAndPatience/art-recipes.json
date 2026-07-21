@@ -1,0 +1,224 @@
+{
+  "pack": "PowderAndPatience",
+  "finisher": [ { "op": "vignette", "strength": 0.28 } ],
+  "cards": {
+    "Powder Keg": {
+      "source": "BOMB",
+      "sourceCard": "Bomb",
+      "seed": 700000500,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -28 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#8a2f1e", "#e0a84a"], "strength": 0.45 },
+        { "op": "glow_spot", "center": [0.5, 0.32], "radius": 0.28, "color": "#ff8c2d", "opacity": 0.32 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Blasting Barrel": {
+      "source": "BLACKPOWDER-POCKETS",
+      "sourceCard": "Powder Pockets",
+      "seed": 700000501,
+      "ops": [
+        { "op": "zoom_crop", "factor": 1.25, "gravity": "bottom" },
+        { "op": "rotate_crop", "degrees": 5 },
+        { "op": "hue_rotate", "degrees": -14 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#7a2a18", "#e0a84a"], "strength": 0.5 },
+        { "op": "glow_spot", "center": [0.42, 0.4], "radius": 0.34, "color": "#ff8c2d", "opacity": 0.28 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Ticking Smile": {
+      "source": "CARD_UNLOCKS_7",
+      "sourceCard": "Glimmer",
+      "seed": 700000502,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.3, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -95 },
+        { "op": "sat_value", "sat": 1.15, "value": 0.85 },
+        { "op": "gradient_map", "palette": ["#120a0e", "#8a2f1e", "#f5c469"], "strength": 0.4 },
+        { "op": "glow_spot", "center": [0.5, 0.55], "radius": 0.3, "color": "#ff5c2d", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.07 }
+      ]
+    },
+    "Short Fuse": {
+      "source": "MASKS_OF_MISERY_28",
+      "sourceCard": "Shrapnel Bomb",
+      "seed": 700000503,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "top" },
+        { "op": "hue_rotate", "degrees": 18 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#9c3a20", "#ffd27a"], "strength": 0.42 },
+        { "op": "glow_spot", "center": [0.62, 0.3], "radius": 0.22, "color": "#ffb347", "opacity": 0.4 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Satchel Charge": {
+      "source": "SET_TO_BLOW",
+      "sourceCard": "Set to Blow",
+      "seed": 700000504,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -4 },
+        { "op": "hue_rotate", "degrees": -22 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#8a2f1e", "#e0a84a"], "strength": 0.44 },
+        { "op": "color_wash", "color": "#4a1c10", "opacity": 0.16, "blend": "overlay" },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Safe Distance": {
+      "source": "BLASTSHIELD_1",
+      "sourceCard": "Blastshield",
+      "seed": 700000505,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.18, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -35 },
+        { "op": "sat_value", "sat": 0.85, "value": 0.92 },
+        { "op": "gradient_map", "palette": ["#10100e", "#6e3a22", "#d8c9a0"], "strength": 0.42 },
+        { "op": "glow_spot", "center": [0.5, 0.7], "radius": 0.38, "color": "#ff8c2d", "opacity": 0.2 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Parting Gift": {
+      "source": "SNARE",
+      "sourceCard": "Snare",
+      "seed": 700000506,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.22, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -60 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#8a2f1e", "#f5c469"], "strength": 0.5 },
+        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.26, "color": "#ff6b2d", "opacity": 0.34 },
+        { "op": "grain", "opacity": 0.07 }
+      ]
+    },
+    "Sapper's Patience": {
+      "source": "STARTER-GRENADE",
+      "sourceCard": "Demolition",
+      "seed": 700000507,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 6 },
+        { "op": "hue_rotate", "degrees": -18 },
+        { "op": "sat_value", "sat": 0.9, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#7a2a18", "#e0a84a"], "strength": 0.46 },
+        { "op": "glow_spot", "center": [0.36, 0.5], "radius": 0.3, "color": "#ffb347", "opacity": 0.25 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Controlled Demolition": {
+      "source": "LOCK-AND-LOAD",
+      "sourceCard": "Lock and Load",
+      "seed": 700000508,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.16, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -30 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#8a2f1e", "#ffd27a"], "strength": 0.42 },
+        { "op": "glow_spot", "center": [0.55, 0.4], "radius": 0.3, "color": "#ff8c2d", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "The Long Con": {
+      "source": "COIN-FLIP",
+      "sourceCard": "Coinflip",
+      "seed": 700000509,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -40 },
+        { "op": "sat_value", "sat": 0.8, "value": 0.85 },
+        { "op": "gradient_map", "palette": ["#120d10", "#6e2a1e", "#e0a84a"], "strength": 0.5 },
+        { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.24, "color": "#ffd27a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.07 }
+      ]
+    },
+    "Packed with Nails": {
+      "source": "SHRAPNEL_2",
+      "sourceCard": "Shrapnel",
+      "seed": 700000510,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -5 },
+        { "op": "hue_rotate", "degrees": 12 },
+        { "op": "sat_value", "sat": 1.1, "value": 0.88 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#8a2016", "#d8b47a"], "strength": 0.44 },
+        { "op": "color_wash", "color": "#6a1410", "opacity": 0.18, "blend": "overlay" },
+        { "op": "grain", "opacity": 0.07 }
+      ]
+    },
+    "Chain Reaction": {
+      "source": "MASKS_OF_MISERY_32",
+      "sourceCard": "Cluster Grenade",
+      "seed": 700000511,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.18, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -20 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#9c3a20", "#f5c469"], "strength": 0.46 },
+        { "op": "glow_spot", "center": [0.4, 0.42], "radius": 0.26, "color": "#ff6b2d", "opacity": 0.36 },
+        { "op": "glow_spot", "center": [0.66, 0.6], "radius": 0.2, "color": "#ffb347", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "One Last Job": {
+      "source": "RIGGED-EXPLOSIVES",
+      "sourceCard": "Rigged Explosives",
+      "seed": 700000512,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.12, "gravity": "bottom" },
+        { "op": "hue_rotate", "degrees": -26 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.85 },
+        { "op": "gradient_map", "palette": ["#0e0a08", "#8a2f1e", "#ffd27a"], "strength": 0.5 },
+        { "op": "glow_spot", "center": [0.5, 0.5], "radius": 0.42, "color": "#ff8c2d", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.07 }
+      ]
+    },
+    "Fuse-Cutter": {
+      "source": "WOODCARVING_KNIFE",
+      "sourceCard": "Carving Knife",
+      "seed": 700000599,
+      "size": [512, 873],
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.1, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -24 },
+        { "op": "sat_value", "sat": 0.9, "value": 0.88 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#7a2a18", "#e0a84a"], "strength": 0.48 },
+        { "op": "glow_spot", "center": [0.5, 0.25], "radius": 0.3, "color": "#ff8c2d", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Demolitionist Weapon": {
+      "source": "TOOLBELT",
+      "sourceCard": "Toolbelt",
+      "seed": 700000598,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -20 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#8a2f1e", "#e0a84a"], "strength": 0.46 },
+        { "op": "glow_spot", "center": [0.5, 0.42], "radius": 0.32, "color": "#ffb347", "opacity": 0.28 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Strike the Match": {
+      "source": "ABILITYART_2_0",
+      "sourceCard": "Light the Fuse",
+      "seed": 700000597,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.24, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -15 },
+        { "op": "sat_value", "sat": 1.1, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#140d0a", "#9c3a20", "#ffd27a"], "strength": 0.42 },
+        { "op": "glow_spot", "center": [0.5, 0.6], "radius": 0.26, "color": "#ff8c2d", "opacity": 0.4 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    }
+  }
+}

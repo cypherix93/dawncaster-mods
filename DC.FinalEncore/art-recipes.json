@@ -1,0 +1,179 @@
+{
+  "pack": "FinalEncore",
+  "finisher": [ { "op": "vignette", "strength": 0.28 } ],
+  "cards": {
+    "Crowd Work": {
+      "source": "DEATH_OF_DIVINITY_7",
+      "sourceCard": "Crowd goes Wild",
+      "seed": 700000400,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.16, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -25 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.88 },
+        { "op": "gradient_map", "palette": ["#140d18", "#7a2440", "#f2cf6e"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.32, "color": "#ffd86b", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Smoke and Mirrors": {
+      "source": "ELEGANCE",
+      "sourceCard": "Elegance",
+      "seed": 700000401,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -5 },
+        { "op": "zoom_crop", "factor": 1.18, "gravity": "center" },
+        { "op": "sat_value", "sat": 0.8, "value": 0.85 },
+        { "op": "gradient_map", "palette": ["#101422", "#3a4a6b", "#e8e4d8"], "strength": 0.45 },
+        { "op": "color_wash", "color": "#20304a", "opacity": 0.2, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.42, 0.4], "radius": 0.35, "color": "#bcd0ff", "opacity": 0.28 },
+        { "op": "grain", "opacity": 0.07 }
+      ]
+    },
+    "Knife Juggling": {
+      "source": "JUGGLINGBALLS_ECLYPSE",
+      "sourceCard": "Juggling Balls",
+      "seed": 700000402,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "top" },
+        { "op": "hue_rotate", "degrees": -35 },
+        { "op": "sat_value", "sat": 0.95, "value": 0.86 },
+        { "op": "gradient_map", "palette": ["#161018", "#6b3244", "#e8d8b0"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.5, 0.3], "radius": 0.3, "color": "#ffd86b", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Card Trick": {
+      "source": "CARDS_METAMORPHOSIS_2_48",
+      "sourceCard": "Abracardabra",
+      "seed": 700000403,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 6 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 40 },
+        { "op": "sat_value", "sat": 0.9, "value": 0.85 },
+        { "op": "color_wash", "color": "#4a1f33", "opacity": 0.22, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.55, 0.5], "radius": 0.3, "color": "#f2cf6e", "opacity": 0.32 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "The Vanishing Act": {
+      "source": "CARDS_METAMORPHOSIS_2_34",
+      "sourceCard": "Grand Entrance",
+      "seed": 700000404,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.22, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 150 },
+        { "op": "sat_value", "sat": 0.75, "value": 0.82 },
+        { "op": "gradient_map", "palette": ["#0d1018", "#3f3a5c", "#d8d4e8"], "strength": 0.5 },
+        { "op": "glow_spot", "center": [0.5, 0.55], "radius": 0.4, "color": "#9a8fd0", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.08 }
+      ]
+    },
+    "Second Act": {
+      "source": "CARDS_METAMORPHOSIS_21",
+      "sourceCard": "Show must go on",
+      "seed": 700000405,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": -4 },
+        { "op": "zoom_crop", "factor": 1.14, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -30 },
+        { "op": "sat_value", "sat": 1.0, "value": 0.88 },
+        { "op": "gradient_map", "palette": ["#140d18", "#7a2440", "#f2cf6e"], "strength": 0.32 },
+        { "op": "glow_spot", "center": [0.5, 0.4], "radius": 0.33, "color": "#ff9c5a", "opacity": 0.28 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Curtain Call": {
+      "source": "CARDS_METAMORPHOSIS_2_56",
+      "sourceCard": "Crescendo",
+      "seed": 700000406,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.18, "gravity": "bottom" },
+        { "op": "hue_rotate", "degrees": -20 },
+        { "op": "sat_value", "sat": 1.1, "value": 0.85 },
+        { "op": "gradient_map", "palette": ["#180d14", "#8f2438", "#ffd86b"], "strength": 0.4 },
+        { "op": "glow_spot", "center": [0.5, 0.62], "radius": 0.36, "color": "#ff5a4a", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Dead Man's Encore": {
+      "source": ["DANCE_OF__SPIRITS_ECLYPSE", "MYTH_OF_GURA_ECLYPSE-MINISET"],
+      "sourceCard": "Dance of Spirits + Myth of Gura",
+      "seed": 700000407,
+      "ops": [
+        { "op": "composite", "mask": "noise" },
+        { "op": "mirror" },
+        { "op": "sat_value", "sat": 0.85, "value": 0.8 },
+        { "op": "gradient_map", "palette": ["#0d1014", "#3f5c50", "#e8e0c0"], "strength": 0.4 },
+        { "op": "color_wash", "color": "#16241e", "opacity": 0.2, "blend": "multiply" },
+        { "op": "glow_spot", "center": [0.5, 0.42], "radius": 0.32, "color": "#a0e8c0", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.08 }
+      ]
+    },
+    "The Final Encore": {
+      "source": "SIRENSCALLLOW",
+      "sourceCard": "Siren's Call",
+      "seed": 700000408,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.12, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 35 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.82 },
+        { "op": "gradient_map", "palette": ["#140d18", "#7a2440", "#ffd86b"], "strength": 0.45 },
+        { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.4, "color": "#ffd86b", "opacity": 0.35 },
+        { "op": "grain", "opacity": 0.07 }
+      ]
+    },
+    "Encore Blade": {
+      "source": ["THROWING_KNIVES", "CARDS_METAMORPHOSIS_20"],
+      "sourceCard": "Throwing Knife (mid-run weapon card, no char-creation menu; composition-level ops per ART-MUTATION-SPEC s2) + Serenade",
+      "seed": 700000499,
+      "size": [512, 873],
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.06, "gravity": "center" },
+        { "op": "composite", "mask": "radial", "center": [0.5, 0.2], "radius": 0.55, "softness": 0.6, "opacity": 0.55 },
+        { "op": "gradient_map", "palette": ["#140d18", "#7a2440", "#f2cf6e"], "strength": 0.4 },
+        { "op": "sat_value", "sat": 1.0, "value": 0.88 },
+        { "op": "glow_spot", "center": [0.5, 0.68], "radius": 0.3, "color": "#ffd86b", "opacity": 0.3 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Showstopper Weapon": {
+      "source": "ENCORE_ECLYPSE",
+      "sourceCard": "Encore! (card art; not a tier-0 powerImage - scripted check vs all 66 talent powerImage path_ids)",
+      "seed": 700000498,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 5 },
+        { "op": "zoom_crop", "factor": 1.16, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -18 },
+        { "op": "sat_value", "sat": 1.05, "value": 0.86 },
+        { "op": "gradient_map", "palette": ["#180d14", "#8f2438", "#ffd86b"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.48, 0.42], "radius": 0.34, "color": "#ffd86b", "opacity": 0.32 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Opening Number": {
+      "source": "SIEGEOFSHADOWS-TRUMPET",
+      "sourceCard": "Herald (not in any starting-card menu - Herald is a pool Action, not a Profession default or StartingCard keystone)",
+      "seed": 700000497,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 20 },
+        { "op": "sat_value", "sat": 1.0, "value": 0.9 },
+        { "op": "gradient_map", "palette": ["#140d18", "#6b3244", "#f2cf6e"], "strength": 0.35 },
+        { "op": "glow_spot", "center": [0.5, 0.38], "radius": 0.32, "color": "#ffd86b", "opacity": 0.32 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    }
+  }
+}

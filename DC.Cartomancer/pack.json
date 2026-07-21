@@ -1,0 +1,640 @@
+{
+  "$schema": "../schemas/pack.schema.json",
+  "pack": "Cartomancer",
+  "idBlock": [700000600, 700000699],
+  "cards": [
+    {
+      "name": "Turn the Card",
+      "cardID": 700000600,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {},
+      "description": "<b>Foretell [[foretell+1]]</b>.\nGain <b>1 Focus</b>.",
+      "keywords": [],
+      "cardKeywords": ["foretell"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "foretell:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:1",
+          "forecast": true,
+          "referenceStatus": "Focus",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/TurnTheCard.png",
+      "meta": {
+        "archetype": "BRIDGE Foretell <-> Focus: 0-cost fuel that feeds the foretell-size dial",
+        "nearestExisting": "Gaze_into_the_Beyond.json (0-cost C: 1 Focus + 1 Focus when Foretold); Battle_Sense.json / Observe.json / Reconnaissance.json (the 0-cost foretell commons)",
+        "whyDifferent": "The 0-cost foretell commons pay in draw (Battle Sense/Observe/Recon); Gaze into the Beyond banks Focus but never foretells. This is the only card that both reads AND banks: Focus is the engine's literal size dial - GetForetell() adds +1 revealed card per 3 Focus (GameTextTranslator.cs:723-737, the [[foretell]] token) and +1 draw per 6 at round start (Focus.json). Mode 1 bridge: the vanilla Focus archetype (Mindstrike default, Profess, Impending Doom) and the Eclipse foretell kit currently meet nowhere at 0 cost; this is the missing on-ramp from either side.",
+        "intendedDeck": "Vanilla Seeker Focus shells (Mindstrike/Profess/Centered Strikes) and any foretell deck; in-pack it grows Cartomancer's Edge's per-swing read and Ask the Bones' yield.",
+        "powerNotes": "0-cost common par ~2-3 value (CORPUS-STATS #1). Foretell 1 (~1, smallest shipped read) + 1 Focus (~1-1.5; Gaze into the Beyond prices 1-2 Focus at 0 cost). Recon at 0 cost gives foretell 5 + conditional draw - bigger read, no bank: neither strictly dominates. DSL fully shipped: foretell:N (Torch.json), bless + referenceStatus Focus (Gaze_into_the_Beyond.json T1 bless:1 -> Focus, Mindstrike.json)."
+      }
+    },
+    {
+      "name": "Omen of Ruin",
+      "cardID": 700000601,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "INT": 1 },
+      "description": "Inflict <b>2 Doom</b>.\nWhen <b>Foretold</b>, inflict <b>2 Doom</b>.",
+      "keywords": [],
+      "cardKeywords": ["foretell"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:2",
+          "forecast": true,
+          "referenceStatus": "Doom",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "Reveal",
+          "codeLine": "inflict:2",
+          "forecast": false,
+          "referenceStatus": "Doom",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/OmenOfRuin.png",
+      "meta": {
+        "archetype": "fate payload: the card that sentences the foe from inside the deck",
+        "nearestExisting": "Seers_Orb.json (reward-excluded weapon basic: 3 Doom + on-Reveal inflict + self-scaling); Prophetic_Bolt.json (C DEXINT: damage + Doom + foretold bonus)",
+        "whyDifferent": "Seers Orb is the only shipped card that acts on the board when Foretold (Reveal-trigger inflict fires from the deck, SpellEffects.cs:4494-4501) - and it is a canBeAcquired:0, excludeFromRewards:1 weapon basic granted by events. Scripted scan: 0 player-pool reward cards carry a board-affecting Reveal effect (Gaze into the Beyond blesses self only). Mode 2: first acquirable card whose fate payload fires from inside the deck - every Cartomancer's Edge swing can now cost the foe 2 Doom without spending a card or energy.",
+        "intendedDeck": "Vanilla Doom shells (Impending Doom/Inevitable End/Wicker Crux) as a cheap stacker; in-pack it is the reason Edge swings and Cheat Fate placements feel like attacks.",
+        "powerNotes": "1-energy common par ~4 dmg-equivalent (CORPUS-STATS #1). Played: 2 Doom (~2 dmg at end of turn if preserved - Doom decays 1 per Action played and detonates full stacks at EndTurnPhase, Doom.json / GAME-MECHANICS Part III). Revealed: +2 Doom paid for by the foretell setup card (conditional-overage rule, METHODOLOGY 4.1.3). Anchors: Prophetic Bolt (C, 1 hybrid: 3 dmg + ~3 Doom + foretold rider), Wicker Crux (R, INT 2: flat 6 Doom). Reveal-inflict idiom is Seers_Orb.json trigger-72 verbatim."
+      }
+    },
+    {
+      "name": "Stack the Deck",
+      "cardID": 700000602,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "INT": 1 },
+      "description": "Look at the top 3 cards of your foe's deck,\nthen choose which one they draw first.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "foretellenemy:3",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/StackTheDeck.png",
+      "meta": {
+        "archetype": "the flagship gap: reading and rigging the FOE's future",
+        "nearestExisting": "Reconnaissance.json (fiction-nearest: the same read pointed at your OWN deck; no command-level neighbor exists - foretellenemy has 0 users across all 2,525 cards, scripted codeLine scan)",
+        "whyDifferent": "Mode 2, in its purest form: the foretellenemy command is fully implemented (SpellEffects.cs:1901-1903, 4471-4474, 4507-4523; DeckViewer MoveSelectedCardToTop inserts the pick at E_deck index 0, SpellEffects.cs:4526-4543) and no shipped card ever calls it. Enemies draw from a real 20-card cloned deck (GAME-MECHANICS Part V), so choosing their next draw is telegraph-control: put the harmless card on top of the elite's deck. An entire unused decision axis - intent manipulation - opened with one verified command.",
+        "intendedDeck": "Universal control splash: any deck vs elites/bosses buys certainty for 1 energy. In-pack it completes the fiction - the Cartomancer reads both futures.",
+        "powerNotes": "1-energy common: no stats, pure information + one rigged draw (~ a soft Dazed worth of denial when it matters, nothing when the top 3 are all threats). Whiff mode priced: vs vanilla mobs with uniform decks the pick barely matters - the card is a control tool, not an engine. UNVERIFIED (top of pack QA list): 0 shipped users means the enemy-side selection UI has never shipped on a card; verified in code but needs gate-4 in-game confirmation. Fallback if broken in play: codeLine becomes foretell:3 (own deck, Torch-verbatim) and the card is renamed/retexted as a self-read common."
+      }
+    },
+    {
+      "name": "Turn of Fate",
+      "cardID": 700000603,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "INT": 1 },
+      "description": "<b>Ambush:</b> <b>Foretell [[foretell+2]]</b> and draw a card.\nOtherwise, deal [damage:4] damage.",
+      "keywords": [],
+      "cardKeywords": ["foretell", "ambush"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "foretell:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Ambush", "op": "Is", "target": "", "ignoreForDisplay": false }
+          ]
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "draw:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Ambush", "op": "Is", "target": "", "ignoreForDisplay": false }
+          ]
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:4:arcane",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "Ambush", "op": "IsNot", "target": "", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/TurnOfFate.png",
+      "meta": {
+        "archetype": "spread position made mechanical: WHERE in the turn the card falls decides what it means",
+        "nearestExisting": "Reconnaissance.json (0-cost C: foretell 5 + Ambush: draw); Daggers.json / Sneak_Attack.json (Ambush bonus riders)",
+        "whyDifferent": "Every shipped Ambush card is bonus-shaped: base effect always happens, Ambush adds extra (Recon, Daggers, Sneak Attack - scripted scan of Ambush-condition users). Turn of Fate is mode-switched: led, it is a reading (Foretell 2 + draw); played late, it is a strike - two disjoint cards selected by position. Mode 4: a new mode of the Ambush mechanic, and the proposal's one surviving 'spread position' card expressed entirely through a shipped keyword players already know. Ambush IsNot is shipped (Quickchange.json, Sleight_of_Hand.json decoded [26:3]).",
+        "intendedDeck": "Any INT tempo deck: it is never dead (4 arcane at 1 INT is common par as the floor). Eclipse foretell decks lead it; Exploration ('reset Ambush after you Foretell') turns it back into the reading mid-turn - a live vanilla combo.",
+        "powerNotes": "Either mode alone prices at ~1-energy common (foretell 2 + draw ~ Augury-lite; 4 dmg = the C baseline, CORPUS-STATS #1); paying U for the choice-of-modes, per the conditional rule (METHODOLOGY 4.1.3, the whiff mode IS the other mode). Anchor: Reconnaissance (C: bigger read + gated draw at 0 - no damage floor). Not strictly better/worse than either neighbor: Recon out-reads it, vanilla 1-INT burn outdamages it."
+      }
+    },
+    {
+      "name": "Cheat Fate",
+      "cardID": 700000604,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "INT": 1 },
+      "description": "<b>Foretell [[foretell+1]]</b>. Then put a card\nfrom your hand on top of your deck.",
+      "keywords": [],
+      "cardKeywords": ["foretell"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": ["pauseQueue"],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "foretell:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "blessing",
+        "combat": false,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "EndAction",
+            "codeLine": "placeontopfromhand;removeenchant:this",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/CheatFate.png",
+      "meta": {
+        "archetype": "authoring the future: read the top card, then overwrite it from your hand",
+        "nearestExisting": "Sight_Beyond.json (C DEXINT 1: draw 2, then put a card from hand on top)",
+        "whyDifferent": "Sight Beyond is a filter - dig two, tuck the worst. Cheat Fate is an author: it reads the arriving future first (Foretell 1 fires the top card's Reveal effects and shows it to you), then lets you replace it with a card of your choosing. Mode 3, new setup for an existing payoff: the placed card is deliberate ammunition for the shipped When-Foretold pool - top-deck Prophetic Bolt / Meteor Storm / Starmap tonight and Cartomancer's Edge's next swing reveals it, arming its bonus (Meteor Storm literally becomes free - T72 cost:this:all:99). No shipped card lets you choose WHICH card gets Foretold next.",
+        "intendedDeck": "Vanilla Eclipse foretell decks (Prophetic Bolt, Seeker's Wisdom, Meteor Storm all want to be the placed card); in-pack it loads Omen of Ruin and The Cut into the Edge's next swing.",
+        "powerNotes": "1-energy U: card-neutral (no draw), pure sequencing + a 1-read - strictly less raw value than Sight Beyond's draw-2-tuck-1 at C, paying instead for the arm-your-own-payoff decision (different function, so neither strictly dominates). DSL: foretell:1 at PlayAction (Torch-family); placeontopfromhand at EndAction inside a self-enchant with pauseQueue is Sight_Beyond.json verbatim including the flag. Sequencing note: foretell resolves during the action, placement at EndAction - both in their shipped positions."
+      }
+    },
+    {
+      "name": "Ask the Bones",
+      "cardID": 700000605,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "INT": 1 },
+      "description": "<b>Foretell [[foretell+2]]</b>, then gain\n<b>1 Focus</b> for each card <b>Foretold</b>.",
+      "keywords": [],
+      "cardKeywords": ["foretell"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "foretell:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": true,
+        "effects": [
+          {
+            "trigger": "Reveal",
+            "codeLine": "addstack:1",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          },
+          {
+            "trigger": "EndAction",
+            "codeLine": "bless:[[enchantmentStacks]];removeenchant:this",
+            "forecast": false,
+            "referenceStatus": "Focus",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/AskTheBones.png",
+      "meta": {
+        "archetype": "BRIDGE Foretell -> Focus ramp: the oracle answers with clarity",
+        "nearestExisting": "Desert_Rush.json (C DEXINT 1: foretell 3 + Momentum per card Foretold); Gaze_into_the_Beyond.json (flat Focus)",
+        "whyDifferent": "Desert Rush converts read-size into offense (Momentum); Ask the Bones converts it into the engine's own dial: each Focus banked makes every FUTURE foretell bigger (+1 revealed card per 3 Focus, GameTextTranslator.GetForetell) which makes the next Ask the Bones bank more - the pack's compounding ramp, self-limited by Focus breakpoints. Mode 3: a new payoff (engine growth) for the existing per-card-Foretold counting setup. No shipped card pays Focus per card revealed.",
+        "intendedDeck": "Vanilla Seeker Focus payoffs (Centered Strikes basics, Profess's Focus-scaled foretell, Focus draw at 6+) all cash the ramp; in-pack it grows the Edge's swing-reads.",
+        "powerNotes": "1-energy U: base yield 2 Focus + a 2-card read; at 3+ Focus yields 3, at 6+ yields 4 - growth is stepwise and bounded by the read count. Anchor: Desert Rush prices foretell-3 + ~3 Momentum at C - Focus is the stronger currency (permanent, feeds draw + foretell size + Centered Strikes), hence U and the smaller base read. Counting skeleton (T1 enchant:self + foretell, ENCH Reveal addstack:1, ENCH EndAction cash-out;removeenchant:this) is Desert_Rush.json verbatim with bless->Focus swapped in (Gaze idiom)."
+      }
+    },
+    {
+      "name": "Doomwritten",
+      "cardID": 700000606,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "INT": 1 },
+      "description": "Inflict <b>2 Doom</b>, then trigger\nyour foe's <b>Doom</b>.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:2",
+          "forecast": true,
+          "referenceStatus": "Doom",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "statusdamage:[[other(status)Doom]]:arcane",
+          "forecast": false,
+          "referenceStatus": "Doom",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/Doomwritten.png",
+      "meta": {
+        "archetype": "the countdown, cashed on demand: Doom detonates NOW - and still detonates later",
+        "nearestExisting": "Combust.json (R INT 1: inflict 2 Burning, then trigger the foe's Burning - the exact skeleton, different status)",
+        "whyDifferent": "Doom's whole economy is timing: it detonates full stacks at EndTurnPhase and decays 1 per Action you play (Doom.json; SpellEffects.Doom -> StatusDamage(stacks, 'arcane')), so every card you cast after stacking it is burning your own payload. Scripted scan: 0 shipped cards trigger or read Doom for damage (readers: Dark Omen->Darkness, Twisted Visage->healing, Scorpio II->counter; none deal). Mode 3: the first on-demand detonation - it decouples Doom from the end-of-turn clock, AND the stacks remain to detonate again at end of turn (statusdamage does not remove stacks, Combust-verified behavior). New decision: keep playing and pay the decay, or cash now and double-dip.",
+        "intendedDeck": "Vanilla Doom shells (Impending Doom, Inevitable End, Wicker Crux, Quicksand): their ramped stacks finally have a cash-out that doesn't wait for the enemy turn. In-pack: Omen of Ruin and Sealed Fate feed it.",
+        "powerNotes": "Combust translation at the same slot (R, 1 INT): Combust's Burning persists and re-ticks forever (never decays); Doom self-clears at EndTurnPhase, so Doomwritten's trigger races the same clock Combust doesn't - weaker status economy, same price: not strictly better/worse. Effective ceiling: ~2x the stacks you ramped in one turn (trigger + natural detonation), linear in setup, no loop (stacks never grow from the trigger). Potency adds to the trigger (Doom theType 1 = affliction; StatusDamage adds Potency to affliction ticks, SpellEffects.cs:13794-13824) - noted for QA, shipped-consistent (Potency boosts Burning ticks the same way)."
+      }
+    },
+    {
+      "name": "The Significator",
+      "cardID": 700000607,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Enchantment",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "INT": 2 },
+      "description": "Add a counter whenever a card is <b>Foretold</b>.\nYour Actions deal +1 damage for every 2 counters ([[enchantmentStacks]]/2).",
+      "keywords": [],
+      "cardKeywords": ["foretell"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "Add a counter whenever a card is Foretold. Your Actions deal +1 damage for every 2 counters.",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": true,
+        "effects": [
+          {
+            "trigger": "Reveal",
+            "codeLine": "addstack:1",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          },
+          {
+            "trigger": "CalculateOutgoingDamage",
+            "codeLine": "adddamage:[[enchantmentStacks]]/2",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": []
+          }
+        ]
+      },
+      "art": "art/TheSignificator.png",
+      "meta": {
+        "archetype": "the reading compounds: every card turned makes the querent stronger",
+        "nearestExisting": "Moonwell.json (L DEXINT 2: counter per card Foretold, cashed as healing each turn); Cruel_Intent.json (U: adddamage:[[enchantmentStacks]] engine); Sifting_Time.json (U: this-turn Barrier per foretell)",
+        "whyDifferent": "The shipped per-card-Foretold counters cash out as resources - healing (Moonwell), Barrier (Sifting Time), Momentum (Desert Rush), Doom (Call of the Void). None convert read-count into permanent outgoing damage. Mode 3: a new payoff (combat-long damage scaling) for the existing foretell-count setup - the build-around that makes 'how many cards did I turn this combat' the deck's win axis instead of a value drip.",
+        "intendedDeck": "Vanilla Eclipse foretell piles (Recon/Augury/Battle Sense read 3-5 at a time = +2 damage per cast); in-pack the Edge adds a counter every swing and Ask the Bones' Focus makes each read bigger.",
+        "powerNotes": "R 2 INT engine: with the Edge alone, +1 damage every 2 turns - deliberately slow floor; with dedicated readers (foretell 3-5 per card) it reaches +3-5 by mid-combat, in line with rare 2-cost engines. Counting idiom: ENCH Reveal addstack:1 (Desert_Rush/Pierce_the_Veil/Moonwell verbatim); payout idiom: ENCH CalculateOutgoingDamage adddamage:[[enchantmentStacks]] (Cruel_Intent/Amplification/Fusion verbatim, ungated form = Cruel Intent); token division /2 shipped (Reaver heal:[[myMissingHealth]]/5; sibling-precedent inflict:[[other(status)Poison]]/4). NumberParser floors integer division - stacks 0-1 add +0."
+      }
+    },
+    {
+      "name": "Sealed Fate",
+      "cardID": 700000608,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Legendary",
+      "cost": { "INT": 3 },
+      "description": "<b>Foretell [[foretell+3]]</b>. Inflict <b>4 Doom</b>,\nthen inflict <b>Doom</b> equal to your foe's <b>Doom</b> ([[other(status)Doom]]).",
+      "keywords": [],
+      "cardKeywords": ["foretell"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "foretell:3",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:4",
+          "forecast": true,
+          "referenceStatus": "Doom",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "inflict:[[other(status)Doom]]",
+          "forecast": false,
+          "referenceStatus": "Doom",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/SealedFate.png",
+      "meta": {
+        "archetype": "capstone: the reading ends, the sentence doubles",
+        "nearestExisting": "Strangling_Lashes.json (MONSTER rarity, 2 Neutral: inflict 5 Doom then double the target's Doom - enemy-only tech); Call_of_the_Void.json (R: Doom per card Foretold); Wicker_Crux.json (R INT 2: flat 6 Doom)",
+        "whyDifferent": "Doom-doubling is shipped tech the player has never been given: Strangling Lashes (inflict:[[other(status)Doom]]) is Monster-rarity, and the poison twins (Toxic Salve/Aura of Venom) prove the doubling idiom is player-safe for afflictions. Mode 3 / player-side-first: the only player card whose Doom payload scales with the Doom already on the foe - the finisher the ramp engines (Inevitable End, Impending Doom) currently lack. The foretell rider keeps the capstone on-theme and feeds the pack's counters. Proposal's 'Sealed Fate = Doom per card Foretold' was cut for colliding with shipped Call of the Void (identical decision); this doubling design replaces it.",
+        "intendedDeck": "Vanilla Doom ramp (Inevitable End growing 1/turn, Impending Doom channeling Focus into stacks) - at 15+ foe Doom this converts the bank into a ~34-Doom sentence. In-pack: Omen of Ruin chips, Doomwritten cashes, Sealed Fate seals.",
+        "powerNotes": "L 3 INT: floor (no setup) = foretell 3 + 8 Doom (4 then doubled: 4+X+4 with X=0 -> 8) ~ legendary 3-cost par (CORPUS-STATS #1: R 3-cost 8-15); ceiling = 2X+8 with ramped X, paid for by multi-turn setup and Doom's own anti-synergy (each action played decays it, and the whole bank still races EndTurnPhase). Order matters and is encoded: inflict:4 resolves before the doubling read. No loop: single cast, stacks detonate and clear. Doubling idiom inflict:[[other(status)Doom]] + referenceStatus Doom is Strangling_Lashes.json verbatim; Dark_Omen.json ships the token player-side."
+      }
+    }
+  ],
+  "weapons": [
+    {
+      "name": "Cartomancer's Edge",
+      "cardID": 700000699,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "BasicAttack",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "Neutral": 1 },
+      "description": "Deal [damage:2] damage.\n<b>Foretell [[foretell+1]]</b>.",
+      "keywords": [],
+      "cardKeywords": ["basic", "foretell"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": ["excludeFromRewards"],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2:arcane",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "foretell:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/CartomancersEdge.png",
+      "classes": ["Seeker", "Arcanist"],
+      "meta": {
+        "archetype": "the metronome: every swing turns a card",
+        "nearestExisting": "Torch.json (Arcanist-menu basic: 0 damage - Foretell 3 + bury a card + Burning by its cost); Seers_Orb.json (Seeker-menu basic: 0 damage - Doom applicator with foretold self-scaling); Forcewand.json / Knuckles.json (the class defaults: 2 dmg + rider)",
+        "whyDifferent": "78-weapon sweep (basic-keyword corpus, CORPUS-STATS #2): the only foretell-touching basics are Torch and Seers Orb, and both sacrifice ALL damage for their engine - the shipped foretell weapons are utility metronomes for dedicated kits. Cartomancer's Edge is the missing middle point: statline-par damage (2, the universal baseline) with the smallest possible read (Foretell 1) as its single rider. Not strictly better than Torch (no bury/burn engine, one-third the read); not worse (it still fights). The rider's real payload is the Reveal trigger it fires every turn: each swing arms When-Foretold cards (Prophetic Bolt, Seers Orb's own bonus, Omen of Ruin) and feeds every per-card-Foretold counter - a decision (which future do I arm each swing?) no shipped weapon offers.",
+        "intendedDeck": "Loadout: The Cut arrives pre-armed off the swing-reads; Diviner's Barrier rider pays per swing. Vanilla: every Eclipse foretell payoff and counter ticks off the basic attack.",
+        "powerNotes": "Statline: damage 2 at 1 Neutral, Common = the 6-weapon starting curve exactly (CORPUS-STATS #2); identity = exactly one rider (foretell:1), a permanent engine priced as such: 1 revealed card/turn vs Forcewand's 2 Chain/turn or Knuckles' Cascade-gated free copy - comparable rider mass. Foretell 1 cannot reorder (the single revealed card returns to top - DeckViewer.Foretell reinsert), so the rider is knowledge + Reveal-trigger arming, scaling to a real reorder only via Focus (+1 card per 3, GetForetell). Both codeLines shipped verbatim (Forcewand damage:2:lightning analog; Torch foretell)."
+      }
+    }
+  ],
+  "weaponPowers": [
+    {
+      "name": "Diviner's Weapon",
+      "talentID": 700000698,
+      "description": "Use your weapon power to inflict <b>Doom</b> equal to twice your level ([[myLevel]]*2) at the start of next combat. <b>Passive:</b> After you <b>Foretell</b>, gain <b>1 Barrier</b>.",
+      "flavortext": "",
+      "cooldown": 2,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "startstatus:[[myLevel]]*2:false",
+          "forecast": true,
+          "referenceStatus": "Doom",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "Foretell",
+          "codeLine": "bless:1",
+          "forecast": false,
+          "referenceStatus": "Barrier",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "requirements": { "rDEX": 0, "rINT": 0, "rSTR": 0 },
+      "classes": ["Seeker", "Arcanist"],
+      "art": "art/DivinersWeapon.png",
+      "meta": {
+        "archetype": "the fate is already written: the foe starts the fight sentenced",
+        "nearestExisting": "Baneful Weapon (cd2: startstatus Poison 2xlvl on foe + passive); Focused Weapon (cd3: 1 Focus + Centered Strikes - the shipped Seeker foretell-adjacent power)",
+        "whyDifferent": "0 of the 66 shipped tier-0 talents touch Doom (scripted scan), and the proposal's 'start next combat with Foretell 2' is impossible - foretell hard-requires the player turn (SpellEffects.Foretell early-returns on CheckIfPlayerTurn) while ActivateWeapon fires in exploration; 'Foretold cards deal +1' needs a per-card marker the engine does not keep. Redesigned inside the fiction: the reading happens before the fight (Doom opener - the countdown starts at turn 1), and the passive pays the pack's core loop (a Foretell-trigger rider; the global Foretell trigger fires once per completed reading, DeckViewer.cs:1025-1030, Exploration.json's shipped T96 shape). Focus opener was rejected: Focused/Psychic Weapon already own next-combat Focus.",
+        "intendedDeck": "Loadout: opener means Omen of Ruin/Doomwritten have a bank to build on from turn 1; the Barrier rider pays 1-2/turn off the Edge's swing-reads. Works with vanilla Doom shells even without the pack.",
+        "powerNotes": "cd2 curve point (CORPUS-STATS #3): level-scaled next-combat status opener (Baneful = Poison 2xlvl at cd2) + small per-trigger passive (shipped rider scale: 1 stack/trigger, e.g. Acrobatic's bless:1). Doom 2xlvl is weaker per stack than Poison 2xlvl (detonates once at EndTurnPhase minus decay vs repeating ticks) - fits cd 2. Barrier rider: ~1-2/turn with the Edge (once per reading, not per card - T96 fires post-selection). UNVERIFIED x2 (QA list): startstatus with Doom referenceStatus has no shipped user (command + status both shipped, pairing new - Festering Weapon's Infected precedent shipped the same class of risk); Foretell as a talent rider trigger has no tier-0 precedent (legal GameTriggers member; card-side T96 shipped in Exploration.json). Fallback if the Doom opener fails QA: swap the ActivateWeapon line to the Warding Weapon shape (startstatus:[[myMaxHealth]]/5 self-Barrier, shipped verbatim at cd3 - value retuned for cd2) and keep the Foretell rider as the identity carrier."
+      }
+    }
+  ],
+  "startingCards": [
+    {
+      "name": "The Cut",
+      "cardID": 700000697,
+      "expansion": "Extended",
+      "type": "Magic",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "INT": 1 },
+      "description": "<b>Foretell [[foretell+1]]</b>. Deal [damage:2+[[tempValue]]] damage.\nWhen <b>Foretold</b>, add 2 damage.",
+      "keywords": [],
+      "cardKeywords": ["foretell"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "foretell:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2+[[tempValue]]:arcane",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "Reveal",
+          "codeLine": "addtempvalue:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/TheCut.png",
+      "classes": ["Seeker", "Arcanist"],
+      "meta": {
+        "archetype": "the loadout's called shot: cut the deck, then cut the foe",
+        "nearestExisting": "Prophetic_Bolt.json (C DEXINT 1: damage 3+tempValue, +5 per Foretold, + Doom rider); Mindstrike.json (Seeker default starting card)",
+        "whyDifferent": "Prophetic Bolt is a pure payoff - it waits to be found. The Cut is the seed shape a starting card needs: it FEEDS the engine (Foretell 1 on play) and pays off being fed, in one two-line card. Scripted scan: 0 of the 63 shipped starting cards reference Foretell or carry a Reveal-trigger effect. Deliberately smaller numbers than Prophetic Bolt (2+2 vs 3+5, no Doom rider, mono-INT vs hybrid) with a self-contained read attached - different decision (metronome vs haymaker), neither strictly dominates. The proposal's 'bury one Foretold card' clause was cut as redundant: foretell natively bottom-decks every future you refuse (DeckViewer.Foretell) and no command buries from the revealed selection.",
+        "intendedDeck": "Loadout story (one sentence): Cartomancer's Edge turns a card every swing - when it turns The Cut, The Cut arrives calling +2, and its own read arms the next turn's future; Diviner's Doom opener makes even turn 1 feel like a sentence being carried out. As a mid-run pull: a fair 1-INT cantrip-read for any Eclipse foretell deck.",
+        "powerNotes": "Starting-card curve (CORPUS-STATS #4): cost 1 (81% mode), Common, Magic/Action, 3 effect lines (60/63 ship 1-3), archetype-seed shape. Reliability floor: 2 arcane + Foretell 1 every draw - slightly under the 4-dmg common par, priced for the read (Battle Sense pays 3 self-damage for foretell 3 + draw at 0 cost). Ceiling: 4-6 when swing-reads reveal it (each Reveal adds +2, Starmap-style stacking, tempValue clamp 0-9999) - paid by the Edge's rider, not the card. Whiff mode: never dead (flat 2 + read). DSL: foretell (Torch), damage:X+[[tempValue]] + Reveal addtempvalue (Prophetic_Bolt.json / Seers_Orb.json / Starmap.json verbatim)."
+      }
+    }
+  ]
+}

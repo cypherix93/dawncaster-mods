@@ -1,0 +1,782 @@
+{
+  "$schema": "../schemas/pack.schema.json",
+  "pack": "PowderAndPatience",
+  "idBlock": [700000500, 700000599],
+  "cards": [
+    {
+      "name": "Powder Keg",
+      "cardID": 700000500,
+      "expansion": "Extended",
+      "type": "Ranged",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "Neutral": 2 },
+      "description": "Deal [damage:5] damage.\nReady after 2 turns. Speed up the timer when you use a <b>Charge</b>.",
+      "keywords": ["OneUse", "Persistent"],
+      "cardKeywords": ["bomb"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": ["excludeFromRewards"],
+      "playConditions": [
+        { "value": "AnyValue", "op": "IsLessThan", "target": "[[costThisCard]]:1", "ignoreForDisplay": false }
+      ],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:5",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "StartPhase",
+          "codeLine": "reducecost:any:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "SpendCharge",
+          "codeLine": "reducecost:any:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "Draw",
+          "codeLine": "setcost:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/PowderKeg.png",
+      "meta": {
+        "archetype": "fuse token - the base instrument",
+        "nearestExisting": "Cryo_Bomb.json (the shipped fuse-2 bomb: 6 dmg + 6 Frozen, Legendary); Bomb.json (the family template: fuse-3, 20 dmg)",
+        "whyDifferent": "Structurally the shipped Bomb pattern verbatim (cost-as-fuse: playCondition AnyValue IsLessThan [[costThisCard]]:1; StartPhase + SpendCharge reducecost:any:1; Draw setcost - all four lines copied from Bomb.json/Cryo_Bomb.json). Deliberately NOT a new decision by itself: it is the pack's token instrument, reward-excluded, sized under every shipped bomb (5 plain vs Cryo's 6+6-Frozen at the same fuse). The new decisions live on the issuer cards; the token joins the shipped 'bomb' keyword pool so every shipped bomb payoff (Rigged Explosives, Stockpile, Blast Junkie, Blast Zone, Tinker, Handcannon) reads it.",
+        "intendedDeck": "Conjured by Strike the Match / Sapper's Patience / Demolitionist Weapon. Matures in ~1 real turn under the Fuse-Cutter clock (StartPhase tick + one swing tick).",
+        "powerNotes": "Fuse-2 bombs shipped: Cryo_Bomb = 6 dmg + 6 Frozen (Legendary token). Ours: 5 plain damage, Common - strictly under Cryo at the same fuse; mass-issued instead of singleton. Detonation is a PLAYER decision at cost 0 (playCondition gates until ready, then it is a free Action) - the timing-vs-intents fantasy. All four codeLines + both keywords (OneUse+Persistent = Bomb.json's kw [31,36]) verbatim from shipped bombs; no uncertainty."
+      }
+    },
+    {
+      "name": "Blasting Barrel",
+      "cardID": 700000501,
+      "expansion": "Extended",
+      "type": "Ranged",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "Neutral": 3 },
+      "description": "Deal [damage:12] damage.\nReady after 3 turns. Speed up the timer when you use a <b>Charge</b>.",
+      "keywords": ["OneUse", "Persistent"],
+      "cardKeywords": ["bomb"],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": ["excludeFromRewards"],
+      "playConditions": [
+        { "value": "AnyValue", "op": "IsLessThan", "target": "[[costThisCard]]:1", "ignoreForDisplay": false }
+      ],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:12",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "StartPhase",
+          "codeLine": "reducecost:any:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "SpendCharge",
+          "codeLine": "reducecost:any:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "Draw",
+          "codeLine": "setcost:3",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/BlastingBarrel.png",
+      "meta": {
+        "archetype": "fuse token - the long bond",
+        "nearestExisting": "Soulfire_Bomb.json (fuse-3, 10 dmg); Bomb.json (fuse-3, 20 dmg, cannon-kit economy)",
+        "whyDifferent": "Same verbatim Bomb pattern at fuse 3. Sized between Soulfire (10) and Bomb (20) because our issuers arm it for one cheap card with no Handcannon/restock economy behind it, and the Fuse-Cutter clock halves its real maturity. Token, reward-excluded - the decision (long bond vs fast keg) lives on Satchel Charge.",
+        "intendedDeck": "Conjured by Satchel Charge. The scheduling long bond: matures turn 2 under the full clock (StartPhase + swing + Satchel's own Charge tick).",
+        "powerNotes": "12 at fuse 3 vs Soulfire's 10 and Bomb's 20 - inside the shipped band. Deferred-damage pricing per the fuse: ~12 dmg for 1 STR (Satchel) delayed ~2 turns vs the 1-energy ~4-dmg immediate baseline (CORPUS-STATS 1) - the overage is paid by delay, telegraph (foe may die first, fight may end) and hand-slot occupancy. All codeLines shipped-verbatim; no uncertainty."
+      }
+    },
+    {
+      "name": "Ticking Smile",
+      "cardID": 700000502,
+      "expansion": "Extended",
+      "type": "Corruption",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {},
+      "description": "<b>One Use:</b> Take 6 damage and become <b>Stunned</b>.\n<i>\"Surprise.\"</i>",
+      "keywords": ["OneUse"],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": ["excludeFromRewards"],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "directdamage:6:normal:self",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:1",
+          "forecast": false,
+          "referenceStatus": "Stunned",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "say:Surprise.",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/TickingSmile.png",
+      "meta": {
+        "archetype": "enemy-planted token - the punchline",
+        "nearestExisting": "Snare.json (enemy-deck plant: OneUse, 0-cost, self-damage on the drawer's own play); Glimmer.json (plant whose bless self-applies to the enemy)",
+        "whyDifferent": "Snare pings and cantrips (1+X piercing, draw 1, upgrade-scaling); Glimmer self-Charms. This is the first planted card that is a scheduled BOMB: a real damage payload (6) plus a self-applied hard stop (Stunned: 'cards cannot be played', Stunned.json) that ends the rest of the enemy's turn - a tempo detonation, not a ping. Phase-0 verdict: enemy-drawn cards do NOT fire on draw; planted cards fire when the enemy PLAYS them (Snare/Glimmer/Sabotage pattern, all PlayAction-trigger; enemy AI plays its hand in order, cost-gated - GAME-MECHANICS Part V), and a 0-cost plant is always played. The 'Surprise.' punchline survives exactly as the proposal's fallback intended.",
+        "intendedDeck": "Planted by Parting Gift. Works against every deck the enemy owns; best vs multi-action elites (Stunned cancels their remaining plays that turn).",
+        "powerNotes": "Payload sized as a delayed ~6 dmg + soft turn-break for Parting Gift's 1 STR: enemy deck is 20 cards (cloned deckList, Part V), so the fuse is drawn in roughly 1-3 turns. directdamage:6:normal:self is Snare's exact self-hit idiom; bless + referenceStatus on an enemy-played card self-applies (Glimmer verbatim: bless:2 Charmed); say is a shipped command (Hidden_Blade.json 'say:Requiescat in pace'; SpellEffects.cs:2383). LOW-RISK FLAG: Stunned is canNotBeIncreased (Stunned.json) - we apply exactly 1, no stacking intended; QA-check the enemy actually stops playing."
+      }
+    },
+    {
+      "name": "Short Fuse",
+      "cardID": 700000503,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": {},
+      "description": "Deal [damage:2] damage.\nUses a <b>Charge</b> — your <b>Bombs</b>' timers speed up.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 3,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/ShortFuse.png",
+      "meta": {
+        "archetype": "free acceleration - the cheap tick",
+        "nearestExisting": "Demolition.json (the shipped charge-card accelerant shape: STR 1, 3 charges, delves a bomb); Jab-class 0-cost commons",
+        "whyDifferent": "The tick rider costs NO codeLine: any card with charges > 0 fires the SpendCharge event when played from hand (SpellEffects.Decharge, SpellEffects.cs:12397-12410 - 'SpendCharge trigger for non-Equipment'), and every bomb - ours AND the shipped seven - already listens to SpendCharge with reducecost:any:1. No shipped 0-cost card exists whose entire identity is being a Charge emitter; the decision is spending a copy's limited uses (3/combat, then the copy is buried - depleted-card rule, EndActionStep) to compress a detonation into this turn instead of next.",
+        "intendedDeck": "Any bomb deck, including the vanilla Handcannon/Warrior cannon kit - it accelerates shipped Bombs identically. In-pack: the emergency throttle for steering a keg into the enemy's telegraphed turn.",
+        "powerNotes": "0-cost common baseline ~2-3 dmg-equivalent (CORPUS-STATS 1). 2 dmg + 1 fuse tick, 3 uses per combat per copy (then buried for the combat - verified depletion path, SpellEffects.cs:615-645). Precedent for the charge budget: Demolition (C, 1 STR, 3 charges). Auto-Decharge on play + SpendCharge event are decompile-verified; no DSL uncertainty (the only codeLine is damage:2)."
+      }
+    },
+    {
+      "name": "Satchel Charge",
+      "cardID": 700000504,
+      "expansion": "Extended",
+      "type": "Ranged",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "STR": 1 },
+      "description": "Conjure a <b>Blasting Barrel</b>.\nUses a <b>Charge</b> — your <b>Bombs</b>' timers speed up.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 3,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "conjure:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": ["Blasting Barrel"],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/SatchelCharge.png",
+      "meta": {
+        "archetype": "the long bond issuer",
+        "nearestExisting": "Lock_and_Load.json (U, 1 STR: conjure a Bomb + reload all Ammo); Restock.json (C, 1 STR: conjure 2 Bombs)",
+        "whyDifferent": "Lock and Load and Restock issue the cannon kit's 20-damage Bomb into a Handcannon economy (restock/ammo). Satchel Charge issues a smaller instrument (12) but is itself a Charge card: playing it fires SpendCharge (auto-Decharge), so the freshly conjured Barrel ticks immediately (arrives during the action, hears the end-of-action Charge) and every other held bomb accelerates. Arming that is simultaneously an acceleration event is a combination no shipped issuer has - the decision is sequencing arms to compound the clock.",
+        "intendedDeck": "Vanilla STR bomb/charge shell (Handcannon is a Warrior keystone weapon; Demolition/Toolbelt/Lock and Load/Rigged Explosives are acquirable STR cards) or the pack's fuse kit.",
+        "powerNotes": "1 STR C: ~12 damage delayed ~2 turns + 1 immediate tick to all held bombs, 3 uses/copy/combat. Vs Lock and Load (U): less damage per bomb (12 vs 20), no ammo reload, faster maturity - not strictly better or worse; vs Restock (C, 2 Bombs = 40 total): far less payload, adds the tick - different decision (tempo vs mass). conjure:N + referenceCards is Restock-verbatim (conjure:2 + Bomb PPtr); charges-on-play tick verified at SpellEffects.cs:12397. No DSL uncertainty."
+      }
+    },
+    {
+      "name": "Safe Distance",
+      "cardID": 700000505,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "Neutral": 1 },
+      "description": "Gain <b>4 Armor</b>.\nIf you're holding a <b>Bomb</b>, gain <b>2</b> more.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:4",
+          "forecast": true,
+          "referenceStatus": "Armor",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "bless:2",
+          "forecast": false,
+          "referenceStatus": "Armor",
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "AnyValue", "op": "IsMoreThan", "target": "[[bombsInHand]]:0", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/SafeDistance.png",
+      "meta": {
+        "archetype": "defense inside the fiction - BRIDGE to Armor decks",
+        "nearestExisting": "Brace_for_Impact.json (C, 1-cost: 4 Armor, 8 if the enemy is holding an attack)",
+        "whyDifferent": "Brace for Impact reads the ENEMY's hand; Safe Distance reads YOUR armed bombs ([[bombsInHand]], the Handcannon-kit token) - the first defensive card gated on your own scheduled detonations. The decision it creates: holding a matured keg one more turn now has a defensive dividend, which is exactly the pack's timing tension (patience pays armor, detonation pays damage).",
+        "intendedDeck": "Any Armor/defense shell (Warrior armor piles) - 4 unconditional Armor at 1 Neutral is Brace-for-Impact-par and pull-safe with zero pack support. In-pack: the survival lane while bonds mature.",
+        "powerNotes": "Anchor: Brace_for_Impact (C, 1-cost, 4/8 on an externally-owned condition). Ours is 4/6 on a self-controlled condition - lower ceiling for an easier gate; not strictly better (6 < 8) or worse (same base, self-steerable rider). bless + referenceStatus Armor = the 441-card idiom (Block.json); AnyValue IsMoreThan [[bombsInHand]]:0 is Handcannon.json's exact condition (decoded conds [251:[[bombsInHand]]:0] family). No uncertainty."
+      }
+    },
+    {
+      "name": "Parting Gift",
+      "cardID": 700000506,
+      "expansion": "Extended",
+      "type": "Ranged",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "STR": 1 },
+      "description": "Deal [damage:2] damage.\nAdd a <b>Ticking Smile</b> to your foe's deck.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "addcardtodeck:1:other",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": ["Ticking Smile"],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/PartingGift.png",
+      "meta": {
+        "archetype": "the screenshot card - a bomb in THEIR deck",
+        "nearestExisting": "Crossbow.json (basic: Ambush/Finale-gated 'Add a Snare to your foe's deck'); Rapier.json (Flanking-gated Glimmer plant)",
+        "whyDifferent": "Both shipped planters are position-gated riders on basic-attack weapons, and their payloads are pings (Snare) or self-charms (Glimmer). Parting Gift is the first ACTION whose whole purpose is the plant, ungated, and the first plant that is a bomb (6 damage + a Stunned turn-break when the enemy plays it). It extends the pack's thesis into the enemy's deck: their draw pile becomes one of your scheduling venues.",
+        "intendedDeck": "Any STR tempo deck - it is 2 damage plus ~6 delayed damage with no archetype requirement (pull-safe). In-pack: the punchline; pairs with Stunned tempo swings against multi-action elites.",
+        "powerNotes": "1 STR U: 2 now + ~6 + turn-break delayed 1-3 turns (20-card enemy deck, Part V). Comparable to 1-cost U delayed-control precedent (Sleeping Poison's 2 delayed Jinxed). addcardtodeck:1:other + referenceCards is Rapier.json verbatim; the plant fires on enemy play (Snare pattern) - see Ticking Smile's block for the on-draw verdict. No DSL uncertainty on this card itself."
+      }
+    },
+    {
+      "name": "Sapper's Patience",
+      "cardID": 700000507,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "STR": 1 },
+      "description": "Conjure 2 <b>Powder Kegs</b>.\nIf you're holding 3 or more <b>Bombs</b>, draw a card.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "conjure:2",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": ["Powder Keg"],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "draw:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "AnyValue", "op": "IsMoreThan", "target": "[[bombsInHand]]:2", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "enchantment": null,
+      "art": "art/SappersPatience.png",
+      "meta": {
+        "archetype": "going wide - the portfolio card",
+        "nearestExisting": "Restock.json (C, 1 STR: Conjure 2 Bombs, flat)",
+        "whyDifferent": "Restock is flat mass supply for the cannon. Sapper's Patience adds the width payoff: the draw is gated on holding 3+ bombs, which only a deck that arms and HOLDS (patience) reaches - and every held keg is a hand slot not drawing cards (hand cap 10), so width has a real price the draw partially refunds. First bomb issuer with a bombs-held threshold; the decision is portfolio size vs hand liquidity.",
+        "intendedDeck": "Vanilla cannon kit (its Bombs count toward the gate) or the pack's fuse deck going wide under Chain Reaction / One Last Job.",
+        "powerNotes": "1 STR U: 2 kegs = ~10 delayed damage + conditional cantrip. Vs Restock (C): 10 vs 40 potential payload but 2-turn instead of 3-turn maturity and the width cantrip - not strictly comparable; the rarity step buys the extra gate per CORPUS-STATS 1. conjure:2 + referenceCards Restock-verbatim; [[bombsInHand]] threshold = Handcannon/Tinker token, AnyValue IsMoreThan idiom. Degeneracy note for the sniffer: conjure here is on PlayAction (not the Conjure trigger) - no self-feeding loop; kegs mature over turns and hand cap 10 bounds width."
+      }
+    },
+    {
+      "name": "Controlled Demolition",
+      "cardID": 700000508,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Uncommon",
+      "cost": { "STR": 1 },
+      "description": "Play a <b>Bomb</b> from your hand, even if it isn't ready.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [
+        { "value": "AnyValue", "op": "IsMoreThan", "target": "[[bombsInHand]]:0", "ignoreForDisplay": false }
+      ],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "playkeywordfromhand:bomb",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/ControlledDemolition.png",
+      "meta": {
+        "archetype": "early redemption - cash out before maturity",
+        "nearestExisting": "Handcannon.json (Warrior keystone weapon, 2 Neutral: 'If you're holding a Bomb, play that instead' - playkeywordfromhand:bomb verbatim)",
+        "whyDifferent": "Handcannon is the launcher IN the basic-attack slot: every swing either hits for 4 or fires a bomb, an economy you buy at character creation. Controlled Demolition is the same verified mechanism as a pool ACTION: any deck that picks up bombs mid-run gains one-shot early redemption without owning the cannon. The decision is the economist's: pay 1 energy + a card to collapse a bond's remaining maturity to zero (against a telegraphed enemy heal/shield, or to dodge an incoming discard).",
+        "intendedDeck": "Vanilla cannon-kit decks (fires their 20-dmg Bomb early) and any deck that pulled an issuer; in-pack, the answer to 'the fight ends before my Barrel matures'.",
+        "powerNotes": "1 STR U for tempo conversion, no raw stats - the value is entirely the held bomb's face, which the player already paid for (no double-count: this card adds 0 damage of its own). playkeywordfromhand:bomb is Handcannon-verbatim; implementation verified to PlayAction the bomb directly, bypassing the ready-gate playCondition (SpellEffects.PlayKeywordFromHand, SpellEffects.cs:10036-10048; selection UI when holding several). playCondition idiom (AnyValue IsMoreThan [[bombsInHand]]:0) is Tinker.json's exact play-gate. No uncertainty."
+      }
+    },
+    {
+      "name": "The Long Con",
+      "cardID": 700000509,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "Neutral": 1 },
+      "description": "Deal {[[tempValue+1]]} damage.\nAt the start of each turn this waits in your hand, it gains <b>3</b> damage.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:[[tempValue+1]]",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "StartPhase",
+          "codeLine": "addtempvalue:3",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/TheLongCon.png",
+      "meta": {
+        "archetype": "the card that lies - patience as a statline",
+        "nearestExisting": "Hidden_Flurry.json (in-hand tempValue growth: 'After you play a Sinister card, add one attack' - EndAction + addtempvalue while held); Bomb.json (in-hand StartPhase countdown)",
+        "whyDifferent": "Hidden Flurry grows per event of an archetype you drive; shipped bombs count DOWN in hand toward a fixed face. The Long Con is the inversion no shipped card has: a card that counts UP in hand, turning pure time into damage - a fuse where you choose the detonation size by choosing the wait, with no keyword support needed. New decision: it competes for the same patience the kegs consume, and cashing it early is always legal (1 damage - the pathetic jab it pretends to be).",
+        "intendedDeck": "Any deck at all - it is archetype-free and pull-safe (the growth needs nothing). Best where the pack already wants long turns held (fuse decks, control shells).",
+        "powerNotes": "Deal 1 on arrival; +3 per turn held: turn 3 of holding = 10 damage for 1 Neutral, vs 1-cost Rare par ~5 (CORPUS-STATS 1) - the overage is paid by 2-3 turns of a dead hand slot (hand cap 10) and draw-timing risk, same deferral pricing as the kegs. Linear, single-copy growth; no loop (sniffer-safe: no replay/copy commands). DSL: damage:[[tempValue+1]] and in-hand addtempvalue are Hidden_Flurry-verbatim (its codeLines: basicattack:[[tempValue+1]]; EndAction addtempvalue:1); StartPhase is in the engine's in-hand trigger whitelist (EventHandler.HandTrigger, EventHandler.cs:485 - same scan that runs shipped bombs' StartPhase tick). No uncertainty."
+      }
+    },
+    {
+      "name": "Packed with Nails",
+      "cardID": 700000510,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Enchantment",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "STR": 2 },
+      "description": "This combat, whenever one of your <b>Bombs</b> detonates, inflict <b>3 Bleeding</b>.",
+      "keywords": ["Unique"],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "EndAction",
+            "codeLine": "inflict:3",
+            "forecast": false,
+            "referenceStatus": "Bleeding",
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": [
+              { "value": "PlayedCardHasKeyword", "op": "Is", "target": "bomb", "ignoreForDisplay": false }
+            ]
+          }
+        ]
+      },
+      "art": "art/PackedWithNails.png",
+      "meta": {
+        "archetype": "BRIDGE bombs -> bleed (shrapnel)",
+        "nearestExisting": "Rigged_Explosives.json (the shipped 'your Bombs deal more' enchantment); Caltrops.json (per-event Bleeding enchantment)",
+        "whyDifferent": "Every shipped bomb payoff is MORE DAMAGE on the detonation (Rigged Explosives, Blast Junkie, Stockpile upgrades). This is the first payoff that converts detonations into a different archetype's currency: each blast loads 3 Bleeding, pulling the bomb deck toward the vanilla STR bleed/Deep-Wound shell (Lacerate, Cleavers, Cutting Words readers). New payoff for an existing setup (Difference mode 3) and an explicit bridge edge bombs->bleed that Part VI's web lacks.",
+        "intendedDeck": "STR bleed decks that pull one bomb issuer, or fuse decks splashing bleed payoffs; detonation count (not size) is the scaling axis, so it prefers many Powder Kegs over one Barrel - a real portfolio choice against Blasting Barrel.",
+        "powerNotes": "2 STR Rare: ~3 Bleeding per detonation, realistically 1-2 detonations/turn mid-combat in a dedicated deck - proportional to Festering_Wounds' per-proc rate at U (its trigger is far more frequent). Trigger idiom: EndAction + PlayedCardHasKeyword Is 'bomb' is Hidden_Flurry.json's exact pair (EndAction t44 + cond [97:'sinister'] checking cardKeywords via ConditionChecker.PlayedCardHasKeyword -> CheckCardKeyword, ConditionChecker.cs:2326); enchant:self combat-blessing shape = Carnage/Salt-the-Wound pattern; inflict + referenceStatus = 441-card idiom. UNVERIFIED (rank 3): Hidden Flurry hears its trigger from HAND; ours listens from an active enchantment container (ProcessLastingEffects handles EndAction enchantment effects - Amber_Bomb ships an EndAction enchantment line, so the zone is exercised). Fallback if the keyword condition misfires in enchantment context: gate on AnyValue IsMoreThan [[bombsPlayedTurn]] equivalent is NOT available - fallback is Rigged-style adddamage rider (CalculateOutgoingDamage + CardContainsKeyword, fully verbatim) with the bleed moved onto Powder Keg itself."
+      }
+    },
+    {
+      "name": "Chain Reaction",
+      "cardID": 700000511,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Enchantment",
+      "suffix": "None",
+      "rarity": "Rare",
+      "cost": { "STR": 2 },
+      "description": "This combat, whenever one of your <b>Bombs</b> detonates, spend a <b>Charge</b> — your other <b>Bombs</b> speed up.",
+      "keywords": ["Unique"],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "enchant:self",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": {
+        "text": "",
+        "type": "blessing",
+        "combat": true,
+        "showstacks": false,
+        "effects": [
+          {
+            "trigger": "EndAction",
+            "codeLine": "decharge:1",
+            "forecast": false,
+            "referenceStatus": null,
+            "referenceCards": [],
+            "hideReferenceCards": false,
+            "conditions": [
+              { "value": "PlayedCardHasKeyword", "op": "Is", "target": "bomb", "ignoreForDisplay": false }
+            ]
+          }
+        ]
+      },
+      "art": "art/ChainReaction.png",
+      "meta": {
+        "archetype": "cascade engine - detonations tick the portfolio",
+        "nearestExisting": "Blast_Zone.json (detonation-event enchantment: 'whenever you discard a Bomb, play it instead'); Stockpile.json (on-create bomb enchantment)",
+        "whyDifferent": "Blast Zone converts discards into detonations; Stockpile upgrades on creation. Neither touches the TIMER. Chain Reaction makes each detonation emit a Charge event, ticking every other held fuse - the cascade the archetype's fiction promises, expressed entirely in the shipped tick vocabulary (bombs already listen to SpendCharge). Bounded by construction: each detonation ticks others by exactly 1, matured kegs still need the player to play them, and conjured kegs cannot chain-arm themselves (no conjure in the loop).",
+        "intendedDeck": "Wide fuse decks (Sapper's Patience, Strike the Match, Demolitionist Weapon); also accelerates vanilla cannon-kit Bombs.",
+        "powerNotes": "2 STR Rare engine: saves ~1 turn of maturity per detonation across the held portfolio - comparable to Rigged Explosives' +5-per-detonation at U priced as tempo instead of damage, plus the Unique/combat enchantment tax. UNVERIFIED (rank 1, the pack's riskiest line): 'decharge' exists in the closed vocabulary (effect-commands.txt line 196; SpellEffects.cs:1256 -> Decharge at :12397) but has ZERO shipped card users as a codeLine. In enchantment context cc = the enchantment's referenceCard (ProcessLastingEffects: 'cc = item.referenceCard ?? c', EventHandler.cs:305-360) = this card's own non-Conjured container with 0 base charges -> Decharge fires exactly one SpendCharge event and clamps charges to 0 (loop body, SpellEffects.cs:12397-12420); depletion-burial cannot trigger (that path only runs at play time for theCard.charges > 0). Fallback if the sim/QA falsifies: replace decharge:1 with directdamage:2:normal:self (Caltrops-verbatim shape) and retitle the rider 'the blast echoes: deal 2 damage'; card keeps its slot as a detonation-count payoff."
+      }
+    },
+    {
+      "name": "One Last Job",
+      "cardID": 700000512,
+      "expansion": "Extended",
+      "type": "Utility",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Legendary",
+      "cost": { "STR": 2 },
+      "description": "<b>One Use:</b> Deal [damage:4] damage.\nSpend all 4 <b>Charges</b> at once, burning every <b>Fuse</b> down.",
+      "keywords": ["OneUse"],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 4,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:4",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "decharge:3",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/OneLastJob.png",
+      "meta": {
+        "archetype": "capstone - collapse every maturity now",
+        "nearestExisting": "Demolition.json (the shipped charge-spender family: each play = 1 tick); Big_Bomb.json (the shipped slow-payout ceiling)",
+        "whyDifferent": "Shipped acceleration is strictly 1 tick per Charge-card play. One Last Job is the first mass-maturity event: 4 SpendCharge events in one action (decharge:3 while holding 4 charges + the play's own auto-Decharge) ready every held bomb - fuse-3 Barrels included - this turn. The proposal's 'detonations are doubled' rider was cut (no verified doubling channel; multiplydamage:2 is the crit channel, Part VIII) and replaced with maturity collapse, which IS the fantasy: the whole portfolio comes due at once. The player still fires each keg by hand - the payoff is scheduling, not free damage.",
+        "intendedDeck": "Wide fuse decks; also readies vanilla cannon Bombs. The One Use + single copy per pull keeps it an event, not an engine.",
+        "powerNotes": "Legendary 2 STR: 4 immediate damage + up to ~5-17 unlocked deferred damage ALREADY PAID FOR by issuer cards (no double-count) + tempo. L anchors: 2-3-cost one-shot swings (Toxic_Bloom-class). Bounded: OneUse, charges 4, no replay commands (sniffer-clean). UNVERIFIED (rank 2): decharge as a codeLine has no shipped card user; in PLAY context cc = this card's own container (standard RunEffect cc binding), charges 4 -> decharge:3 fires 3 SpendCharge events (verified loop body, SpellEffects.cs:12397-12420), then EndActionStep's auto-Decharge fires the 4th and buries the depleted copy (redundant under OneUse). Fallback: playkeywordfromhand:bomb (Handcannon-verbatim) x1 + damage:8 - 'fire one bomb now', smaller fantasy, fully verified."
+      }
+    }
+  ],
+  "weapons": [
+    {
+      "name": "Fuse-Cutter",
+      "cardID": 700000599,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "BasicAttack",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "Neutral": 1 },
+      "description": "Deal [damage:1] damage.\nUses a <b>Charge</b> — your <b>Bombs</b>' timers speed up.",
+      "keywords": [],
+      "cardKeywords": ["basic"],
+      "utilityNumber": "",
+      "charges": 3,
+      "flags": ["excludeFromRewards"],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:1",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/FuseCutter.png",
+      "classes": ["Warrior", "Hunter"],
+      "meta": {
+        "archetype": "the clock - every swing ticks every fuse",
+        "nearestExisting": "Handcannon.json (Warrior keystone weapon, 2 Neutral: 4 dmg / 'If you're holding a Bomb, play that instead' - the launcher); Warmace.json (2 Neutral for an ungated status rider); Blightpin Stiletto (sibling mod: the damage-1 stat-sacrifice precedent, Rogue menu)",
+        "whyDifferent": "78-weapon sweep: 0 of 78 basic-keyword weapons carry charges (scripted scan, 2026-07) - the Charge-emitting basic is an unused combination (Difference mode 2). Handcannon FIRES held bombs (replacing the swing, at 2 Neutral); Fuse-Cutter never fires anything - it accelerates: each swing from hand auto-Decharges (charges 3) and the SpendCharge event ticks every held bomb's timer by 1, because shipped bombs already listen for exactly that ('Speed up the timer when you use a Charge' - their own printed rule). The weapon needs no new listener, no new command, and it accelerates VANILLA bombs identically. Same Warrior menu as Handcannon, opposite decision: launcher vs metronome.",
+        "intendedDeck": "The pack loadout (Strike the Match arms, swings mature, Demolitionist re-arms) and any vanilla bomb pickup; without bombs it is a weak-but-functional 1-damage basic - the honest floor of the sacrifice.",
+        "powerNotes": "Budget vs the 6 starting weapons (CORPUS-STATS 2: all damage 2, 1 Neutral, one rider): damage 1 = a full stat sacrifice (Blightpin Stiletto precedent) buying an every-swing rider that repeats all run - priced as a permanent engine per the weapon addendum. Additional hidden cost: each of the 6 deck copies has 3 charges/combat, then that copy is buried (depleted-card path, SpellEffects.cs:615-645) - 18 swings/combat ceiling, real only in marathon fights (flavor: the powder runs dry). Not strictly worse than any of the 78: no other weapon ticks timers; not strictly better: lowest damage line in the corpus and it does nothing alone. Auto-Decharge on play-from-hand + SpendCharge broadcast + in-hand SpendCharge scan all decompile-verified (SpellEffects.cs:12397-12420, :615-645; EventHandler.HandTrigger, EventHandler.cs:485). QA flag: commanded basics (basicattack:N cards) are not played from hand and do NOT tick - by design, only real swings are the clock; verify in gate 4."
+      }
+    }
+  ],
+  "weaponPowers": [
+    {
+      "name": "Demolitionist Weapon",
+      "talentID": 700000598,
+      "description": "Use your weapon power to start your next combat with a <b>Powder Keg</b> in hand.\n<b>Passive:</b> Your <b>Bombs</b> deal 1 additional damage.",
+      "flavortext": "",
+      "cooldown": 3,
+      "keywords": [],
+      "effects": [
+        {
+          "trigger": "ActivateWeapon",
+          "codeLine": "addnextcardfree",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": ["Powder Keg"],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "CalculateOutgoingDamage",
+          "codeLine": "adddamage:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": [
+            { "value": "CardContainsKeyword", "op": "Is", "target": "bomb", "ignoreForDisplay": false }
+          ]
+        }
+      ],
+      "requirements": { "rDEX": 0, "rINT": 0, "rSTR": 0 },
+      "classes": ["Warrior", "Hunter"],
+      "art": "art/DemolitionistWeapon.png",
+      "meta": {
+        "archetype": "opening inventory + permanent ordnance quality",
+        "nearestExisting": "Deadly Weapon (cd 3: ActivateWeapon addnextcardfree + StartCombat passive - the exact structural template); Rigged Explosives (the '+X to your Bombs' line, as a card)",
+        "whyDifferent": "No shipped tier-0 talent touches the bomb pool at all (66-talent scan). The activation converts exploration downtime into an armed opening keg (the sapper prepared before the fight - thesis in one line); the passive is the run-long ordnance-quality dial that scales with detonation COUNT, rewarding the wide-portfolio plan over the single Barrel. Both halves point at the same archetype state, per the weapon-power addendum.",
+        "intendedDeck": "The pack loadout; the passive also buffs vanilla cannon-kit Bombs, so the power stays live if the run drifts toward Handcannon tools.",
+        "powerNotes": "cd-3 curve point (CORPUS-STATS 3): 'a start-of-combat card (choice-of-3 or free)' - addnextcardfree + referenceCard is Deadly_Weapon's exact cd-3 ActivateWeapon line (Talent scan; also Flywheel Weapon in the sibling Clockwork pack). Passive: adddamage:1 on CalculateOutgoingDamage + CardContainsKeyword 'bomb' composes two verbatim pieces - trigger+command from Deadly_Accuracy.json (t33 adddamage + ActionType condition, a shipped Talent) and the condition pair (58:'bomb') from Rigged_Explosives.json's enchantment; +1 is shipped small-rider scale (passives do not scale with cooldown, CORPUS-STATS 3). UNVERIFIED (rank 4, low): no shipped tier-0 talent uses CardContainsKeyword on t33 (both halves shipped separately); fallback: move the +1 into Powder Keg's face damage and give the talent a StartCombat bless:2 Armor rider (Deadly-Weapon-shaped, fully verbatim)."
+      }
+    }
+  ],
+  "startingCards": [
+    {
+      "name": "Strike the Match",
+      "cardID": 700000597,
+      "expansion": "Extended",
+      "type": "Melee",
+      "category": "Action",
+      "suffix": "None",
+      "rarity": "Common",
+      "cost": { "STR": 1 },
+      "description": "Deal [damage:2] damage.\nConjure a <b>Powder Keg</b>.",
+      "keywords": [],
+      "cardKeywords": [],
+      "utilityNumber": "",
+      "charges": 0,
+      "flags": [],
+      "playConditions": [],
+      "effects": [
+        {
+          "trigger": "PlayAction",
+          "codeLine": "damage:2",
+          "forecast": true,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "conjure:1",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": ["Powder Keg"],
+          "hideReferenceCards": false,
+          "conditions": []
+        }
+      ],
+      "enchantment": null,
+      "art": "art/StrikeTheMatch.png",
+      "classes": ["Warrior", "Hunter"],
+      "meta": {
+        "archetype": "the ignition - loadout seed",
+        "nearestExisting": "Powder_Pockets.json (Warrior keystone starting card: 'Conjure a Bomb. If you had no Bombs in hand, return this card to hand', 3 charges - found by the Phase-2 sweep; the ONLY bomb-touching starting card in the 63-corpus)",
+        "whyDifferent": "Powder Pockets is a keystone-unlock ENGINE: it returns to hand to re-supply the cannon with 20-damage fuse-3 Bombs and spends charges doing it. Strike the Match is a SEED: immediate tempo (2 damage - it is never a dead card) plus one fast keg (fuse 2, matures ~1 real turn under the Fuse-Cutter clock vs 3 turns for Powder Pockets' Bomb without one). Different slot in the run too: always-available mod loadout pick vs keystone unlock; and ours is the only starting card whose weapon completes it (the keg it arms is ticked by every swing). Reliability-first per the starting-card addendum: both halves are unconditional.",
+        "intendedDeck": "Loadout: Fuse-Cutter (the clock) + Demolitionist Weapon (opening keg + ordnance passive) + this. Mid-run pull: still a clean 2-damage-plus-delayed-5 tempo card for any STR deck, and its keg feeds vanilla bomb payoffs (Rigged Explosives, Stockpile).",
+        "powerNotes": "Starting-card curve (CORPUS-STATS 4): cost 1 (81% mode), Common, 2 effect lines, normal reward-pool card (NOT excludeFromRewards - 62/63 corpus rule). Value: 2 now + 5 in ~2 turns for 1 STR - at the 4-dmg 1-cost baseline once deferral risk is priced (fight ends, keg unfired = 2-dmg vanilla, the honest whiff mode). Both codeLines verbatim-shipped (damage:N; conjure:1 + referenceCards = Restock/Cogspark pattern). No uncertainty."
+      }
+    }
+  ]
+}

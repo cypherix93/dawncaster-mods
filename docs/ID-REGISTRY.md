@@ -9,6 +9,9 @@ ID 41,020,045). Blocks of 100. Allocate here BEFORE using; never reuse a freed b
 | 700000100–700000199 | VenomousLegacy (attrition) | allocated 2026-07-18 |
 | 700000200–700000299 | Clockwork Cadence (tempo) | allocated 2026-07-18 |
 | 700000300–700000399 | CrimsonLedger (sacrifice/artifice) | allocated 2026-07-18 |
+| 700000400–700000499 | FinalEncore (Rogue, Perform) | allocated 2026-07-20 |
+| 700000500–700000599 | PowderAndPatience (Warrior/Hunter, fuses) | allocated 2026-07-20 |
+| 700000600–700000699 | Cartomancer (Seeker/Arcanist, Foretell/fate) | allocated 2026-07-20 |
 
 Legacy: `SandboxStrike` id 900001 (pre-policy hello-card; migrate into a block when the
 pack loader lands).
@@ -23,7 +26,7 @@ free top-down number per block is one below the lowest listed.
 | Block | Pack | Weapon cardIDs (top-down) | Power talentIDs (top-down) |
 |---|---|---|---|
 | …000099↓ | EmberweaveGrove | 700000099 Cinderbough Wand | 700000098 Cindersong Weapon, 700000097 Pyregraft Weapon, 700000096 Hearthguard Weapon |
-| …000199↓ | VenomousLegacy | 700000199 Blightpin Stiletto, 700000198 Flaying Hook | 700000197 Festering Weapon, 700000196 Hemorrhaging Weapon |
+| …000199↓ | VenomousLegacy | 700000199 Blightpin Stiletto, 700000198 Flaying Hook — **RETIRED 2026-07-20** (pack is cards-only; IDs permanently reserved, never reuse) | 700000197 Festering Weapon, 700000196 Hemorrhaging Weapon — **RETIRED 2026-07-20** |
 | …000299↓ | Clockwork Cadence | 700000299 Tickwright's Baton | 700000298 Ratchetwind Weapon, 700000297 Escapement Weapon, 700000296 Flywheel Weapon |
 | …000399↓ | CrimsonLedger | 700000399 Bloodprice Falchion | 700000398 Bloodtithe Weapon, 700000397 Soulscribe Weapon, 700000396 Pawnbroker's Weapon |
 
@@ -37,6 +40,6 @@ manifest array / `DawnKit.StartingCards` builder).
 | Block | Pack | Starting-card cardIDs (top-down) | Next free (top-down) |
 |---|---|---|---|
 | …000099↓ | EmberweaveGrove | 700000095 Stoke the Coals | 700000094 |
-| …000199↓ | VenomousLegacy | 700000195 Twin Fangs, 700000194 First Blood | 700000193 |
+| …000199↓ | VenomousLegacy | 700000195 Twin Fangs, 700000194 First Blood — **RETIRED 2026-07-20** | 700000193 |
 | …000299↓ | Clockwork Cadence | 700000295 Calibrated Strike | 700000294 |
 | …000399↓ | CrimsonLedger | 700000395 Repossession | 700000394 |
