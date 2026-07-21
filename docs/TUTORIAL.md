@@ -249,6 +249,26 @@ checkout IS the install, no copying. That's how this repo's four packs run.)
   (mid-run copies of your card vanish on the next reload; the engine's
   degradation rules are part of its spec, not your problem).
 
+## 7b. Testing your cards fast (gate-4 QA loop)
+
+Seeing your cards among 2,525 vanilla ones is slow. Three shipped/engine tools
+compress the loop (decompile-verified, `MetaCodes.CheckCode` /
+`AssetManager.GetArea`):
+
+- **Warp cheat** — start a new run and type **`xdctest0`** as the character
+  name: you spawn in the hidden `Stalwart_TEST` area (level 5, dense fights, 3
+  campfires, no boss) with an auto-generated class deck and gold.
+  `xdctest<areaID>` warps to any area (shipped IDs 11–102; e.g. `xdctest53` =
+  Emberwyld Heights). Type `c0dexplz` once to unlock the full codex.
+- **Mod-only reward pools** — set `[Sandbox] ModOnlyRewards = true` in
+  `BepInEx/config/dcmods.dawnkit.cfg`: every card reward, event grant and
+  conjuration pool then offers **only mod-set cards**. Testing only — never
+  ship enabled; with no mod cards present it logs a warning and stays vanilla.
+- **Reward-roll traces** — the game silences its own logger in player builds
+  (`GameLoader.cs:124`); DawnKit's log plus `BepInEx\LogOutput.log` still
+  carry the `[DawnKit] CreateRunLists` per-set pool counts, so you can verify
+  your set is actually in the pool before ever fighting.
+
 ## 8. Where to go next
 
 - **Design a real pack** — [METHODOLOGY](design/METHODOLOGY.md) is the design

@@ -26,11 +26,13 @@ namespace DawnKit
         internal static ManualLogSource Log;
         internal static bool Verbose;
         internal static bool DiagnosticsDump;
+        internal static bool SandboxModOnlyRewards;
 
         private ConfigEntry<bool> engineEnabled;
         private ConfigEntry<bool> verboseLogging;
         private ConfigEntry<bool> diagnosticsDump;
         private ConfigEntry<bool> eventsEnabled;
+        private ConfigEntry<bool> sandboxModOnlyRewards;
 
         private void Awake()
         {
@@ -48,8 +50,15 @@ namespace DawnKit
             eventsEnabled = Config.Bind("Events", "Enabled", true,
                 "Master switch for modded opportunity events (fail-safe rule): false = no event " +
                 "injection and no story-serving patch behavior — vanilla events untouched.");
+            sandboxModOnlyRewards = Config.Bind("Sandbox", "ModOnlyRewards", false,
+                "TESTING ONLY — never ship enabled. When true, the run card pool is filtered to " +
+                "mod-set cards only (synthetic expansions >= 1000) after every CreateRunLists, so " +
+                "card rewards, event grants and conjuration pools offer exclusively mod content. " +
+                "Fail-safe: if no mod cards are present in the pool, the filter is skipped and a " +
+                "warning is logged; vanilla behavior is untouched when false.");
             Verbose = verboseLogging.Value;
             DiagnosticsDump = diagnosticsDump.Value;
+            SandboxModOnlyRewards = sandboxModOnlyRewards.Value;
             Integration.Dialogues.DialogueIntegration.Enabled = eventsEnabled.Value;
 
             if (!engineEnabled.Value)

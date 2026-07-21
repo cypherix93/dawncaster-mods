@@ -35,6 +35,25 @@ namespace DawnKit.Core.Status
                     $"{s.DisplayName}={runcards.Count(c => c != null && c.cardexpansion == s.Expansion)}"));
                 string excluded = string.Join(",", PlayerHandler.thePlayerData.excludedsets.Select(e => (int)e));
                 DawnKitPlugin.Log.LogInfo($"[DawnKit] CreateRunLists: runcards={runcards.Count} [{perSet}] excludedsets=[{excluded}]");
+
+                if (DawnKitPlugin.SandboxModOnlyRewards)
+                {
+                    // Sandbox test knob (SPEC.md §5, [Sandbox] ModOnlyRewards): shrink the run
+                    // pool to mod-set cards (synthetic expansions >= 1000, Sets.SetHandle) so
+                    // test runs only offer mod content. Fail-safe: never leave the pool empty.
+                    int modCount = runcards.Count(c => c != null && (int)c.cardexpansion >= 1000);
+                    if (modCount == 0)
+                    {
+                        DawnKitPlugin.Log.LogWarning(
+                            "[DawnKit] [Sandbox] ModOnlyRewards=true but the run pool holds no mod-set cards — filter skipped, pool left vanilla.");
+                    }
+                    else
+                    {
+                        int removed = runcards.RemoveAll(c => c == null || (int)c.cardexpansion < 1000);
+                        DawnKitPlugin.Log.LogWarning(
+                            $"[DawnKit] [Sandbox] ModOnlyRewards ACTIVE: removed {removed} native cards; run pool = {runcards.Count} mod cards. TESTING ONLY.");
+                    }
+                }
             }
             catch (Exception ex)
             {

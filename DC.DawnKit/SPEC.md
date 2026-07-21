@@ -173,6 +173,14 @@ Current (SandboxPlugin.Awake — migrate sections `[Packs]` → DawnKit.Packs co
 - `[Engine] DiagnosticsDump` (bool, `false`) — write `BepInEx/DawnKit-diagnostics.txt`
   at boot completion: per-mod registered content, ownership table, conflict report,
   unresolved refs (P19 bug-report channel).
+- `[Sandbox] ModOnlyRewards` (bool, `false`) — **testing only, never ship enabled**:
+  after every `AssetManager.CreateRunLists`, filter `_runcards` to mod-set cards
+  (synthetic expansions ≥ 1000), so card rewards/event grants/conjuration pools offer
+  exclusively mod content (implemented in the existing CreateRunLists postfix,
+  `RunListProbe`). Fail-safe: skipped with a warning if the pool holds no mod cards;
+  `GenerateCardsRewards`' rarity/color fallbacks tolerate small pools
+  (GenerateCardsRewards.cs:96–134). Pairs with the shipped `xdctest<areaID>`
+  character-name warp (MetaCodes.CheckCode) for a full in-game test loop.
 
 ## 6. Patch targets & integration points
 
