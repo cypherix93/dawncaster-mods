@@ -244,9 +244,16 @@ per-trigger values, non-scaling with cd.
 - **Budget:** at the pack's derived rate (2 Life ~ 1 energy) 1 Life buys ~0.5 energy;
   damage stays at the universal 2 and the soul (<=1 HP battery) roughly refunds the
   life paid - the real gain is tempo + trigger fuel, and the sustained ~1 HP/turn drain
-  is a drawback no shipped weapon carries. Renders Black (pure life cost) per GetColor.
-- **Nearest:** Longsword (statline) / Soultap (HP->souls). **Different:** the only
-  weapon with no energy cost; identity is an economy loop, not a statline bump.
+  is a drawback no STARTING weapon carries. Renders Black (pure life cost) per GetColor.
+- **Nearest (updated v1.2 — 78-weapon corpus, CORPUS-STATS §2):** **Duskblades** and
+  **Demon Claws** (shipped Eclipse basics costing 1 Life, 0 energy — v1.1's "only
+  weapon with no energy cost" claim is retracted) / Longsword (statline) / Soultap
+  (HP→souls). **Different:** Duskblades' Life buys raw stats + a private Darkness crit
+  ramp — a sealed loop. The Falchion's Life cost is a public *event* the whole kit
+  listens to (DealtDamage→Frenzy, BLOOD spend→Bloodbank-pattern riders + Soulscribe's
+  dividend) while banking a Soul per swing. No shipped weapon's cost is itself the
+  archetype trigger; not dominated in either direction (different resource out, lower
+  raw output).
 
 ### Power: Bloodtithe Weapon - 700000398, cd 2, Warrior/Knight
 - **Role:** HP->gold conversion; the pack thesis as a button.

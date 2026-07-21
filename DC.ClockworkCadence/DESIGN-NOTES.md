@@ -78,12 +78,12 @@ Art files are not yet produced (ART-PIPELINE step); `art/` paths reserved in the
 - **Budget:** played 4th = 4+1 chain for 1 INT (Stormcast U gives 1+upgrades). Chain dies at EndTurnPhase — value must be converted same turn.
 - **Nearest:** `Stormcast.json` / `Chain_Lightning.json`. **Difference:** chain gain scales with *sequencing* (play count), a scaling axis no chain battery uses (upgrades and damage-roll exist; play-count doesn't).
 
-### 700000205 — Stutterbolt (Uncommon, 1 INT, Magic, Lightning — deliberately NOT Chain)
-- **Role:** chain cash-out into the copy archetype: 3 dmg + `playcopy:[[my(status)Chain]]/3`; being non-Chain, casting it **wipes your chain**.
+### 700000205 — Stutterbolt (Uncommon, 1 INT, Magic, Lightning — deliberately NOT Chain) — v1.2
+- **Role:** chain cash-out into the copy archetype: 3 dmg + `playcopy:[[my(status)Chain]]/3`, then an **explicit** chain wipe.
 - **Deck:** chain decks as finisher; tension: the chain you spend was also +dmg on future hits.
 - **Budget:** at 6 chain → 9 dmg for 1 INT, minus surrendered chain value; net ~+3 over baseline with full setup.
-- **Nearest:** `Gathering_Storm.json` (`playcopy:[[tempValue]]`). **Difference:** copy count fueled by chain, and the loop-brake is the chain-wipe rule itself rather than a tempValue zero-out. Converts chain into *plays* — existing spenders convert only into damage (Shocking Grasp) or energy (Energize).
-- **Loop-brake (engine):** `playcopy` re-runs PlayAction lines per copy, but the first resolution (non-Chain card) wipes all chain via EndActionStep ⇒ every replay computes `chain/3 = 0`. Self-extinguishing; verified against the Gathering Storm re-entry pattern.
+- **Nearest:** `Gathering_Storm.json` (`playcopy:[[tempValue]]`). **Difference:** copy count fueled by chain. Converts chain into *plays* — existing spenders convert only into damage (Shocking Grasp) or energy (Energize).
+- **Loop-brake (v1.2 — was DEGENERATE-RISK):** v1.1 relied on the *implicit* non-Chain wipe in EndActionStep, but SpellManager's replay queue (SpellManager.cs:616–696) re-runs PlayAction lines without calling EndActionStep, and the coroutine ordering of the first cast's wipe vs the queued replays is not decompile-provable. v1.2 adds `removestatus:chain:9999:self` (the engine's own EndActionStep idiom, SpellEffects.cs:586) as the card's final line: the wipe executes in the same resolution that queues the replays, so every replay computes `chain/3 = 0` **regardless of coroutine timing**. Same self-extinguishing shape as Gathering Storm's tempValue reset; the sim's degeneracy sniffer now recognizes the pattern (tools/sim/dsl.py `_self_extinguishing`, tested).
 
 ### 700000206 — Fractal Bolt (Uncommon, 1 INT, Magic, Lightning, Figmented)
 - **Role:** echo/copy via the dormant **Figmented** keyword: on play, a Conjured non-Figmented copy joins your hand (engine: EndActionStep).
@@ -182,15 +182,19 @@ mirrored, reframed, pulled to storm blue over brass with a voltage glow.
 passive), cd 3 = free/choice card or 2-3xlvl status, cd 4-5 = permanent deck edits,
 cd 6+ = dramatic one-offs; riders are small per-trigger values, non-scaling with cd.
 
-### Weapon: Tickwright's Baton - 700000299, Magic (Chain), Arcanist/Seeker
+### Weapon: Tickwright's Baton - 700000299, Magic (Chain), Arcanist/Seeker — evidence updated (v1.2)
 - **Role:** combo finisher in the basic-attack slot - Flow 2 mints a Cogspark for next
   turn's chain; carries Chain so the basic never wipes chain stacks (the archetype's
   breaking rule).
 - **Budget:** damage 2 + Chain keyword (=1 chain on resolve, half Forcewand's feed);
   gated token = ~1 dmg + 1 chain + Cascade-gated draw of temporary value, priced by
   needing 2 prior plays. At/under Forcewand's unconditional +2 chain.
-- **Nearest:** Forcewand / Knuckles. **Different:** opposite sequencing decision to
-  Knuckles' Cascade opener-weave - play it LAST, not first; the output is the pack token.
+- **Nearest:** **Stormaxe** (shipped Eclipse weapon basic: 1 lightning dmg + ungated
+  conjured Zap — the token-minting basic the v1.1 sweep missed; 78-weapon corpus,
+  CORPUS-STATS §2) / Forcewand / Knuckles. **Different:** Stormaxe trades a damage
+  point for a mindless token drip; the Baton keeps the statline and gates the mint on
+  sequencing (Flow 2, played third-or-later), producing the pack's Cascade link — the
+  basic as combo *finisher*, vs Stormaxe's drip and Knuckles' opener-weave.
 
 ### Power: Ratchetwind Weapon - 700000298, cd 3, Arcanist/Seeker
 - **Role:** token opener; four 0-cost links let turn 1 hit Flow thresholds.

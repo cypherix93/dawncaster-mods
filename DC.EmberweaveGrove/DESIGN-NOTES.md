@@ -83,17 +83,26 @@ for bridges, matching the Halo bury cycle.
   burial and stays retrievable; Persistent ships today only as hand-retention.
 - All DSL verified.
 
-### 5. Flameletting — INT 1, Uncommon, Magic/Fire
-- **Role:** self-Burning payoff (new mode: wants an affliction on self).
-- **Deck:** masochist INT fire with cleanse valves (Cauterize, Fire_Resistance,
-  Aura_of_Fire); Zeal decks get accidental fuel.
-- **Budget:** floor 4 dmg for 1 INT (par) at the price of a permanent 2/turn
-  self-DoT; escalates with copies/Zeal because Burning never decays.
-- **Nearest:** Cauterize (self-Burning as cost rider). **Different:** the payoff
-  direction is new — nothing in 2,525 cards rewards Burning on yourself.
-- DSL: `bless:2`+refstatus Burning self-application per Cauterize.json;
-  `[[my(status)Burning]]` per Pyroclasm.json; `*2` is NumberParser base arithmetic,
-  deliberately NOT `multiplydamage:2` (crit channel, Part VIII).
+### 5. Flameletting — INT 1, Uncommon, Magic/Fire — REDESIGNED (v1.2)
+- **Role:** self-Burning payoff (new mode: wants an affliction on self), now a
+  **cash-out cycle**: gain 2 Burning, deal 2× your Burning, then cleanse your Burning.
+- **History:** v1.1 (no cleanse) failed gate 3 with DEGENERATE-RISK — damage still
+  accelerating at the 16-turn cap (late/early 2.04): Burning never decays, so every
+  copy escalated forever (and Δsustain −20 meant it was racing its own pyre). The
+  cleanse is the loop-brake: nothing accumulates past the release.
+- **Deck:** masochist INT fire — bank Burning between casts (Cauterize's rider, Zeal
+  upkeep, the seed), choose the release turn; tension with Zeal decks that *want* to
+  stay lit.
+- **Budget:** floor 4 dmg for 1 INT (seed 2 then read 2×, par); each banked stack adds
+  2, paid by the ~1 HP/turn endured holding it.
+- **Nearest:** Cauterize (self-Burning as cost rider) / Tonguelash (consume-the-stack
+  cash-out, foe-side Poison→Stagger). **Different:** nothing in 2,525 cards rewards
+  Burning on yourself; the self-side consume-payoff is a new mode, and the name now
+  *depicts* the mechanic (letting the flame out).
+- DSL: `bless:2`+refstatus Burning per Cauterize.json; `[[my(status)Burning]]` per
+  Pyroclasm.json; `removestatus:<status>:all` per Tonguelash.json (`:self` target form
+  is the engine's own EndActionStep idiom, SpellEffects.cs:586); `*2` is NumberParser
+  base arithmetic, deliberately NOT `multiplydamage:2` (crit channel, Part VIII).
 
 ### 6. Chosen for the Pyre — INT 1, Uncommon, Magic/Fire
 - **Role:** precision bury → burn (burn/bury archetype).
@@ -159,8 +168,11 @@ for bridges, matching the Halo bury cycle.
 - **Role:** bridge payload — burn bomb / bury roulette hit / permanent graveyard
   resident, in one card.
 - **Deck:** every deck in the cluster wants it for a different reason.
-- **Budget:** 8 + 4 Burning at 2-cost Rare is top-of-band (5–8), paid by Heavy
-  (once per combat unless Emberdredge re-arms it). Not strictly better than
+- **Budget (v1.3 — rebalanced):** v1.1's 8 + 4 Burning simmed **OVER** (>P95, power
+  28.8), and 6 + 4 still grazed the edge (26.8 vs Rare P95 25.6) — the single-combat
+  sim cannot price Heavy (a cross-combat drawback) and never-decaying Burning fills the
+  whole window. Now 6 + 3 Burning: band-interior with margin, the rider still priced by
+  Heavy (once per combat unless Emberdredge re-arms it). Not strictly better than
   Elite_Fireball (Legendary, INT1, no drawback, reward-locked rarity aside).
 - **Nearest:** Elite_Fireball. **Different:** the pool's first Firecast+Heavy
   keyword pair (verified zero cards carry 11+21 together); the lifecycle
@@ -257,16 +269,24 @@ extracted tier-0 talents distribute cooldown 1×1, 2×20, 3×32, 4×8, 5×2, 6×
 - Passive riders do NOT scale with cooldown: small per-trigger values (heal 1–3, 1
   status stack, 1 resource) or one-time StartGame `addtalent`/`imbue` grants.
 
-### Weapon: Cinderbough Wand — 700000099, Magic, Arcanist/Knight
-- **Role:** graveyard→burn bridge in the basic-attack slot (the direction the gap map
-  calls missing).
-- **Budget:** statline par (2 fire dmg, 1 Neutral, Common). Rider = 1 Burning/turn gated
-  on `AnyValue IsMoreThan [[cardsBuried]]:0` (NOT the `CardsBurned` condition value —
-  that is an unimplemented always-true stub in ConditionChecker.cs, and no vanilla card
-  uses it); Warmace ships an UNgated 2-status/turn rider at cost 2, so a
-  bury-gated 1/turn at cost 1 is under the shipped ceiling.
-- **Nearest:** Forcewand (statline twin) / Warmace (status rider). **Different:** first
-  weapon whose rider reads archetype state (graveyard) instead of position/cost-weave.
+### Weapon: Cinderbough Wand — 700000099, Magic, Arcanist/Knight — evidence updated (v1.2)
+- **Role:** graveyard→burn bridge in the basic-attack slot — the *passive* half of the
+  direction; the shipped **Torch** (Eclipse weapon basic: foretell 3 + bury 1 + Burning
+  = buried cost) is the *active* half and the required nearest-neighbor.
+- **Budget:** statline par with the 6 starting weapons (2 fire dmg, 1 Neutral, Common —
+  the budget anchor tier; mid-run weapons like Firebinders' 2 + ungated 3 Burning run
+  richer by design and are the uniqueness denominator, not the budget curve). Rider =
+  1 Burning/turn gated on `AnyValue IsMoreThan [[cardsBuried]]:0` (NOT the `CardsBurned`
+  condition value — an unimplemented always-true stub in ConditionChecker.cs); Warmace
+  ships an ungated 2-status/turn rider at cost 2, so a bury-gated 1/turn at cost 1 is
+  under the shipped ceiling.
+- **Nearest:** Torch (same archetype, opposite decision: Torch sacrifices ALL base
+  damage to actively bury+burn; the Wand keeps the statline and *rewards* buries made
+  elsewhere) / Forcewand (statline twin) / Firebinders (mid-run burn rider tier).
+  **Different:** the 78-weapon corpus holds state-reading riders (Duskblades↔Darkness,
+  Khanjali↔Sinister) but none that reads *graveyard* state as a passive gate; v1.1's
+  claim "first weapon whose rider reads archetype state" was corpus-undercount error
+  (swept only the 6 char-creation weapons) and is retracted.
 
 ### Power: Cindersong Weapon — 700000098, cd 3, Arcanist/Knight
 - **Role:** burn opener + bury→burn passive.

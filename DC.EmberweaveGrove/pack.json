@@ -1,7 +1,10 @@
 {
   "$schema": "../schemas/pack.schema.json",
   "pack": "EmberweaveGrove",
-  "idBlock": [700000000, 700000099],
+  "idBlock": [
+    700000000,
+    700000099
+  ],
   "cards": [
     {
       "name": "Emberseed",
@@ -13,8 +16,13 @@
       "rarity": "Common",
       "cost": {},
       "description": "Inflict <b>1 Burning</b>.\nDraw a card.",
-      "keywords": ["Firecast"],
-      "cardKeywords": ["firecast", "fire"],
+      "keywords": [
+        "Firecast"
+      ],
+      "cardKeywords": [
+        "firecast",
+        "fire"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -57,10 +65,15 @@
       "category": "Action",
       "suffix": "Fire",
       "rarity": "Common",
-      "cost": { "INT": 1 },
+      "cost": {
+        "INT": 1
+      },
       "description": "Deal [damage:3] damage.\n<b>Ancestral:</b> Inflict <b>4 Burning</b>.",
       "keywords": [],
-      "cardKeywords": ["fire", "ancestral"],
+      "cardKeywords": [
+        "fire",
+        "ancestral"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -83,7 +96,12 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "CardsInGraveyard", "op": "IsMoreThan", "target": "3", "ignoreForDisplay": false }
+            {
+              "value": "CardsInGraveyard",
+              "op": "IsMoreThan",
+              "target": "3",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -108,7 +126,9 @@
       "cost": {},
       "description": "Gain <b>2 Armor</b>.\nBury a card.\nWhen Buried: Gain <b>5 Armor</b>.",
       "keywords": [],
-      "cardKeywords": ["bury"],
+      "cardKeywords": [
+        "bury"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -160,10 +180,17 @@
       "category": "Action",
       "suffix": "Fire",
       "rarity": "Common",
-      "cost": { "INT": 1 },
+      "cost": {
+        "INT": 1
+      },
       "description": "Inflict <b>3 Burning</b>.\n<b>Persistent</b>.\nWhen Buried: Inflict <b>3 Burning</b>.",
-      "keywords": ["Persistent"],
-      "cardKeywords": ["fire", "bury"],
+      "keywords": [
+        "Persistent"
+      ],
+      "cardKeywords": [
+        "fire",
+        "bury"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -206,10 +233,14 @@
       "category": "Action",
       "suffix": "Fire",
       "rarity": "Uncommon",
-      "cost": { "INT": 1 },
-      "description": "Gain <b>2 Burning</b>.\nDeal damage equal to twice your <b>Burning</b>.",
+      "cost": {
+        "INT": 1
+      },
+      "description": "Gain <b>2 Burning</b>.\nDeal damage equal to twice your <b>Burning</b>, then cleanse your <b>Burning</b>.",
       "keywords": [],
-      "cardKeywords": ["fire"],
+      "cardKeywords": [
+        "fire"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -232,6 +263,15 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "removestatus:burning:all:self",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
         }
       ],
       "enchantment": null,
@@ -239,9 +279,9 @@
       "meta": {
         "archetype": "burn (self-Burning payoff)",
         "nearestExisting": "Cauterize",
-        "whyDifferent": "First card that WANTS Burning on yourself — the spec's example of a new mode (a payoff for a status on self). Shipped self-Burning is only ever a cost rider (Cauterize) or something to cleanse (Aura_of_Fire, Fire_Resistance). Because Burning never decays (Burning.json clearAt None), each copy escalates: play 1 = 4 dmg, play the second at 4 self-stacks = 8+. Creates a masochist INT line where Zeal's fire upkeep, Cauterize's rider and cleanse timing become deck decisions.",
+        "whyDifferent": "First card that WANTS Burning on yourself - the spec's example of a new mode (a payoff for a status on self). Shipped self-Burning is only ever a cost rider (Cauterize) or something to cleanse (Aura_of_Fire, Fire_Resistance). v1.2: the payoff now CONSUMES the pyre (cleanse after the hit) - you bank Burning between casts (Cauterize's rider, Zeal upkeep, its own seed) and choose the release turn. Bounded by construction: nothing accumulates past the cash-out.",
         "intendedDeck": "INT fire deck with heal/cleanse release valves (Cauterize's 4 heal, Fire_Resistance, Aura_of_Fire). Race the foe before your own pyre wins.",
-        "powerNotes": "Turn-1 floor: 2 self-Burning -> 4 dmg for 1 INT (par), while eating 2/turn thereafter — the escalation upside is paid for by permanent self-DoT. bless:X + referenceStatus Burning self-application verified in Cauterize.json; [[my(status)Burning]] token verified in Pyroclasm.json; *2 base-damage arithmetic is NumberParser int math, NOT the multiplydamage:2 crit channel."
+        "powerNotes": "Floor: seeds 2 then reads 2x -> 4 dmg for 1 INT (par) with zero stored Burning; each externally banked stack adds 2, paid for by the ~1 HP/turn you endured holding it. v1.1 (no cleanse) was DEGENERATE-RISK in sim - damage still accelerating at the turn cap (late/early 2.04) because Burning never decays; the cleanse is the loop-brake. bless:X + referenceStatus Burning self-application verified in Cauterize.json; [[my(status)Burning]] token verified in Pyroclasm.json; removestatus:<status>:all shipped verbatim in Tonguelash.json (:self target form is the engine's own EndActionStep idiom, removestatus:chain:9999:self, SpellEffects.cs:586). *2 is NumberParser int math, NOT the multiplydamage crit channel."
       }
     },
     {
@@ -252,15 +292,25 @@
       "category": "Action",
       "suffix": "Fire",
       "rarity": "Uncommon",
-      "cost": { "INT": 1 },
+      "cost": {
+        "INT": 1
+      },
       "description": "Bury a card of your choice from your deck.\nInflict <b>Burning</b> equal to twice its cost.",
       "keywords": [],
-      "cardKeywords": ["fire", "bury"],
+      "cardKeywords": [
+        "fire",
+        "bury"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
       "playConditions": [
-        { "value": "CardsInDeckRemaining", "op": "IsMoreThan", "target": "0", "ignoreForDisplay": false }
+        {
+          "value": "CardsInDeckRemaining",
+          "op": "IsMoreThan",
+          "target": "0",
+          "ignoreForDisplay": false
+        }
       ],
       "effects": [
         {
@@ -316,15 +366,25 @@
       "category": "Action",
       "suffix": "Fire",
       "rarity": "Uncommon",
-      "cost": { "INTSTR": 1 },
+      "cost": {
+        "INTSTR": 1
+      },
       "description": "Return a card from your discard pile to your hand, then inflict <b>Burning</b> equal to its cost.",
       "keywords": [],
-      "cardKeywords": ["fire", "discardpile"],
+      "cardKeywords": [
+        "fire",
+        "discardpile"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
       "playConditions": [
-        { "value": "CardsInGraveyard", "op": "IsMoreThan", "target": "0", "ignoreForDisplay": false }
+        {
+          "value": "CardsInGraveyard",
+          "op": "IsMoreThan",
+          "target": "0",
+          "ignoreForDisplay": false
+        }
       ],
       "effects": [
         {
@@ -380,15 +440,27 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Uncommon",
-      "cost": { "DEXSTR": 2 },
+      "cost": {
+        "DEXSTR": 2
+      },
       "description": "Deal damage equal to the cards in your discard pile ([[cardsInGraveyard]]).\n<b>Reaping</b>.",
-      "keywords": ["Reaping"],
-      "cardKeywords": ["reaping", "discardpile"],
+      "keywords": [
+        "Reaping"
+      ],
+      "cardKeywords": [
+        "reaping",
+        "discardpile"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
       "playConditions": [
-        { "value": "CardsInGraveyard", "op": "IsMoreThan", "target": "0", "ignoreForDisplay": false }
+        {
+          "value": "CardsInGraveyard",
+          "op": "IsMoreThan",
+          "target": "0",
+          "ignoreForDisplay": false
+        }
       ],
       "effects": [
         {
@@ -419,10 +491,17 @@
       "category": "Enchantment",
       "suffix": "Fire",
       "rarity": "Rare",
-      "cost": { "INTSTR": 1 },
+      "cost": {
+        "INTSTR": 1
+      },
       "description": "This combat, whenever your foe takes <b>Burning</b> damage, return a random card from your discard pile to your hand.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["fire", "discardpile"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "fire",
+        "discardpile"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -452,8 +531,18 @@
             "referenceCards": [],
             "hideReferenceCards": false,
             "conditions": [
-              { "value": "DamageType", "op": "Is", "target": "fire", "ignoreForDisplay": false },
-              { "value": "CardsInGraveyard", "op": "IsMoreThan", "target": "0", "ignoreForDisplay": true }
+              {
+                "value": "DamageType",
+                "op": "Is",
+                "target": "fire",
+                "ignoreForDisplay": false
+              },
+              {
+                "value": "CardsInGraveyard",
+                "op": "IsMoreThan",
+                "target": "0",
+                "ignoreForDisplay": true
+              }
             ]
           }
         ]
@@ -475,10 +564,16 @@
       "category": "Enchantment",
       "suffix": "Fire",
       "rarity": "Rare",
-      "cost": { "DEXSTR": 1 },
+      "cost": {
+        "DEXSTR": 1
+      },
       "description": "This combat, whenever your deck reshuffles, inflict <b>6 Burning</b> and gain <b>6 Armor</b>.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["fire"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "fire"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -537,10 +632,19 @@
       "category": "Action",
       "suffix": "Fire",
       "rarity": "Rare",
-      "cost": { "INT": 2 },
-      "description": "Deal [damage:8] damage.\nInflict <b>4 Burning</b>.",
-      "keywords": ["Firecast", "Heavy"],
-      "cardKeywords": ["firecast", "fire", "heavy"],
+      "cost": {
+        "INT": 2
+      },
+      "description": "Deal [damage:6] damage.\nInflict <b>3 Burning</b>.",
+      "keywords": [
+        "Firecast",
+        "Heavy"
+      ],
+      "cardKeywords": [
+        "firecast",
+        "fire",
+        "heavy"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -548,7 +652,7 @@
       "effects": [
         {
           "trigger": "PlayAction",
-          "codeLine": "damage:8:fire",
+          "codeLine": "damage:6:fire",
           "forecast": true,
           "referenceStatus": null,
           "referenceCards": [],
@@ -557,7 +661,7 @@
         },
         {
           "trigger": "PlayAction",
-          "codeLine": "inflict:4",
+          "codeLine": "inflict:3",
           "forecast": true,
           "referenceStatus": "Burning",
           "referenceCards": [],
@@ -572,7 +676,7 @@
         "nearestExisting": "Elite_Fireball",
         "whyDifferent": "First Firecast+Heavy card in the pool (verified: zero shipped cards carry keywords 11+21 together). The keywords interlock into a lifecycle no card has: bury it and it detonates free (Firecast), then parks in the graveyard permanently (Heavy survives every reshuffle, DeckHandler.ReshuffleGraveyard) as fuel for Ashen Harvest/Ashfeast — until Emberdredge digs it out for a paid second detonation. Hand-cast is the fair fallback, one shot per cycle. Not strictly better than Elite_Fireball (Legendary, INT1, 8 dmg + burn, no Heavy): this costs more and carries a real drawback.",
         "intendedDeck": "Any deck in this cluster: burn decks want the payload, bury decks want the roulette hit, graveyard decks want the permanent resident.",
-        "powerNotes": "2-cost Rare envelope 5-8 dmg (spec §4): 8 + 4 Burning is top-of-band, paid for by Heavy (once per combat without recursion) — mirrors Grave_Pact's Heavy-as-rate-payment (U, DEXSTR1, escalating steal). Firecast bury-cast path verified in SpellEffects.BuryCard (PlayAction effects execute, card -> graveyard)."
+        "powerNotes": "2-cost Rare envelope 5-8 dmg (spec 4): v1.1 ran 8 + 4 Burning and simmed OVER (>P95, power 28.8); 6 + 4 still grazed the band edge (26.8 vs P95 25.6) because the single-combat sim cannot price Heavy (a cross-combat drawback) and never-decaying Burning fills the whole 8-turn window. v1.3 = 6 + 3 Burning: band-interior with margin, identity intact (Firecast detonation + permanent Heavy graveyard residency; Emberdredge re-arms it). Mirrors Grave_Pact's Heavy-as-rate-payment. Firecast bury-cast path verified in SpellEffects.BuryCard."
       }
     },
     {
@@ -583,10 +687,17 @@
       "category": "Enchantment",
       "suffix": "Fire",
       "rarity": "Legendary",
-      "cost": { "INTSTR": 2 },
+      "cost": {
+        "INTSTR": 2
+      },
       "description": "Whenever you Bury a card, inflict <b>Burning</b> equal to 2 plus its cost.\nWhenever your deck reshuffles, <b>Bury 3</b> cards.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["fire", "bury"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "fire",
+        "bury"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -698,10 +809,10 @@
       ],
       "meta": {
         "archetype": "burn/Firecast x graveyard bridge (basic-attack slot)",
-        "nearestExisting": "Forcewand.json (statline twin: 2 elemental damage + archetype rider); Warmace.json (only shipped weapon applying a status)",
-        "whyDifferent": "Every shipped weapon's rider is positional or unconditional (Ambush, Flanking, Cascade, always-on). Cinderbough Wand is the first whose rider reads run/combat state from an archetype ([[cardsBuried]] > 0 via AnyValue; the CardsBurned condition value is an unimplemented always-true stub in ConditionChecker) - once any bury has happened this combat, the repeating basic attack becomes a burn engine. It closes the pack's missing graveyard->burn direction (DESIGN-NOTES gap map) from turn 1 of the run.",
+        "nearestExisting": "Torch.json (shipped Eclipse weapon basic in the SAME archetype: foretell 3 + bury 1 + Burning = buried cost - the ACTIVE bury-burn basic); Forcewand.json (statline twin); Firebinders.json (2 fire dmg + ungated 3 Burning, mid-run tier)",
+        "whyDifferent": "The full 78-card basic-keyword weapon corpus (CORPUS-STATS section 2) already holds state-reading riders (Duskblades reads Darkness, Khanjali reads Sinister) AND a bury-burn basic: Torch, which sacrifices ALL base damage to actively bury and convert cost to Burning every swing. Cinderbough Wand takes the complementary decision: it keeps the damage statline and instead REWARDS a bury made elsewhere ([[cardsBuried]] > 0 via AnyValue; the CardsBurned condition value is an unimplemented always-true stub in ConditionChecker). Torch IS the bury engine; the Wand pays you for having one - no shipped weapon reads graveyard state as a passive gate. It closes the pack's graveyard->burn direction from turn 1 while staying a real attack.",
         "intendedDeck": "EmberweaveGrove bury shells: Emberseed/Gravemoss enable it by turn 2; Combust/Flameletting read the Burning it accrues.",
-        "powerNotes": "Statline par: damage 2 at 1 Neutral, Common - identical to 5 of 6 shipped weapons. Rider = 1 Burning/turn, gated behind a real setup (a bury) exactly like Warmace's ungated 2 Brittle/turn at cost 2; conditional 1/turn at cost 1 is under that shipped ceiling."
+        "powerNotes": "Statline par: damage 2 at 1 Neutral, Common - identical to 5 of 6 starting weapons (the budget anchor tier; mid-run weapons like Firebinders run richer riders by design and are the uniqueness denominator, not the budget curve). Rider = 1 Burning/turn gated behind a real setup (a bury), under Warmace's ungated 2 Brittle/turn at cost 2."
       }
     }
   ],

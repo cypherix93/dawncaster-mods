@@ -1,7 +1,10 @@
 {
   "$schema": "../schemas/pack.schema.json",
   "pack": "Clockwork Cadence",
-  "idBlock": [700000200, 700000299],
+  "idBlock": [
+    700000200,
+    700000299
+  ],
   "cards": [
     {
       "name": "Cogspark",
@@ -13,11 +16,17 @@
       "rarity": "Common",
       "cost": {},
       "description": "Deal [damage:1] damage.\n<b>Cascade:</b> Draw a card.",
-      "keywords": ["Chain"],
-      "cardKeywords": ["lightning"],
+      "keywords": [
+        "Chain"
+      ],
+      "cardKeywords": [
+        "lightning"
+      ],
       "utilityNumber": "",
       "charges": 0,
-      "flags": ["excludeFromRewards"],
+      "flags": [
+        "excludeFromRewards"
+      ],
       "playConditions": [],
       "effects": [
         {
@@ -37,7 +46,12 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "Cascade", "op": "Is", "target": "", "ignoreForDisplay": false }
+            {
+              "value": "Cascade",
+              "op": "Is",
+              "target": "",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -59,7 +73,9 @@
       "category": "Action",
       "suffix": "Phyisical",
       "rarity": "Common",
-      "cost": { "Neutral": 1 },
+      "cost": {
+        "Neutral": 1
+      },
       "description": "Deal [damage:2] damage.\nIf you've already played a Gearbite this turn, deal [damage:6] damage instead.",
       "keywords": [],
       "cardKeywords": [],
@@ -85,7 +101,12 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "AlreadyPlayedThisTurn", "op": "Is", "target": "", "ignoreForDisplay": false }
+            {
+              "value": "AlreadyPlayedThisTurn",
+              "op": "Is",
+              "target": "",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -110,7 +131,9 @@
       "cost": {},
       "description": "Deal [damage:1] damage twice.\nIf you played a Conjuration this turn, deal it twice more.",
       "keywords": [],
-      "cardKeywords": ["lightning"],
+      "cardKeywords": [
+        "lightning"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -133,7 +156,12 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "CategoryPlayedThisTurn", "op": "Is", "target": "conjuration", "ignoreForDisplay": false }
+            {
+              "value": "CategoryPlayedThisTurn",
+              "op": "Is",
+              "target": "conjuration",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -155,10 +183,15 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Common",
-      "cost": { "INT": 1 },
+      "cost": {
+        "INT": 1
+      },
       "description": "Conjure 2 Cogsparks.\n<b>Empower:</b> Conjure a third.",
       "keywords": [],
-      "cardKeywords": ["conjure", "empower"],
+      "cardKeywords": [
+        "conjure",
+        "empower"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -169,7 +202,9 @@
           "codeLine": "conjure:2",
           "forecast": true,
           "referenceStatus": null,
-          "referenceCards": ["Cogspark"],
+          "referenceCards": [
+            "Cogspark"
+          ],
           "hideReferenceCards": false,
           "conditions": []
         },
@@ -178,10 +213,17 @@
           "codeLine": "conjure:1",
           "forecast": false,
           "referenceStatus": null,
-          "referenceCards": ["Cogspark"],
+          "referenceCards": [
+            "Cogspark"
+          ],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "Empower", "op": "Is", "target": "", "ignoreForDisplay": false }
+            {
+              "value": "Empower",
+              "op": "Is",
+              "target": "",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -203,10 +245,16 @@
       "category": "Action",
       "suffix": "Lightning",
       "rarity": "Uncommon",
-      "cost": { "INT": 1 },
+      "cost": {
+        "INT": 1
+      },
       "description": "Gain <b>Chain</b> equal to the cards you've played this turn ([[actionsPlayed]]).",
-      "keywords": ["Chain"],
-      "cardKeywords": ["lightning"],
+      "keywords": [
+        "Chain"
+      ],
+      "cardKeywords": [
+        "lightning"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -240,10 +288,14 @@
       "category": "Action",
       "suffix": "Lightning",
       "rarity": "Uncommon",
-      "cost": { "INT": 1 },
-      "description": "Deal [damage:3] damage. Play a copy for every 3 <b>Chain</b> you have ([[my(status)Chain]]).\nBreaks your <b>Chain</b>.",
+      "cost": {
+        "INT": 1
+      },
+      "description": "Deal [damage:3] damage. Play a copy for every 3 <b>Chain</b> you have ([[my(status)Chain]]).\nThen your <b>Chain</b> fades.",
       "keywords": [],
-      "cardKeywords": ["lightning"],
+      "cardKeywords": [
+        "lightning"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -266,6 +318,15 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": []
+        },
+        {
+          "trigger": "PlayAction",
+          "codeLine": "removestatus:chain:9999:self",
+          "forecast": false,
+          "referenceStatus": null,
+          "referenceCards": [],
+          "hideReferenceCards": false,
+          "conditions": []
         }
       ],
       "enchantment": null,
@@ -275,7 +336,7 @@
         "nearestExisting": "Gathering_Storm.json",
         "whyDifferent": "Gathering Storm's playcopy count grows by sitting in hand (patience axis). Stutterbolt's grows with Chain stacks - and it deliberately does NOT have the Chain keyword, so casting it ends the chain it cashes out. Existing chain spenders (Shocking Grasp, Energize) convert chain to damage/energy; none convert chain into PLAYS. New decision: kill your own engine at the right moment.",
         "intendedDeck": "Chain decks as the finisher: build 6-9 chain with links, then convert to 3-4 casts of 3 (each still buffed by chain on the first hit).",
-        "powerNotes": "LOOP-BRAKE (engine card): playcopy re-runs the card's PlayAction lines on each copy, but because Stutterbolt is non-Chain, EndActionStep wipes ALL chain when the first cast resolves - every replay evaluates [[my(status)Chain]]/3 = 0. Self-extinguishing by construction, verified against the Gathering Storm playcopy re-entry pattern (their brake is addtempvalue:-999; mine is the chain wipe rule itself). At 6 chain: 3+3+3 = 9 dmg for 1 INT, minus the chain (+6 next-hit) you gave up - net swing ~3 over baseline with full setup."
+        "powerNotes": "LOOP-BRAKE v1.2 (was DEGENERATE-RISK in sim): the wipe is now EXPLICIT in the card's own lines - playcopy queues its replays, then removestatus:chain:9999:self (the engine's own EndActionStep idiom, SpellEffects.cs:586) zeroes Chain in the same resolution, so every replay evaluates [[my(status)Chain]]/3 = 0 regardless of coroutine timing (v1.1 relied on the implicit non-Chain wipe in EndActionStep, whose ordering vs the SpellManager replay queue is not decompile-provable - SpellManager.cs:616-696 replays re-run PlayAction lines and never call EndActionStep). Same self-extinguishing shape as Gathering Storm's playcopy + tempValue reset. At 6 chain: 3+3+3 = 9 dmg for 1 INT, minus the chain (+6 next-hit) you gave up - net swing ~3 over baseline with full setup."
       }
     },
     {
@@ -286,10 +347,17 @@
       "category": "Action",
       "suffix": "Lightning",
       "rarity": "Uncommon",
-      "cost": { "INT": 1 },
+      "cost": {
+        "INT": 1
+      },
       "description": "Deal [damage:3] damage.\n<b>Figmented</b>.",
-      "keywords": ["Figmented"],
-      "cardKeywords": ["lightning", "elemental"],
+      "keywords": [
+        "Figmented"
+      ],
+      "cardKeywords": [
+        "lightning",
+        "elemental"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -323,10 +391,16 @@
       "category": "Enchantment",
       "suffix": "None",
       "rarity": "Uncommon",
-      "cost": { "INT": 1 },
+      "cost": {
+        "INT": 1
+      },
       "description": "This combat, whenever you Conjure a card, gain <b>1 Chain</b>.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["conjure"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "conjure"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -340,7 +414,12 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "EnchantmentOnSelf", "op": "IsNot", "target": "", "ignoreForDisplay": false }
+            {
+              "value": "EnchantmentOnSelf",
+              "op": "IsNot",
+              "target": "",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -378,10 +457,16 @@
       "category": "Enchantment",
       "suffix": "Lightning",
       "rarity": "Rare",
-      "cost": { "INT": 2 },
+      "cost": {
+        "INT": 2
+      },
       "description": "This combat, cards you draw or Conjure gain <b>Chain</b>.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["lightning"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "lightning"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -395,7 +480,12 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "EnchantmentOnSelf", "op": "IsNot", "target": "", "ignoreForDisplay": false }
+            {
+              "value": "EnchantmentOnSelf",
+              "op": "IsNot",
+              "target": "",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -442,10 +532,14 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Rare",
-      "cost": { "INT": 2 },
+      "cost": {
+        "INT": 2
+      },
       "description": "Conjure a free Cogspark for each card you've played this turn ([[actionsPlayed]]).",
       "keywords": [],
-      "cardKeywords": ["conjure"],
+      "cardKeywords": [
+        "conjure"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -456,7 +550,9 @@
           "codeLine": "conjure:[[actionsPlayed]]:free",
           "forecast": true,
           "referenceStatus": null,
-          "referenceCards": ["Cogspark"],
+          "referenceCards": [
+            "Cogspark"
+          ],
           "hideReferenceCards": false,
           "conditions": []
         }
@@ -479,10 +575,16 @@
       "category": "Enchantment",
       "suffix": "Lightning",
       "rarity": "Rare",
-      "cost": { "INT": 1 },
+      "cost": {
+        "INT": 1
+      },
       "description": "This combat, whenever you play a card you've already played this turn, gain <b>2 Chain</b> and deal [damage:2] damage.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["lightning"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "lightning"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -496,7 +598,12 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "EnchantmentOnSelf", "op": "IsNot", "target": "", "ignoreForDisplay": false }
+            {
+              "value": "EnchantmentOnSelf",
+              "op": "IsNot",
+              "target": "",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -514,7 +621,12 @@
             "referenceCards": [],
             "hideReferenceCards": false,
             "conditions": [
-              { "value": "AlreadyPlayedThisTurn", "op": "Is", "target": "", "ignoreForDisplay": false }
+              {
+                "value": "AlreadyPlayedThisTurn",
+                "op": "Is",
+                "target": "",
+                "ignoreForDisplay": false
+              }
             ]
           },
           {
@@ -525,7 +637,12 @@
             "referenceCards": [],
             "hideReferenceCards": false,
             "conditions": [
-              { "value": "AlreadyPlayedThisTurn", "op": "Is", "target": "", "ignoreForDisplay": false }
+              {
+                "value": "AlreadyPlayedThisTurn",
+                "op": "Is",
+                "target": "",
+                "ignoreForDisplay": false
+              }
             ]
           }
         ]
@@ -547,10 +664,17 @@
       "category": "Action",
       "suffix": "Lightning",
       "rarity": "Legendary",
-      "cost": { "INT": 2 },
+      "cost": {
+        "INT": 2
+      },
       "description": "Draw 2 cards.\n<b>Flow ([[actionsPlayed]]/8):</b> Take an extra turn.\n<b>One Use</b>.",
-      "keywords": ["OneUse"],
-      "cardKeywords": ["flow", "lightning"],
+      "keywords": [
+        "OneUse"
+      ],
+      "cardKeywords": [
+        "flow",
+        "lightning"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -573,7 +697,12 @@
           "referenceCards": [],
           "hideReferenceCards": false,
           "conditions": [
-            { "value": "Flow", "op": "Is", "target": "8", "ignoreForDisplay": false }
+            {
+              "value": "Flow",
+              "op": "Is",
+              "target": "8",
+              "ignoreForDisplay": false
+            }
           ]
         }
       ],
@@ -652,8 +781,8 @@
       ],
       "meta": {
         "archetype": "chain/conjuration finisher (basic-attack slot)",
-        "nearestExisting": "Forcewand.json (2 lightning + chain feed); Knuckles.json (Cascade: conjure a copy)",
-        "whyDifferent": "Forcewand feeds chain stacks; Knuckles self-copies on a cost-weave. The Baton mints the pack's token only when played third-or-later in a turn (Flow 2) - the basic attack becomes the combo FINISHER that banks tomorrow's link, the opposite sequencing decision to Knuckles' opener-weave. Carries Chain so it never breaks the chain it serves.",
+        "nearestExisting": "Stormaxe.json (shipped Eclipse weapon basic: 1 lightning dmg + UNGATED conjured Zap - the token-minting basic); Forcewand.json (2 lightning + chain feed); Knuckles.json (Cascade: conjure a copy)",
+        "whyDifferent": "The 78-card weapon corpus (CORPUS-STATS section 2) already holds a token-minting lightning basic: Stormaxe, which trades a damage point for an unconditional Zap every swing. The Baton takes the opposite deal: full statline, and the mint is GATED on sequencing (Flow 2 - played third-or-later) and produces the pack's own Cascade-bearing link instead of a burst token. Decision: the basic is your combo FINISHER that banks tomorrow's link (vs Stormaxe's mindless drip and Knuckles' opener-weave). Carries Chain so it never breaks the chain it serves.",
         "intendedDeck": "Clockwork Cadence combo turns: Cogspark output feeds Winding Key/Assembly Line counters and keeps Mainspring Coil fed.",
         "powerNotes": "Statline par: damage 2 at 1 Neutral + Chain keyword (=1 chain stack on resolve, half of Forcewand's feed). Gated Cogspark ~ 1 dmg + 1 chain + Cascade-gated draw of temporary value; needing 2 prior plays prices it at/under Forcewand's unconditional +2 chain."
       }

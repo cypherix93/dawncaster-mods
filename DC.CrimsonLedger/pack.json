@@ -1,7 +1,10 @@
 {
   "$schema": "../schemas/pack.schema.json",
   "pack": "CrimsonLedger",
-  "idBlock": [700000300, 700000399],
+  "idBlock": [
+    700000300,
+    700000399
+  ],
   "cards": [
     {
       "name": "Paper Cut",
@@ -14,7 +17,9 @@
       "cost": {},
       "description": "Deal 2 damage. Take 1 damage.",
       "keywords": [],
-      "cardKeywords": ["blood"],
+      "cardKeywords": [
+        "blood"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -57,10 +62,16 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Common",
-      "cost": { "STR": 1, "Life": 1 },
+      "cost": {
+        "STR": 1,
+        "Life": 1
+      },
       "description": "Deal 5 damage. Restore 1 Durability of your Equipment.",
       "keywords": [],
-      "cardKeywords": ["blood", "equipment"],
+      "cardKeywords": [
+        "blood",
+        "equipment"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -103,10 +114,15 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Common",
-      "cost": { "Life": 2 },
+      "cost": {
+        "Life": 2
+      },
       "description": "Deal 4 damage. Gain 2 Souls.",
       "keywords": [],
-      "cardKeywords": ["blood", "souls"],
+      "cardKeywords": [
+        "blood",
+        "souls"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -149,10 +165,14 @@
       "category": "Action",
       "suffix": "None",
       "rarity": "Common",
-      "cost": { "Life": 1 },
+      "cost": {
+        "Life": 1
+      },
       "description": "Inflict 2 Bleeding. Gain Souls equal to the foe's Bleeding.",
       "keywords": [],
-      "cardKeywords": ["souls"],
+      "cardKeywords": [
+        "souls"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -195,10 +215,17 @@
       "category": "Enchantment",
       "suffix": "None",
       "rarity": "Uncommon",
-      "cost": { "STR": 1, "Life": 1 },
+      "cost": {
+        "STR": 1,
+        "Life": 1
+      },
       "description": "This combat, whenever you spend BLOOD, add a tally. Your attacks deal +1 damage per tally.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["blood"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "blood"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -228,7 +255,12 @@
             "referenceCards": [],
             "hideReferenceCards": false,
             "conditions": [
-              { "value": "EnergyType", "op": "Is", "target": "BLOOD", "ignoreForDisplay": false }
+              {
+                "value": "EnergyType",
+                "op": "Is",
+                "target": "BLOOD",
+                "ignoreForDisplay": false
+              }
             ]
           },
           {
@@ -259,10 +291,18 @@
       "category": "Equipment",
       "suffix": "None",
       "rarity": "Uncommon",
-      "cost": { "Neutral": 1 },
+      "cost": {
+        "Neutral": 1
+      },
       "description": "Whenever you spend BLOOD, restore 3 HEALTH and this loses 1 Durability.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["blood", "equipment", "durability"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "blood",
+        "equipment",
+        "durability"
+      ],
       "utilityNumber": "",
       "charges": 3,
       "flags": [],
@@ -292,8 +332,18 @@
             "referenceCards": [],
             "hideReferenceCards": false,
             "conditions": [
-              { "value": "EnergyType", "op": "Is", "target": "BLOOD", "ignoreForDisplay": false },
-              { "value": "EnchantmentStacks", "op": "IsMoreThan", "target": "0", "ignoreForDisplay": true }
+              {
+                "value": "EnergyType",
+                "op": "Is",
+                "target": "BLOOD",
+                "ignoreForDisplay": false
+              },
+              {
+                "value": "EnchantmentStacks",
+                "op": "IsMoreThan",
+                "target": "0",
+                "ignoreForDisplay": true
+              }
             ]
           },
           {
@@ -304,7 +354,12 @@
             "referenceCards": [],
             "hideReferenceCards": false,
             "conditions": [
-              { "value": "EnchantmentStacks", "op": "IsLessThan", "target": "1", "ignoreForDisplay": true }
+              {
+                "value": "EnchantmentStacks",
+                "op": "IsLessThan",
+                "target": "1",
+                "ignoreForDisplay": true
+              }
             ]
           }
         ]
@@ -329,12 +384,19 @@
       "cost": {},
       "description": "Spend 12 Souls: Draw 2 cards and gain 4 Barrier.",
       "keywords": [],
-      "cardKeywords": ["souls"],
+      "cardKeywords": [
+        "souls"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
       "playConditions": [
-        { "value": "AnyValue", "op": "IsMoreThan", "target": "[[souls]]:11", "ignoreForDisplay": false }
+        {
+          "value": "AnyValue",
+          "op": "IsMoreThan",
+          "target": "[[souls]]:11",
+          "ignoreForDisplay": false
+        }
       ],
       "effects": [
         {
@@ -383,10 +445,18 @@
       "category": "Enchantment",
       "suffix": "None",
       "rarity": "Rare",
-      "cost": { "Neutral": 1, "Life": 1 },
+      "cost": {
+        "Neutral": 1,
+        "Life": 1
+      },
       "description": "This combat, whenever you take damage during your turn, gain that many Souls.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["blood", "souls"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "blood",
+        "souls"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -416,7 +486,12 @@
             "referenceCards": [],
             "hideReferenceCards": false,
             "conditions": [
-              { "value": "EnemyTurn", "op": "IsNot", "target": "", "ignoreForDisplay": false }
+              {
+                "value": "EnemyTurn",
+                "op": "IsNot",
+                "target": "",
+                "ignoreForDisplay": false
+              }
             ]
           }
         ]
@@ -438,10 +513,18 @@
       "category": "Equipment",
       "suffix": "None",
       "rarity": "Rare",
-      "cost": { "INT": 1 },
+      "cost": {
+        "INT": 1
+      },
       "description": "Use: Spend 8 Souls to gain 2 INT energy and draw a card.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["souls", "equipment", "durability"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "souls",
+        "equipment",
+        "durability"
+      ],
       "utilityNumber": "",
       "charges": 3,
       "flags": [],
@@ -480,7 +563,12 @@
             "referenceCards": [],
             "hideReferenceCards": false,
             "conditions": [
-              { "value": "AnyValue", "op": "IsMoreThan", "target": "[[souls]]:7", "ignoreForDisplay": false }
+              {
+                "value": "AnyValue",
+                "op": "IsMoreThan",
+                "target": "[[souls]]:7",
+                "ignoreForDisplay": false
+              }
             ]
           },
           {
@@ -511,10 +599,17 @@
       "category": "Enchantment",
       "suffix": "None",
       "rarity": "Rare",
-      "cost": { "Neutral": 1, "Life": 1 },
+      "cost": {
+        "Neutral": 1,
+        "Life": 1
+      },
       "description": "This combat, whenever you spend a Charge, deal 3 arcane damage to the foe.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["equipment"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "equipment"
+      ],
       "utilityNumber": "",
       "charges": 0,
       "flags": [],
@@ -564,10 +659,19 @@
       "category": "Equipment",
       "suffix": "None",
       "rarity": "Legendary",
-      "cost": { "Neutral": 2, "Life": 1 },
+      "cost": {
+        "Neutral": 2,
+        "Life": 1
+      },
       "description": "Use: Draw a card, then convert its cost to BLOOD.",
-      "keywords": ["Unique"],
-      "cardKeywords": ["blood", "equipment", "durability"],
+      "keywords": [
+        "Unique"
+      ],
+      "cardKeywords": [
+        "blood",
+        "equipment",
+        "durability"
+      ],
       "utilityNumber": "",
       "charges": 4,
       "flags": [],
@@ -680,10 +784,10 @@
       ],
       "meta": {
         "archetype": "blood economy engine (basic-attack slot)",
-        "nearestExisting": "Longsword.json (statline baseline); Soultap.json (self-damage -> Souls exchange)",
-        "whyDifferent": "The only weapon with no energy cost: it is paid in Life (1/swing). Every single turn it fires the pack's whole listener stack for free - a life payment counts as damage taken (Frenzy) and as a BLOOD energy spend (Bloodbank-pattern riders) - while banking 1 Soul toward the 100-soul auto-revive. The basic attack IS the ledger: HP out, tempo + souls in.",
+        "nearestExisting": "Duskblades.json (shipped Eclipse weapon basic: 1 Life, 0 energy - 3 dmg + Darkness crit ramp); Demon_Claws.json (1 Life, 0 energy corrupt basic); Longsword.json (starting-tier statline baseline); Soultap.json (self-damage -> Souls)",
+        "whyDifferent": "The 78-card weapon corpus (CORPUS-STATS section 2) already sells basics for Life: Duskblades and Demon Claws both cost 1 Life and zero energy - so 'the only weapon with no energy cost' (v1.1 claim, swept vs the 6 char-creation weapons only) is retracted. What remains unoccupied is what the Life payment DOES: Duskblades buys raw stats + a private crit ramp (Darkness), a sealed loop. The Falchion's Life cost is a public EVENT the whole kit listens to - it fires DealtDamage (Frenzy) and a BLOOD energy spend (Bloodbank-pattern riders, Soulscribe's dividend) and banks 1 Soul toward the 100-soul revive, every swing. Decision: the basic as economy engine vs stat engine - no shipped weapon's cost is itself the archetype trigger.",
         "intendedDeck": "CrimsonLedger blood decks (Blood Retainer, Sanguine Tally, Soul Dynamo); frees a full energy per turn for the pack's expensive engines.",
-        "powerNotes": "Budget at the pack's derived exchange rate (2 Life ~ 1 energy): 1 Life buys ~0.5 energy of value; damage stays at the universal 2 and the soul (~<=1 HP of battery) roughly refunds the life paid, so the real gain is tempo + trigger fuel - text, not stats. Sustained cost ~1 HP/turn is a genuine drawback no shipped weapon carries."
+        "powerNotes": "Budget vs the starting tier (the anchor curve; Duskblades' richer 3-dmg statline is mid-run tier, the uniqueness denominator): 1 Life ~ 0.5 energy at the pack's derived rate; damage stays at the universal 2 and the soul (~<=1 HP of battery) roughly refunds the life paid, so the real gain is tempo + trigger fuel - text, not stats. Sustained ~1 HP/turn is a genuine drawback no STARTING weapon carries; strictly-worse check vs Duskblades: different resource out (Souls/BLOOD triggers vs Darkness crits) and lower raw output - not dominated either direction."
       }
     }
   ],
