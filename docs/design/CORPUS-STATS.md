@@ -55,16 +55,35 @@ Last measured: 2026-07 extraction pass (game version per `tools/out/data-index.j
 - Engine ceilings (GAME-MECHANICS Part VII): damage clamp 999,999; status stack cap
   9,999; hand cap 10; energy cap 8; deck cap 999; gold cap 9,999.
 
-## 2. Starting weapons (corpus: 6)
+## 2. Weapons (starting corpus: 6; full basic-keyword corpus: 78)
 
-One per class (Knight=Longsword, Rogue=Daggers, Arcanist=Forcewand, Hunter=Hatchet,
-Seeker=Knuckles, Warrior=Warmace; Scion none).
+**Starting weapons — the budget anchor (6).** One per class (Knight=Longsword,
+Rogue=Daggers, Arcanist=Forcewand, Hunter=Hatchet, Seeker=Knuckles, Warrior=Warmace;
+Scion none).
 
 - **Statline:** all six are `damage:2`, Common, BasicAttack category, 1 Neutral cost.
   Sole deviation: **Warmace pays 2 Neutral for an ungated status rider.**
 - **Identity lives in exactly one rider or condition** — never in a bigger number.
 - A weapon's rider repeats **every single turn, all run** — budget it as a permanent
   engine, not a card effect.
+
+**Full weapon corpus — the uniqueness denominator (78).** Scripted scan
+(`cardKeywords` contains `basic`, `tools/out/data/Card/`, 2026-07): **78 cards** — the
+6 starting weapons (expansion 1) plus **71 non-starting weapon basics** (62 from
+expansion 2 / Eclipse, 9 core-set, 1 dev leftover `Cutlass_OLD` excluded). All 71 are
+`canBeAcquired: 0` + `excludeFromRewards: 1` (granted by events/swaps, not pulls).
+
+- **Statline mode:** first-line flat damage 3 (×21) or 2 (×18) at 1 Neutral, with
+  riders routinely richer than the starting six (Khanjali: 3 dmg + Poison=Sinister;
+  Firebinders: 2 dmg + ungated 3 Burning; Steel Longsword: 3 dmg + Sharpen ramp).
+- **Cross-tier dominance is vanilla-consistent:** the game itself ships starting
+  weapons that a mid-run weapon strictly outclasses (Longsword vs Steel Longsword).
+  A mod starting weapon being *weaker* than a mid-run weapon is therefore fine —
+  **occupying the same decision** as one is not.
+- **Rule:** mod weapons *budget* against the 6-weapon starting curve, but the
+  Uniqueness Bar's nearest-neighbor sweep must run over **all 78** (the 2026-07 audit
+  caught a Blightpin Stiletto ↔ Khanjali decision-point collision that the 6-weapon
+  sweep missed).
 
 ## 3. Weapon powers (corpus: 66 tier-0 Talents)
 
