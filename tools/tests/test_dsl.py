@@ -51,6 +51,36 @@ def test_real_but_unsupported_command_flagged_distinctly():
     assert not st.simulable and st.reason == "command not in sim subset"
 
 
+def test_self_extinguishing_copy_loop_not_flagged():
+    # Gathering Storm ships playcopy:[[tempValue]] with a tempValue reset — the
+    # replay recomputes 0, so the loop self-extinguishes. Same shape with a status
+    # read + full self-wipe. An unwiped read stays flagged.
+    def card_with(lines):
+        effects = [{"trigger": "PlayAction",
+                    "codeLine": ln, "referenceStatus": None, "conditions": []}
+                   for ln in lines]
+        return dsl.card_from_pack_json({
+            "name": "T", "rarity": "Uncommon", "cost": {"INT": 1}, "keywords": [],
+            "cardKeywords": [], "charges": 0, "effects": effects})
+
+    wiped = card_with(["damage:3", "playcopy:[[my(status)Chain]]/3",
+                       "removestatus:chain:9999:self"])
+    assert not dsl.degeneracy_flags(wiped)
+    unwiped = card_with(["damage:3", "playcopy:[[my(status)Chain]]/3"])
+    assert dsl.degeneracy_flags(unwiped)
+
+
+def test_removestatus_accepts_shipped_lowercase_names():
+    # Shipped codeLines use lowercase (Tonguelash `removestatus:poison:all:other`,
+    # the engine's own `removestatus:chain:9999:self`); the game matches
+    # case-insensitively, so the parser must too.
+    st = analyze_statement("removestatus:burning:all:self", None)
+    assert st.simulable and st.args[0] == "Burning"
+    st = analyze_statement("removestatus:poison:all:other", None)
+    assert st.simulable and st.args[0] == "Poison"
+    assert not analyze_statement("removestatus:charmed:all:other", None).simulable
+
+
 def test_inflict_requires_modeled_reference_status():
     assert not analyze_statement("inflict:3", None).simulable
     assert not analyze_statement("inflict:3", "Charmed").simulable  # not modeled

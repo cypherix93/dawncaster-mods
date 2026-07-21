@@ -11,6 +11,7 @@ Two card sources are normalized into the same CardModel:
 
 from __future__ import annotations
 
+import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -24,6 +25,11 @@ IMPLEMENTED_STATUSES = frozenset({
     "Anger", "Chain", "Zeal", "Frozen", "Poison", "Burning", "Bleeding",
     "Regenerate", "Doom", "Stagger",
 })
+
+# The game's RemoveStatus matches status names case-insensitively; shipped codeLines
+# use lowercase (Tonguelash `removestatus:poison:all:other`, the engine's own
+# `removestatus:chain:9999:self` in SpellEffects.EndActionStep).
+_STATUS_CANON = {n.lower(): n for n in IMPLEMENTED_STATUSES}
 
 # Status EffectType taxonomy straight from the extracted assets
 # (theStatus.theType: 0=blessing, 1=affliction, 2=other — LastingEffect.EffectType).
@@ -428,6 +434,8 @@ def analyze_statement(raw: str, reference_status: str | None) -> Statement:
         return Statement(raw, cmd, args, simulable=True)
 
     if cmd == "removestatus":
+        if args and args[0].lower() in _STATUS_CANON:
+            args[0] = _STATUS_CANON[args[0].lower()]
         if not args or args[0] == "ref" or args[0] not in IMPLEMENTED_STATUSES:
             return bad("removestatus of unmodeled status")
         if len(args) >= 2 and args[1] != "all" and not expression_simulable(args[1]):
@@ -588,17 +596,55 @@ _SELF_FEEDING = {  # trigger -> commands that re-fire the same trigger
 }
 
 
+_STATUS_READ_RE = re.compile(r"\[\[my\(status\)(\w+)\]\]", re.IGNORECASE)
+
+
+def _self_extinguishing(stmts) -> bool:
+    """A replay/copy loop is bounded if its count expression reads a resource that a
+    LATER statement in the same trigger's ordered statement stream zeroes — replays
+    then recompute 0. Shipped precedent: Gathering Storm (`playcopy:[[tempValue]]` …
+    `settempvalue` reset); the same shape with a status read +
+    `removestatus:<status>:all|9999:self` wipe."""
+    for i, s in enumerate(stmts):
+        if s.command not in _LOOP_COMMANDS or not s.args:
+            continue
+        expr = s.args[0]
+        later = stmts[i + 1:]
+        m = _STATUS_READ_RE.search(expr)
+        if m:
+            status = m.group(1).lower()
+            if any(t.command == "removestatus" and t.args
+                   and t.args[0].lower() == status
+                   and (len(t.args) < 2 or t.args[1] == "all"
+                        or t.args[1].lstrip("-").isdigit() and int(t.args[1]) >= 999)
+                   and (len(t.args) < 3 or t.args[2] == "self")
+                   for t in later):
+                continue
+        if "[[tempValue]]" in expr:
+            if any(t.command == "settempvalue" or
+                   (t.command == "addtempvalue" and t.args and t.args[0].startswith("-"))
+                   for t in later):
+                continue
+        return False
+    return True
+
+
 def degeneracy_flags(card: CardModel, raw_effects: list[dict] | None = None) -> list[str]:
     """Static sniff for unbounded loops. `raw_effects` = manifest effect dicts
     (used to see commands on cards regardless of simulability)."""
     flags = []
     bounded = bool(card.keywords & {"OneUse", "Conjured"}) or card.charges > 0
+    stmts_by_trigger: dict[str, list] = {}
     for eff in card.effects:
-        cmds = {s.command for s in eff.statements}
+        stmts_by_trigger.setdefault(eff.trigger, []).extend(eff.statements)
+    for trigger, stmts in stmts_by_trigger.items():
+        cmds = {s.command for s in stmts}
         loops = cmds & _LOOP_COMMANDS
-        if loops and not bounded:
+        if loops and not bounded and not _self_extinguishing(stmts):
             flags.append(f"replay/copy command(s) {sorted(loops)} on a card without "
                          "OneUse/Conjured/charges bound")
+    for eff in card.effects:
+        cmds = {s.command for s in eff.statements}
         feeder = _SELF_FEEDING.get(eff.trigger)
         if feeder:
             selffeed = cmds & feeder
