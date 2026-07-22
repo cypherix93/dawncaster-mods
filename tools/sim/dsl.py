@@ -652,3 +652,30 @@ def degeneracy_flags(card: CardModel, raw_effects: list[dict] | None = None) -> 
                 flags.append(f"trigger {eff.trigger} fires command(s) {sorted(selffeed)} "
                              "that re-fire the same trigger (unbounded feedback)")
     return flags
+
+
+# Statuses whose damage amplification the engine HARD-CAPS, so accumulating them cannot
+# scale damage without bound: Vulnerable caps at 10 stacks / +100% (RunStatusEffect
+# "Vulnerable"; mirrored in engine.py as min(vuln, 10)), Weakness halves-and-decays.
+# Distinct from never-decaying DoTs (Burning), which DO grow unbounded.
+CAPPED_AMP_STATUSES = {"vulnerable", "weakness"}
+UNBOUNDED_DOT_STATUSES = {"burning"}
+
+
+def scaling_is_bounded(card: CardModel) -> bool:
+    """True when a card's late-window damage growth is bounded by a hard status cap
+    rather than a runaway loop.
+
+    Suppresses the scaling-ratio degeneracy FALSE POSITIVE on capped-amp archetypes
+    (e.g. Vulnerable): the amp plateaus at +100%, so a high late/early ratio is the
+    bounded ramp-to-cap, not unbounded acceleration. Genuine unbounded loops are caught
+    independently by degeneracy_flags (the static loop sniff), which this does not touch.
+    """
+    inflicted = {(eff.reference_status or "").lower()
+                 for eff in card.effects if eff.reference_status}
+    inflicted.discard("")
+    if not (inflicted & CAPPED_AMP_STATUSES):
+        return False                       # exemption only applies to capped-amp cards
+    if inflicted & UNBOUNDED_DOT_STATUSES:
+        return False                       # a never-decaying DoT scales without bound
+    return True

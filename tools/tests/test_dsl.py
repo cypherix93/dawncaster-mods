@@ -181,3 +181,41 @@ def test_conditioned_self_feed_not_flagged():
         "trigger": "Draw", "codeLine": "draw:1",
         "conditions": [{"value": "Chance", "op": "IsChance", "target": "25"}]}])
     assert not dsl.degeneracy_flags(card)
+
+
+# ------------------------------------------- bounded-amp scaling exemption
+
+def test_vulnerable_applier_scaling_is_bounded():
+    # Vulnerable is hard-capped at 10 stacks (+100%), so its amp plateaus — a high
+    # scaling ratio is the bounded ramp-to-cap, not runaway acceleration.
+    card = _pack_card(effects=[{"trigger": "PlayAction", "codeLine": "inflict:2",
+                                "referenceStatus": "Vulnerable"}])
+    assert dsl.scaling_is_bounded(card)
+
+
+def test_burning_applier_scaling_not_bounded():
+    # Burning never decays and has no amp cap → genuinely unbounded scaling.
+    card = _pack_card(effects=[{"trigger": "PlayAction", "codeLine": "inflict:4",
+                                "referenceStatus": "Burning"}])
+    assert not dsl.scaling_is_bounded(card)
+
+
+def test_plain_damage_card_not_treated_as_bounded_amp():
+    # No inflicted status → the capped-amp exemption does not apply.
+    assert not dsl.scaling_is_bounded(_pack_card())
+
+
+def test_capped_amp_plus_unbounded_dot_not_bounded():
+    # A card that also lays a never-decaying DoT is not exempt.
+    card = _pack_card(effects=[
+        {"trigger": "PlayAction", "codeLine": "inflict:2", "referenceStatus": "Vulnerable"},
+        {"trigger": "PlayAction", "codeLine": "inflict:2", "referenceStatus": "Burning"}])
+    assert not dsl.scaling_is_bounded(card)
+
+
+def test_capped_amp_plus_defensive_status_still_bounded():
+    # Vulnerable + a non-scaling status (Barrier) stays bounded.
+    card = _pack_card(effects=[
+        {"trigger": "PlayAction", "codeLine": "inflict:2", "referenceStatus": "Vulnerable"},
+        {"trigger": "PlayAction", "codeLine": "bless:3", "referenceStatus": "Barrier"}])
+    assert dsl.scaling_is_bounded(card)

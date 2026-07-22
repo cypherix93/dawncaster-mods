@@ -52,7 +52,8 @@ def evaluate_card(card: dsl.CardModel, data: dict) -> CardVerdict:
 
     if sim_pct > 0:
         score = engine.score_card(card)
-        if score.scaling_ratio >= SCALING_FLAG_RATIO and score.dmg_delta > 0:
+        if (score.scaling_ratio >= SCALING_FLAG_RATIO and score.dmg_delta > 0
+                and not dsl.scaling_is_bounded(card)):
             degen.append(f"damage contribution still growing at the turn cap "
                          f"(late/early ratio {score.scaling_ratio:.2f})")
 
