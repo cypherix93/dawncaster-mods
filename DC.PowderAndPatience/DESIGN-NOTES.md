@@ -36,6 +36,16 @@ citations.
    rule themselves ("Speed up the timer when you use a Charge"). Untapped axis: 0 of the
    78 basic-keyword weapons carry charges (scripted scan) — no shipped archetype makes
    the tick *deliberate*.
+   **Boundary (gate-4 verified, by-design):** the tick fires only for *real hand-played
+   swings*. `Decharge` early-returns for any card carrying the `Conjured` keyword
+   (`SpellEffects.cs:12399`: `if (cc.GetKeywords().Contains(Card.CardProperties.Conjured)) return;`),
+   and both **commanded** basics (`basicattack:N` → `MakeBasicAttacks`, `SpellEffects.cs:7527`)
+   and **conjured** basics (`CreateBasicAttack`, `SpellEffects.cs:9441` — e.g. the shipped
+   *Surge of Dexterity* "Conjure a Basic Attack") tag their copies `Conjured`. So those
+   copies never emit `SpendCharge` and never tick fuses — this is a shipped anti-loop guard
+   (conjure-N-basics would otherwise emit N free charge events), not our defect, and not
+   data-fixable. The pack loop is unaffected: the six deck copies of Fuse-Cutter are dealt,
+   not conjured, so they tick normally.
 3. **Planting into the enemy deck is shipped, and planted cards fire on enemy PLAY, not
    on draw.** `addcardtodeck:1:other` + referenceCard is Crossbow/Rapier-verbatim; the
    shipped plants (Snare, Glimmer, Sabotage) are 0-cost PlayAction cards with
