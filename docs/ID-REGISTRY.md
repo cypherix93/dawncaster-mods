@@ -11,7 +11,7 @@ ID 41,020,045). Blocks of 100. Allocate here BEFORE using; never reuse a freed b
 | 700000300–700000399 | CrimsonLedger (sacrifice/artifice) | allocated 2026-07-18 |
 | 700000400–700000499 | FinalEncore (Rogue, Perform) | allocated 2026-07-20 |
 | 700000500–700000599 | PowderAndPatience (Warrior/Hunter, fuses) | allocated 2026-07-20 |
-| 700000600–700000699 | Cartomancer (Seeker/Arcanist, Foretell/fate) | allocated 2026-07-20 |
+| 700000600–700000699 | Malediction (Arcanist/Seeker, Vulnerable/hex) — renamed+repurposed from Cartomancer (Foretell/fate, retired 2026-07-21) | allocated 2026-07-20 |
 
 Legacy: `SandboxStrike` id 900001 (pre-policy hello-card; migrate into a block when the
 pack loader lands).

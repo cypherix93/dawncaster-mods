@@ -1,130 +1,132 @@
 {
-  "pack": "Cartomancer",
-  "finisher": [ { "op": "vignette", "strength": 0.25 } ],
+  "pack": "Malediction",
+  "finisher": [ { "op": "vignette", "strength": 0.28 } ],
   "cards": {
-    "Turn the Card": {
-      "source": "CARD_UNLOCKS_36",
-      "sourceCard": "Observe",
+    "Whispered Curse": {
+      "source": "DOOMSAY",
+      "sourceCard": "Doomsay",
       "seed": 700000600,
       "ops": [
         { "op": "mirror" },
-        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
-        { "op": "hue_rotate", "degrees": 40 },
-        { "op": "gradient_map", "palette": ["#131530", "#3c4a8c", "#e8c46a"], "strength": 0.4 },
-        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.32, "color": "#ffd98c", "opacity": 0.3 },
+        { "op": "zoom_crop", "factor": 1.16, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -18 },
+        { "op": "gradient_map", "palette": ["#0d0a1c", "#3a2a5a", "#9a7ad0"], "strength": 0.44 },
+        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.32, "color": "#b89aff", "opacity": 0.3 },
         { "op": "grain", "opacity": 0.06 }
       ]
     },
-    "Omen of Ruin": {
-      "source": "SIEGEOFSHADOWS-DARK-OMEN",
-      "sourceCard": "Dark_Omen",
-      "seed": 700000601,
-      "ops": [
-        { "op": "mirror" },
-        { "op": "rotate_crop", "degrees": 5 },
-        { "op": "zoom_crop", "factor": 1.18, "gravity": "top" },
-        { "op": "gradient_map", "palette": ["#10122a", "#4a3a7a", "#d8b45a"], "strength": 0.45 },
-        { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.3, "color": "#9a7bff", "opacity": 0.32 },
-        { "op": "grain", "opacity": 0.06 }
-      ]
-    },
-    "Stack the Deck": {
+    "Weave the Hex": {
       "source": "CARDS_METAMORPHOSIS_2_48",
       "sourceCard": "Abracardabra",
-      "seed": 700000602,
+      "seed": 700000601,
       "ops": [
         { "op": "mirror" },
         { "op": "rotate_crop", "degrees": -6 },
         { "op": "zoom_crop", "factor": 1.12, "gravity": "center" },
-        { "op": "hue_rotate", "degrees": -30 },
-        { "op": "gradient_map", "palette": ["#141631", "#31427c", "#e0c27a"], "strength": 0.35 },
-        { "op": "glow_spot", "center": [0.42, 0.5], "radius": 0.35, "color": "#8fb4ff", "opacity": 0.3 },
+        { "op": "hue_rotate", "degrees": 62 },
+        { "op": "gradient_map", "palette": ["#0e0c1e", "#3a4a3a", "#8ad07a"], "strength": 0.42 },
+        { "op": "glow_spot", "center": [0.42, 0.5], "radius": 0.35, "color": "#9ae08a", "opacity": 0.3 },
         { "op": "grain", "opacity": 0.06 }
       ]
     },
-    "Turn of Fate": {
-      "source": "CHRONOMEND",
-      "sourceCard": "Chronomend",
+    "Comeuppance": {
+      "source": "INEVITABLE_END_ECLYPSE",
+      "sourceCard": "Inevitable_End",
+      "seed": 700000602,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "rotate_crop", "degrees": 5 },
+        { "op": "zoom_crop", "factor": 1.18, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -52 },
+        { "op": "gradient_map", "palette": ["#100a18", "#5a2a3a", "#d86a7a"], "strength": 0.46 },
+        { "op": "glow_spot", "center": [0.5, 0.4], "radius": 0.3, "color": "#ff8a9a", "opacity": 0.33 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Rend the Veil": {
+      "source": "SKILLSHOT",
+      "sourceCard": "Skillshot",
       "seed": 700000603,
       "ops": [
         { "op": "mirror" },
-        { "op": "rotate_crop", "degrees": 7 },
-        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
-        { "op": "hue_rotate", "degrees": 25 },
-        { "op": "gradient_map", "palette": ["#12142e", "#4a4a92", "#e6c06a"], "strength": 0.4 },
-        { "op": "glow_spot", "center": [0.5, 0.4], "radius": 0.3, "color": "#ffd77a", "opacity": 0.28 },
+        { "op": "rotate_crop", "degrees": -8 },
+        { "op": "zoom_crop", "factor": 1.16, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 30 },
+        { "op": "gradient_map", "palette": ["#0c0a1a", "#4a2a5a", "#c07ad0"], "strength": 0.42 },
+        { "op": "glow_spot", "center": [0.55, 0.42], "radius": 0.3, "color": "#e09aff", "opacity": 0.3 },
         { "op": "grain", "opacity": 0.06 }
       ]
     },
-    "Cheat Fate": {
-      "source": "INFINITE_HOURGLASS_ECLYPSE",
-      "sourceCard": "Houroboros",
+    "The Withering": {
+      "source": "SIEGEOFSHADOWS-DARK-OMEN",
+      "sourceCard": "Dark_Omen",
       "seed": 700000604,
       "ops": [
         { "op": "mirror" },
-        { "op": "zoom_crop", "factor": 1.2, "gravity": "center" },
-        { "op": "hue_rotate", "degrees": -45 },
-        { "op": "gradient_map", "palette": ["#101228", "#3a3f7e", "#dcc48a"], "strength": 0.42 },
-        { "op": "glow_spot", "center": [0.5, 0.55], "radius": 0.3, "color": "#b09aff", "opacity": 0.3 },
+        { "op": "rotate_crop", "degrees": 4 },
+        { "op": "zoom_crop", "factor": 1.2, "gravity": "top" },
+        { "op": "hue_rotate", "degrees": 84 },
+        { "op": "gradient_map", "palette": ["#0c0e10", "#2a4a2a", "#7ac05a"], "strength": 0.48 },
+        { "op": "glow_spot", "center": [0.5, 0.35], "radius": 0.3, "color": "#9ad86a", "opacity": 0.34 },
         { "op": "grain", "opacity": 0.06 }
       ]
     },
-    "Ask the Bones": {
+    "Warding Gaze": {
+      "source": "ORACLE-PENDANT",
+      "sourceCard": "Oracle_s_Pendant",
+      "seed": 700000605,
+      "ops": [
+        { "op": "mirror" },
+        { "op": "zoom_crop", "factor": 1.18, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -32 },
+        { "op": "gradient_map", "palette": ["#0d0c1e", "#2a3a6a", "#7a9ad0"], "strength": 0.4 },
+        { "op": "glow_spot", "center": [0.5, 0.48], "radius": 0.34, "color": "#9ab4ff", "opacity": 0.32 },
+        { "op": "grain", "opacity": 0.06 }
+      ]
+    },
+    "Deepening Dread": {
       "source": "ROLL-THE-BONES",
       "sourceCard": "Roll_the_Bones",
-      "seed": 700000605,
+      "seed": 700000606,
       "ops": [
         { "op": "mirror" },
         { "op": "rotate_crop", "degrees": -5 },
         { "op": "zoom_crop", "factor": 1.15, "gravity": "bottom" },
-        { "op": "hue_rotate", "degrees": 30 },
-        { "op": "gradient_map", "palette": ["#14162f", "#41498a", "#e2cb90"], "strength": 0.38 },
-        { "op": "glow_spot", "center": [0.5, 0.6], "radius": 0.32, "color": "#ffe1a0", "opacity": 0.3 },
+        { "op": "hue_rotate", "degrees": 12 },
+        { "op": "gradient_map", "palette": ["#0a0a14", "#3a2a4a", "#8a6ab0"], "strength": 0.44 },
+        { "op": "glow_spot", "center": [0.5, 0.6], "radius": 0.32, "color": "#a888d8", "opacity": 0.3 },
         { "op": "grain", "opacity": 0.06 }
       ]
     },
-    "Doomwritten": {
-      "source": "DOOMSAY",
-      "sourceCard": "Doomsay",
-      "seed": 700000606,
-      "ops": [
-        { "op": "mirror" },
-        { "op": "rotate_crop", "degrees": 4 },
-        { "op": "zoom_crop", "factor": 1.16, "gravity": "center" },
-        { "op": "hue_rotate", "degrees": -20 },
-        { "op": "gradient_map", "palette": ["#0e1026", "#5a3a8a", "#d8ae5a"], "strength": 0.45 },
-        { "op": "glow_spot", "center": [0.5, 0.42], "radius": 0.3, "color": "#a883ff", "opacity": 0.35 },
-        { "op": "grain", "opacity": 0.06 }
-      ]
-    },
-    "The Significator": {
-      "source": "ORACLE-PENDANT",
-      "sourceCard": "Oracle_s_Pendant",
+    "Sign of Ruin": {
+      "source": "INFINITE_HOURGLASS_ECLYPSE",
+      "sourceCard": "Houroboros",
       "seed": 700000607,
       "ops": [
         { "op": "mirror" },
-        { "op": "zoom_crop", "factor": 1.18, "gravity": "center" },
-        { "op": "hue_rotate", "degrees": 35 },
-        { "op": "gradient_map", "palette": ["#131532", "#3b4a8e", "#eccd85"], "strength": 0.4 },
-        { "op": "glow_spot", "center": [0.5, 0.48], "radius": 0.34, "color": "#ffe9b0", "opacity": 0.32 },
+        { "op": "rotate_crop", "degrees": 7 },
+        { "op": "zoom_crop", "factor": 1.14, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": -64 },
+        { "op": "gradient_map", "palette": ["#120a16", "#5a3a5a", "#c88ac0"], "strength": 0.44 },
+        { "op": "glow_spot", "center": [0.48, 0.44], "radius": 0.33, "color": "#e0a0e0", "opacity": 0.32 },
         { "op": "grain", "opacity": 0.06 }
       ]
     },
-    "Sealed Fate": {
-      "source": "INEVITABLE_END_ECLYPSE",
-      "sourceCard": "Inevitable_End",
+    "The Hex Comes Due": {
+      "source": "CHRONOMEND",
+      "sourceCard": "Chronomend",
       "seed": 700000608,
       "ops": [
         { "op": "mirror" },
         { "op": "rotate_crop", "degrees": -4 },
-        { "op": "zoom_crop", "factor": 1.14, "gravity": "center" },
-        { "op": "hue_rotate", "degrees": 20 },
-        { "op": "gradient_map", "palette": ["#0f112a", "#463a86", "#e0ba62"], "strength": 0.48 },
-        { "op": "glow_spot", "center": [0.5, 0.38], "radius": 0.3, "color": "#8f7bff", "opacity": 0.34 },
+        { "op": "zoom_crop", "factor": 1.16, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 42 },
+        { "op": "gradient_map", "palette": ["#0e0818", "#4a2060", "#b060e0"], "strength": 0.5 },
+        { "op": "glow_spot", "center": [0.5, 0.38], "radius": 0.3, "color": "#c87aff", "opacity": 0.35 },
         { "op": "grain", "opacity": 0.06 }
       ]
     },
-    "Cartomancer's Edge": {
+    "Baleful Eye": {
       "source": "STYLUS",
       "sourceCard": "Stylus (mid-run weapon card, not in the Seeker or Arcanist char-creation menus)",
       "seed": 700000699,
@@ -132,13 +134,13 @@
       "ops": [
         { "op": "mirror" },
         { "op": "zoom_crop", "factor": 1.06, "gravity": "center" },
-        { "op": "hue_rotate", "degrees": 30 },
-        { "op": "gradient_map", "palette": ["#12142e", "#3d478c", "#e6c778"], "strength": 0.42 },
-        { "op": "glow_spot", "center": [0.5, 0.3], "radius": 0.3, "color": "#ffd98c", "opacity": 0.32 },
+        { "op": "hue_rotate", "degrees": 25 },
+        { "op": "gradient_map", "palette": ["#0c0a1c", "#3a2a5a", "#a07ad0"], "strength": 0.44 },
+        { "op": "glow_spot", "center": [0.5, 0.3], "radius": 0.3, "color": "#c89aff", "opacity": 0.33 },
         { "op": "grain", "opacity": 0.06 }
       ]
     },
-    "Diviner's Weapon": {
+    "Cursebrand": {
       "source": "KNOW-THE-UNKOWN",
       "sourceCard": "Astral_Visions",
       "seed": 700000698,
@@ -146,23 +148,23 @@
         { "op": "mirror" },
         { "op": "rotate_crop", "degrees": 6 },
         { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
-        { "op": "hue_rotate", "degrees": -25 },
-        { "op": "gradient_map", "palette": ["#101230", "#41498e", "#e2c070"], "strength": 0.4 },
-        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.33, "color": "#9db4ff", "opacity": 0.32 },
+        { "op": "hue_rotate", "degrees": -40 },
+        { "op": "gradient_map", "palette": ["#100a14", "#5a2a2a", "#d07a5a"], "strength": 0.42 },
+        { "op": "glow_spot", "center": [0.5, 0.45], "radius": 0.33, "color": "#ff9a6a", "opacity": 0.32 },
         { "op": "grain", "opacity": 0.06 }
       ]
     },
-    "The Cut": {
-      "source": "SKILLSHOT",
-      "sourceCard": "Skillshot",
+    "Ill Omen": {
+      "source": "CARD_UNLOCKS_36",
+      "sourceCard": "Observe",
       "seed": 700000697,
       "ops": [
         { "op": "mirror" },
-        { "op": "rotate_crop", "degrees": -6 },
-        { "op": "zoom_crop", "factor": 1.16, "gravity": "center" },
-        { "op": "hue_rotate", "degrees": 45 },
-        { "op": "gradient_map", "palette": ["#12142c", "#3a468a", "#e8ca7e"], "strength": 0.4 },
-        { "op": "glow_spot", "center": [0.55, 0.4], "radius": 0.3, "color": "#ffdf96", "opacity": 0.3 },
+        { "op": "rotate_crop", "degrees": -3 },
+        { "op": "zoom_crop", "factor": 1.15, "gravity": "center" },
+        { "op": "hue_rotate", "degrees": 20 },
+        { "op": "gradient_map", "palette": ["#0c0c1a", "#3a2a4a", "#9a7ac0"], "strength": 0.4 },
+        { "op": "glow_spot", "center": [0.5, 0.5], "radius": 0.32, "color": "#b89ad8", "opacity": 0.3 },
         { "op": "grain", "opacity": 0.06 }
       ]
     }
