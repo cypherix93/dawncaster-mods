@@ -143,3 +143,44 @@ methods across 28 assemblies; CoreModule 3479). `DC.SimHarness/probe2/` binds th
 
 The real game's damage calculation runs headless and returns a correct value. Bet confirmed;
 proceeding to M1 (content loader → single combat) on this foundation.
+
+---
+
+## Combat-driver progress (2026-07-24) — coroutine pump wired; damage-context grind remains
+
+**Keystone landed: the coroutine pump lives INSIDE the shim.** Combat resolution is
+coroutine-driven (`DamageRoutineIsRunning`, ability sequences). The game starts these
+via `MonoBehaviour.StartCoroutine` *internally*, so an external pump can't reach them.
+Fix: `src/SimRuntime/` (`SimCoroutine.Run`, netstandard2.0) is a synchronous recursive
+drain, and `ShimGen` rewrites `MonoBehaviour.StartCoroutine(IEnumerator)` to call it (with
+`StopCoroutine*` no-op'd). Result: real internal combat coroutines now run to completion
+headless with no frame waits. `StartCoroutine` no longer throws; `RunEffect` executes.
+
+**Fourth carve-out confirmed:** `MonoBehaviour.StartCoroutine → SimCoroutine.Run`
+(plus a `MaxSteps` cap so a never-satisfied `WaitWhile` becomes a detectable
+non-termination rather than a hang; the pump also records `LastError`).
+
+**Where it stops:** `RunEffect("damage:6", cc)` runs without throwing but monster
+`E_tempHealth` is unchanged. Root cause identified: the damage path reaches
+`MonsterHandler.ChangeMonsterHealth`, which dereferences three still-null singletons —
+`PlayerHandler.thePlayerData.trackingData`, `StatManager.Instance`, and the static
+`combatUI` — and the resulting NRE is swallowed by the coroutine drain (now recorded in
+`SimCoroutine.LastError`). This is ordinary incremental wiring, not a design problem.
+
+### Exact next steps for the combat driver
+1. Wire `thePlayerData.trackingData` (a `PlayerTrackingData`), `StatManager.Instance`, and a
+   tolerable `combatUI`/`playerUI` (the `*UIHandler` methods deref their own null managed
+   fields — likely need selective no-op of the `*UIHandler` classes, OR guard by only
+   calling state sub-methods). Re-run the vertical slice until monster HP drops on `damage:6`.
+2. Monster setup via `MonsterHandler.ResetMonster` + `GenerateMonsterDeck` (state only; skip
+   the UI/animation tail of `LoadMonster`).
+3. Own thin turn orchestrator (player play-phase via `ExecuteEffect`; enemy via monster-deck
+   effects; call real `EventHandler.FindTriggeredEvents` at phase boundaries for status ticks)
+   → `FightResult`. Autoplay = fixed greedy policy.
+4. `Random.Range` → route to the seeded RNG (currently returns default).
+
+### Verified state at this checkpoint
+- M0 (shim + net8) — proven. Content loader — 6/6 tests green.
+- Coroutine pump — wired and functioning (RunEffect executes headless).
+- Combat driver — foundation in place; damage application blocked only on the three
+  singleton wirings above.

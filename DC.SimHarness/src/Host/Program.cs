@@ -1,10 +1,8 @@
 using Dc.SimHarness.Engine;
+
+// v1 CLI: load the real pool (optionally a modded pack) headless and report.
+// Combat-driver subcommands land here once the fight loop is verified.
 GameBootstrap.EnsureInitialized();
 ContentLoader.LoadAll();
-Console.WriteLine($"allCards={AssetManager.allCards.Count} statuses={AssetManager.allStatusEffects.Count} battles={AssetManager.allBattles.Count}");
-var c0 = AssetManager.allCards[0];
-Console.WriteLine($"[0] name='{c0.name}' id={c0.cardID} effects={c0.CardEffectList?.Count}");
-var ab = AssetManager.GetCard("Abolish");
-Console.WriteLine($"GetCard(Abolish)={(ab==null?"NULL":ab.name)} effects={ab?.CardEffectList?.Count} codeLine0='{ab?.CardEffectList?[0]?.codeLine}' refStatus0={ab?.CardEffectList?[0]?.referenceStatus?.name}");
-int resolved = AssetManager.allCards.Where(c=>c.CardEffectList!=null).SelectMany(c=>c.CardEffectList).Count(e=>e.referenceStatus!=null);
-Console.WriteLine($"total resolved referenceStatus = {resolved}");
+Console.WriteLine($"Loaded headless: {AssetManager.allCards.Count} cards, " +
+    $"{AssetManager.allStatusEffects.Count} statuses, {AssetManager.allBattles.Count} battles.");

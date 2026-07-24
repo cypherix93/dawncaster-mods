@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Mono.Cecil" Version="0.11.5" />
+    <ProjectReference Include="..\SimRuntime\SimRuntime.csproj" />
   </ItemGroup>
 
 </Project>

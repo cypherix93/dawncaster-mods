@@ -73,13 +73,22 @@ internal static class Program
             // Carve-outs: members that combat READS BACK, so a no-op stub is wrong.
             // UnityEngine.Object.name must round-trip (AssetManager lookups key on it).
             if (name == "UnityEngine.CoreModule")
+            {
                 AddNameBackingField(asm.MainModule);
+                WireStartCoroutine(asm.MainModule);
+            }
 
             var outPath = Path.Combine(outDir, name + ".dll");
             asm.Write(outPath);
             Console.WriteLine($"  shimmed {name,-42} native methods neutralized: {n}");
             shimmed++; totalNeutralized += n;
         }
+        // Ship the coroutine-pump assembly alongside the shims (CoreModule now references it).
+        var pumpSrc = typeof(Dc.SimHarness.Runtime.SimCoroutine).Assembly.Location;
+        var pumpDst = Path.Combine(outDir, Path.GetFileName(pumpSrc));
+        File.Copy(pumpSrc, pumpDst, overwrite: true);
+        Console.WriteLine($"copied pump assembly -> {Path.GetFileName(pumpDst)}");
+
         Console.WriteLine($"\nDone. {shimmed} assemblies shimmed, {totalNeutralized} native methods neutralized, {missing} missing. -> {outDir}");
         return 0;
     }
@@ -135,6 +144,49 @@ internal static class Program
                 m.Body = body;
             }
         }
+    }
+
+    // Make MonoBehaviour.StartCoroutine run the coroutine SYNCHRONOUSLY to completion via
+    // our injected pump, so every coroutine the game starts internally (damage routines,
+    // ability sequences) resolves immediately headless. StopCoroutine*/string overloads no-op.
+    private static void WireStartCoroutine(ModuleDefinition module)
+    {
+        var mb = module.GetType("UnityEngine.MonoBehaviour");
+        if (mb == null) { Console.WriteLine("    (!) MonoBehaviour not found; coroutine wiring skipped"); return; }
+        var run = module.ImportReference(
+            typeof(Dc.SimHarness.Runtime.SimCoroutine).GetMethod("Run"));
+
+        foreach (var m in mb.Methods)
+        {
+            bool isStart = m.Name == "StartCoroutine";
+            bool isStop = m.Name is "StopCoroutine" or "StopAllCoroutines";
+            if (!isStart && !isStop) continue;
+            m.IsInternalCall = false; m.ImplAttributes &= ~MethodImplAttributes.InternalCall;
+            var body = new MethodBody(m); var il = body.GetILProcessor();
+
+            // StartCoroutine(IEnumerator): drain it now, return null Coroutine.
+            if (isStart && m.Parameters.Count == 1
+                && m.Parameters[0].ParameterType.FullName == "System.Collections.IEnumerator")
+            {
+                il.Emit(OpCodes.Ldarg_1);
+                il.Emit(OpCodes.Call, run);
+                il.Emit(OpCodes.Ldnull);
+                il.Emit(OpCodes.Ret);
+            }
+            else if (m.ReturnType.MetadataType == MetadataType.Void)
+            {
+                il.Emit(OpCodes.Ret);                       // StopCoroutine / StopAllCoroutines
+            }
+            else
+            {
+                il.Emit(OpCodes.Ldnull); il.Emit(OpCodes.Ret);  // StartCoroutine(string) etc.
+            }
+            m.Body = body;
+        }
+
+        // Ship the pump assembly next to the shims so the resolver can bind it.
+        var src = typeof(Dc.SimHarness.Runtime.SimCoroutine).Assembly.Location;
+        Console.WriteLine($"    (coroutine pump wired; SimRuntime at {Path.GetFileName(src)})");
     }
 
     private static IEnumerable<TypeDefinition> AllTypes(ModuleDefinition m)

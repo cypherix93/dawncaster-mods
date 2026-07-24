@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- netstandard2.0 so BOTH the net8 host/engine AND the shimmed CoreModule can bind it. -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>Dc.SimHarness.Runtime</AssemblyName>
+    <RootNamespace>Dc.SimHarness.Runtime</RootNamespace>
+  </PropertyGroup>
+
+</Project>
