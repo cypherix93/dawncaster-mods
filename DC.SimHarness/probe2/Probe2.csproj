@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AssemblyName>sim-probe2</AssemblyName>
+    <GameManaged>E:\Games\Steam\steamapps\common\Dawncaster\Dawncaster_Data\Managed</GameManaged>
+    <Shims>$(MSBuildProjectDirectory)\..\shims</Shims>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Assembly-CSharp: the real game logic (from the read-only game dir). -->
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(GameManaged)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- UnityEngine surface: the SHIMMED copies (identical public API, no-op native bodies). -->
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(Shims)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(Shims)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(GameManaged)\Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

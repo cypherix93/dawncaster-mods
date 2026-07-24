@@ -122,3 +122,24 @@ carve-out) and confirming no other value-returning native call sits on the execu
 3. Bind Assembly-CSharp against the generated stubs; construct content via
    `GetUninitializedObject`; drive the real `CombatHandler` phase machine through the pump.
 4. Proceed into M1 (content loader → single combat) as originally planned.
+
+---
+
+## M0 GATE: GREEN ✅ (2026-07-21) — shim approach proven end-to-end
+
+`DC.SimHarness/src/ShimGen/` rewrites the real Unity DLLs (neutralized 7970 native
+methods across 28 assemblies; CoreModule 3479). `DC.SimHarness/probe2/` binds the real
+`Assembly-CSharp` against the shimmed UnityEngine on **net8** and passes every check:
+
+| Check | net472 (probe 1) | net8 + shim (probe 2) |
+|---|---|---|
+| Load Assembly-CSharp + reflect Card | PASS | **PASS** |
+| GetUninitializedObject(Card) | PASS | **PASS** |
+| `Debug.Log` | THROW (SecurityException) | **PASS (no-op)** |
+| `ScriptableObject.CreateInstance` | THROW | **PASS (tolerated)** |
+| `Mathf.RoundToInt/Clamp/Min` real math | n/a | **PASS (3 / 5 / 3)** |
+| `DamageCalculations.CalculateDamage(6,…)` | THROW (BCL gap) | **PASS → returned 6** |
+| `SpellEffects` static init | PASS | **PASS** |
+
+The real game's damage calculation runs headless and returns a correct value. Bet confirmed;
+proceeding to M1 (content loader → single combat) on this foundation.

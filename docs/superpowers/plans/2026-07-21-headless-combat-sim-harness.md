@@ -6,7 +6,18 @@
 
 **Architecture:** A net472 C# host loads the game's real `Assembly-CSharp.dll`. We bypass Addressables by reconstructing real `Card`/`Battle`/`StatusEffect` instances from the already-extracted `tools/out/data/*.json` and populating `AssetManager`'s static lists. UI/animation is neutralized; coroutines run through a synchronous pump so combat resolves at CPU speed with no delays.
 
-**Tech Stack:** C# / .NET Framework 4.7.2 (matches the existing DawnKit plugin build), `dotnet build`/`dotnet test`, xUnit for tests (align with DC.DawnKit's test project if it already defines a framework), Newtonsoft.Json (shipped by the game). Reference/decompiled truth in `decompiled/`.
+**Tech Stack:** C# / **.NET 8** (host + engine), `dotnet build`/`dotnet test`, xUnit, Mono.Cecil (shim generation), Newtonsoft.Json (shipped by the game). Reference/decompiled truth in `decompiled/`.
+
+> **⚠️ Superseded by M0 findings (`DC.SimHarness/SPIKE-FINDINGS.md`, committed).** The M0
+> spike proved Strategy 1 (reference real UnityEngine) is NOT viable — Unity native ECalls
+> throw with no player, and net472's BCL lacks APIs the game uses. **Revised approach:**
+> host targets **net8** (not net472); M0's core task is a **Cecil shim rewriter** that loads
+> the real Unity dependency DLLs and neutralizes only their native (InternalCall/PInvoke)
+> methods to `return default`, preserving managed bodies (so `Mathf` math stays real),
+> then binds `Assembly-CSharp` against the rewritten copies via an `AssemblyResolve` hook.
+> Content objects are built with `FormatterServices.GetUninitializedObject`. `Random.Range`
+> is special-cased to the seeded RNG. Tasks below keep their intent; framework = net8 and
+> Task 0.1/0.3 follow the shim-rewriter approach, not the old copy-script/real-DLL path.
 
 ## Global Constraints
 
