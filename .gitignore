@@ -26,3 +26,6 @@ DC.*/src/**/obj/
 DC.*/examples/**/bin/
 DC.*/examples/**/obj/
 *.csproj.user
+
+# Claude Code worktrees (harness-managed, never tracked)
+.claude/worktrees/
