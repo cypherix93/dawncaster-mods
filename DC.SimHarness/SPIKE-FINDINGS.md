@@ -64,3 +64,61 @@ Enumerate the UnityEngine members that `Assembly-CSharp`'s combat classes
 `CardHandler`, `Card`, `StatusEffect`, `Battle`) actually reference. That count bounds the
 shadow-assembly effort and tells us whether Strategy 2 is a day or a week — and whether
 UniTask/DOTween/TextMeshPro ECalls also sit on the combat path (which would enlarge it).
+
+---
+
+## Shim sizing (Mono.Cecil IL walk of the combat classes) — `DC.SimHarness/sizer/`
+
+Seed set (combat + card-math classes): SpellEffects, CombatHandler, MonsterHandler,
+DamageCalculations, ConditionChecker, CardHandler, PlayerHandler, PlayerData, DeckHandler,
+EventHandler, SpellManager, Card, CardContainer, StatusEffect, Status, Battle, CardEffect,
+Condition, NumberParser, Enchantment, LastingEffect(Container), GameTextTranslator
+(1117 methods with bodies).
+
+**DIRECT (combat classes only) — the surface v1 truly needs:**
+
+| Assembly | types | members |
+|---|---|---|
+| UnityEngine.CoreModule | 20 | 69 |
+| UnityEngine.UI | 3 | 3 |
+| Unity.TextMeshPro | 1 | 2 |
+| Unity.Localization | 2 | 2 |
+
+≈ **74 members / 26 types** — small.
+
+**TRANSITIVE (full reachable closure, 4367 methods) — pessimistic upper bound:**
+CoreModule 46t/247m, UI 18t/62m, then a long presentation/platform tail:
+Localization, Steamworks, UIEffect, ParticleSystem, Audio, InputSystem, TextMeshPro,
+UIModule, SQLite, UniTask, ResourceManager, JSON, Ink, Postprocessing, Addressables.
+This tail is all UI / feedback / achievements / save / input — reachable from combat via
+branches we will not execute, but the shim types must still *exist* so JIT can resolve them.
+
+### What this means for effort
+
+- **Auto-generate the shim, don't hand-write it.** Read each real dependency DLL's public
+  metadata with Cecil and emit an assembly with identical public signatures but
+  `return default` bodies. This covers the entire surface of an assembly at once, so the
+  247-vs-69 gap stops mattering — mechanical, ~1–2 days, not a week.
+- **Tiny "must be REAL" carve-out** (combat reads these values back, so no-op is wrong):
+  `Mathf.RoundToInt/Clamp/Min/Max` and `Random.Range` — a handful of one-liners; `Random.Range`
+  routes to the seeded RNG. Everything else (Debug/UI/TMP/audio/particles/Steamworks/SQLite/
+  input/localization/LeanTween) is safely no-op.
+- **Coroutine model confirmed:** the combat classes use **classic `IEnumerator` +
+  `StartCoroutine` + `WaitForSeconds`, zero UniTask/async** — the synchronous coroutine pump
+  design is correct. (UniTask appears only in the transitive periphery.)
+- **Host:** modern .NET (net8) — the sizer runs on it fine; fixes the net472 BCL gap.
+
+### Verdict: **GO.** Strategy 2 is bounded and largely auto-generatable, the pump model
+holds, and the real-math carve-out is trivial. Residual risk is now low and concrete:
+stub-default correctness where combat reads a Unity value back (mitigated by the Mathf/Random
+carve-out) and confirming no other value-returning native call sits on the executed path
+(surfaces incrementally as fights run).
+
+### Revised M0/M1 shape
+1. Modern-.NET (net8) host; drop net472.
+2. Cecil-based **shim generator**: real Unity/dep DLL → no-op stub assembly; hand-override the
+   Mathf/Random carve-out with real bodies. Emit stubs for CoreModule + UI + the transitive
+   tail assemblies.
+3. Bind Assembly-CSharp against the generated stubs; construct content via
+   `GetUninitializedObject`; drive the real `CombatHandler` phase machine through the pump.
+4. Proceed into M1 (content loader → single combat) as originally planned.
