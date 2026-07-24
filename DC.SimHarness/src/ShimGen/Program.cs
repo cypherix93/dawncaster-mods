@@ -70,6 +70,11 @@ internal static class Program
                 foreach (var m in type.Methods)
                     if (Neutralize(m, asm.MainModule)) n++;
 
+            // Carve-outs: members that combat READS BACK, so a no-op stub is wrong.
+            // UnityEngine.Object.name must round-trip (AssetManager lookups key on it).
+            if (name == "UnityEngine.CoreModule")
+                AddNameBackingField(asm.MainModule);
+
             var outPath = Path.Combine(outDir, name + ".dll");
             asm.Write(outPath);
             Console.WriteLine($"  shimmed {name,-42} native methods neutralized: {n}");
@@ -77,6 +82,59 @@ internal static class Program
         }
         Console.WriteLine($"\nDone. {shimmed} assemblies shimmed, {totalNeutralized} native methods neutralized, {missing} missing. -> {outDir}");
         return 0;
+    }
+
+    // Give UnityEngine.Object a real managed string backing field for `name` and wire
+    // get_name/set_name to it, so names round-trip headless. Overrides the no-op stub.
+    private static void AddNameBackingField(ModuleDefinition module)
+    {
+        var obj = module.GetType("UnityEngine.Object");
+        if (obj == null) { Console.WriteLine("    (!) UnityEngine.Object not found; carve-out skipped"); return; }
+        var strType = module.TypeSystem.String;
+        var field = new FieldDefinition("__simName", FieldAttributes.Private, strType);
+        obj.Fields.Add(field);
+
+        // Unity overloads ==/!= so an Object with a null NATIVE pointer reads as == null.
+        // Our headless objects have no native pointer, so without this every `obj != null`
+        // check in game code would be false. Rewrite to plain reference semantics.
+        var refEquals = module.ImportReference(
+            typeof(object).GetMethod("ReferenceEquals", new[] { typeof(object), typeof(object) }));
+        foreach (var m in obj.Methods)
+        {
+            if (m.Name == "op_Equality" && m.Parameters.Count == 2)
+            {
+                var b = new MethodBody(m); var il = b.GetILProcessor();
+                m.IsInternalCall = false; m.ImplAttributes &= ~MethodImplAttributes.InternalCall;
+                il.Emit(OpCodes.Ldarg_0); il.Emit(OpCodes.Ldarg_1); il.Emit(OpCodes.Call, refEquals); il.Emit(OpCodes.Ret);
+                m.Body = b;
+            }
+            else if (m.Name == "op_Inequality" && m.Parameters.Count == 2)
+            {
+                var b = new MethodBody(m); var il = b.GetILProcessor();
+                m.IsInternalCall = false; m.ImplAttributes &= ~MethodImplAttributes.InternalCall;
+                il.Emit(OpCodes.Ldarg_0); il.Emit(OpCodes.Ldarg_1); il.Emit(OpCodes.Call, refEquals);
+                il.Emit(OpCodes.Ldc_I4_0); il.Emit(OpCodes.Ceq); il.Emit(OpCodes.Ret);
+                m.Body = b;
+            }
+        }
+
+        foreach (var m in obj.Methods)
+        {
+            if (m.Name == "get_name" && m.Parameters.Count == 0 && m.ReturnType.MetadataType == MetadataType.String)
+            {
+                var body = new MethodBody(m); var il = body.GetILProcessor();
+                m.IsInternalCall = false; m.ImplAttributes &= ~MethodImplAttributes.InternalCall;
+                il.Emit(OpCodes.Ldarg_0); il.Emit(OpCodes.Ldfld, field); il.Emit(OpCodes.Ret);
+                m.Body = body;
+            }
+            else if (m.Name == "set_name" && m.Parameters.Count == 1)
+            {
+                var body = new MethodBody(m); var il = body.GetILProcessor();
+                m.IsInternalCall = false; m.ImplAttributes &= ~MethodImplAttributes.InternalCall;
+                il.Emit(OpCodes.Ldarg_0); il.Emit(OpCodes.Ldarg_1); il.Emit(OpCodes.Stfld, field); il.Emit(OpCodes.Ret);
+                m.Body = body;
+            }
+        }
     }
 
     private static IEnumerable<TypeDefinition> AllTypes(ModuleDefinition m)

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>dmk-sim</AssemblyName>
+    <GameManaged>E:\Games\Steam\steamapps\common\Dawncaster\Dawncaster_Data\Managed</GameManaged>
+    <Shims>$(MSBuildProjectDirectory)\..\..\shims</Shims>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine.csproj" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(GameManaged)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Shims)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(Shims)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

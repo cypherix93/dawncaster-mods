@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Dc.SimHarness.Engine</AssemblyName>
+    <RootNamespace>Dc.SimHarness.Engine</RootNamespace>
+    <GameManaged>E:\Games\Steam\steamapps\common\Dawncaster\Dawncaster_Data\Managed</GameManaged>
+    <Shims>$(MSBuildProjectDirectory)\..\..\shims</Shims>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Real game logic. -->
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(GameManaged)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- Shimmed UnityEngine surface (compile against the no-op-native copies). -->
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(Shims)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(Shims)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(GameManaged)\Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>
